@@ -2,7 +2,9 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 
 import { App } from '@/app/App'
+import { connectAuthToHttp } from '@/app/config/authBridge'
 import { env } from '@/app/config/env'
+import { queryClient } from '@/app/config/queryClient'
 import { AppProviders } from '@/app/providers/AppProviders'
 
 import './index.css'
@@ -17,6 +19,8 @@ const container = document.getElementById('root')
 if (!container) {
   throw new Error('Elemento #root não encontrado em index.html')
 }
+
+connectAuthToHttp(queryClient)
 
 void enableMocking().then(() => {
   createRoot(container).render(
