@@ -10,6 +10,21 @@ Regra adotada: o Figma manda na composição, tipografia, cores e proporções. 
 (a) o Figma não desenha o estado ou o tamanho de tela, (b) o desenho não funciona de verdade no
 navegador ou (c) há ganho claro de usabilidade ou acessibilidade. Cada desvio fica listado aqui.
 
+### Hero (banner principal)
+
+- **Largura intermediária**: o Figma fixa 600 px de texto e 450 px de imagem. Entre 768 e 1279 px a
+  altura do banner e o tamanho do título passam a ser fluidos (`clamp`), e a imagem continua
+  quadrada ocupando a altura toda. Em 1280 px ou mais as medidas são as do Figma (450 px de altura,
+  título de 43 px).
+- **Celulares estreitos (320–414 px)**: título e imagem também são fluidos; abaixo de 414 px o
+  banner fica um pouco mais alto que no Figma, porque a descrição quebra em mais linhas.
+
+### Autenticação (modal)
+
+- **Telas baixas**: o Figma posiciona o modal a 160 px do topo. Quando a altura da janela não
+  comporta isso, a margem diminui até 16 px e o conteúdo rola dentro do modal, para o botão de
+  enviar nunca ficar fora da tela.
+
 ### Banners de destaque (abaixo do catálogo)
 
 Frame de referência: `Desktop / Início` › `Promos` (`70353:241`).

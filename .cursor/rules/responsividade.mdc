@@ -1,0 +1,25 @@
+---
+description: Toda tela e componente deve funcionar em qualquer tamanho de tela
+alwaysApply: true
+---
+
+# Responsividade em todo o projeto
+
+Toda tela, componente e modal precisa funcionar bem em **qualquer largura e altura**, de 320 px
+(celular pequeno) a 1920 px ou mais, em pé e deitado. O Figma só desenha mobile (~390 px) e desktop
+(1440 px); o que fica entre eles e além deles é responsabilidade nossa.
+
+- Nada de largura fixa que possa estourar o contêiner. Use `max-w-*`, `min-w-0`, `flex-1`, grade
+  fluida, `clamp()` ou consulta de contêiner (`@container`) quando o layout depender da largura do
+  componente, e não da tela.
+- Em `flex`/`grid`, lembre que `gap` e `min-width: auto` somam: confira que a soma dos itens cabe.
+- Sem rolagem horizontal da página em nenhuma largura. Rolagem interna só onde é intencional
+  (por exemplo, a lista de abas).
+- Textos longos quebram ou truncam de propósito; nada pode ficar por cima de outro elemento.
+- Modais e folhas devem caber em telas baixas (celular deitado, ~375 px de altura) e rolar por
+  dentro quando o conteúdo for maior.
+- Alvos de toque com pelo menos 40 px no mobile; o foco do teclado sempre visível.
+- Respeite `prefers-reduced-motion` em animações.
+- Ao terminar uma tela, confira no navegador pelo menos em 320, 390, 768, 1024, 1280 e 1440 px e
+  procure elementos que vazam do pai. Registre em `ARCHITECTURE.md` (seção "Desvios do Figma")
+  qualquer decisão de layout que o Figma não define.
