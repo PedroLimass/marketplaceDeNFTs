@@ -39,6 +39,10 @@ export default defineConfig([
     },
   },
   {
+    files: ['src/shared/ui/**/*.tsx'],
+    rules: { 'react-refresh/only-export-components': 'off' },
+  },
+  {
     files: ['**/*.js', '**/*.config.ts'],
     extends: [js.configs.recommended],
     languageOptions: { globals: globals.node },
