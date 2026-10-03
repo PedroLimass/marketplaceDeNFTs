@@ -25,6 +25,14 @@ export const registerRequestSchema = z.object({
   password: passwordSchema,
 })
 
+/** Formulário de cadastro: a confirmação só existe no cliente e nunca vai para a API. */
+export const registerFormSchema = registerRequestSchema
+  .extend({ confirmPassword: z.string().min(1, 'Confirme a senha.') })
+  .refine((values) => values.password === values.confirmPassword, {
+    path: ['confirmPassword'],
+    message: 'As senhas não coincidem.',
+  })
+
 export const loginRequestSchema = z.object({
   email: emailSchema,
   password: z.string().min(1, 'Informe a senha.'),
@@ -52,6 +60,7 @@ export const sessionResponseSchema = z.object({
 })
 
 export type RegisterRequest = z.infer<typeof registerRequestSchema>
+export type RegisterFormValues = z.infer<typeof registerFormSchema>
 export type LoginRequest = z.infer<typeof loginRequestSchema>
 export type UserDto = z.infer<typeof userDtoSchema>
 export type AuthResponse = z.infer<typeof authResponseSchema>

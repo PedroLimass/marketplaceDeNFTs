@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest'
 import {
   authResponseSchema,
   loginRequestSchema,
+  registerFormSchema,
   registerRequestSchema,
   sessionResponseSchema,
 } from './auth.schemas'
@@ -26,6 +27,32 @@ describe('registerRequestSchema', () => {
 
     expect(result.success).toBe(false)
     expect(result.error?.issues.map((issue) => issue.path[0])).toContain(field)
+  })
+})
+
+describe('registerFormSchema', () => {
+  const valid = {
+    username: 'nova.alves',
+    email: 'nova@kurio.test',
+    password: 'Kurio@2026',
+    confirmPassword: 'Kurio@2026',
+  }
+
+  it('aceita quando a confirmação é igual à senha', () => {
+    expect(registerFormSchema.safeParse(valid).success).toBe(true)
+  })
+
+  it('aponta a divergência no campo de confirmação', () => {
+    const result = registerFormSchema.safeParse({ ...valid, confirmPassword: 'Outra@2026' })
+
+    expect(result.success).toBe(false)
+    expect(result.error?.issues).toMatchObject([
+      { path: ['confirmPassword'], message: 'As senhas não coincidem.' },
+    ])
+  })
+
+  it('exige a confirmação preenchida', () => {
+    expect(registerFormSchema.safeParse({ ...valid, confirmPassword: '' }).success).toBe(false)
   })
 })
 
