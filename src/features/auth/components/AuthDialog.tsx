@@ -50,7 +50,7 @@ export function AuthDialog({ mode, redirect, onClose, onAuthenticated }: AuthDia
         <Dialog.Content
           className={cn(
             'fixed inset-0 z-50 overflow-y-auto bg-ink px-7 pt-20 pb-6 outline-none',
-            'md:inset-auto md:top-[160px] md:left-1/2 md:max-h-[calc(100dvh-80px)] md:w-[500px] md:-translate-x-1/2 md:rounded-lg md:bg-surface-card md:p-0',
+            'md:inset-auto md:[--top:clamp(16px,calc(100dvh-700px),160px)] md:top-(--top) md:left-1/2 md:max-h-[calc(100dvh-var(--top)-16px)] md:w-[500px] md:-translate-x-1/2 md:rounded-lg md:bg-surface-card md:p-0',
           )}
         >
           <div className="flex h-34 items-center justify-center md:hidden">
