@@ -17,7 +17,7 @@ interface MobileCatalogBarProps {
 export function MobileCatalogBar({ filters, list, onChange, onClear }: MobileCatalogBarProps) {
   return (
     <div className="flex items-center gap-2 md:hidden">
-      <CatalogSearchField variant="mobile" className="flex-1" />
+      <CatalogSearchField variant="mobile" className="min-w-0 flex-1" />
       <MobileFiltersSheet
         filters={filters}
         facets={list.data?.facets}

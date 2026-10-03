@@ -28,7 +28,7 @@ export function HeroBanner() {
   return (
     <section
       aria-labelledby="hero-titulo"
-      className="relative isolate flex items-center justify-between gap-2 overflow-hidden rounded-xl p-4 md:h-[450px] md:gap-0 md:rounded-none md:p-0 md:pl-10"
+      className="relative isolate flex items-center justify-between gap-2 overflow-hidden rounded-xl p-4 md:h-[clamp(300px,36vw,450px)] md:gap-0 md:rounded-none md:p-0 md:pl-10"
     >
       <img
         src={heroBgMobile}
@@ -37,7 +37,7 @@ export function HeroBanner() {
         className="absolute inset-0 -z-10 size-full md:hidden"
       />
 
-      <div className="flex min-w-0 flex-col gap-4 md:w-[600px] md:items-end md:gap-11">
+      <div className="flex min-w-0 flex-1 flex-col gap-4 md:max-w-[600px] md:items-end md:gap-11">
         <div className="flex flex-col gap-4 md:gap-8 md:self-stretch">
           <div className="flex flex-col gap-1.5 text-foreground md:gap-2">
             <p className="text-xs leading-4 font-medium md:text-sm md:tracking-[1.4px]">
@@ -45,14 +45,14 @@ export function HeroBanner() {
             </p>
             <h1
               id="hero-titulo"
-              className="flex w-[190px] flex-col text-lg leading-[29px] font-bold md:w-full md:text-[43px] md:leading-[70px]"
+              className="flex w-full flex-col text-[clamp(13px,4.6vw,18px)] leading-[1.6] font-bold md:text-[clamp(28px,3.4vw,43px)] md:leading-[1.63]"
             >
               {text.title.map((line) => (
                 <span key={line}>{line}</span>
               ))}
             </h1>
           </div>
-          <p className="text-xs leading-[18px] text-text-secondary md:w-[557px] md:text-sm md:leading-6">
+          <p className="text-xs leading-[18px] text-text-secondary md:max-w-[557px] md:text-sm md:leading-6">
             {text.description}
           </p>
           <Link
@@ -69,7 +69,7 @@ export function HeroBanner() {
         <img src={heroDotsMobile} alt="" width={33} height={7} className="md:hidden" />
       </div>
 
-      <div className="relative shrink-0">
+      <div className="relative shrink-0 md:h-full">
         <img
           src={assetUrl('assets/nfts/art-1-500.webp')}
           srcSet={`${assetUrl('assets/nfts/art-1-500.webp')} 500w, ${assetUrl('assets/nfts/art-1.webp')} 1000w`}
@@ -78,7 +78,7 @@ export function HeroBanner() {
           width={450}
           height={450}
           fetchPriority="high"
-          className="size-[138px] rounded-2xl object-cover md:size-[450px] md:rounded-3xl"
+          className="size-[clamp(96px,36vw,138px)] rounded-2xl object-cover md:size-auto md:h-full md:rounded-3xl"
         />
         <img
           src={assetUrl('assets/nfts/art-2-500.webp')}
@@ -86,7 +86,7 @@ export function HeroBanner() {
           aria-hidden="true"
           width={58}
           height={58}
-          className="absolute top-[88px] left-3.5 size-[58px] rounded-2xl object-cover md:hidden"
+          className="absolute -bottom-2 left-3.5 size-[58px] rounded-2xl object-cover md:hidden"
         />
       </div>
     </section>
