@@ -66,6 +66,9 @@ as mesmas usadas no Figma, em vez dos PNGs de ~2 MB do arquivo de design.
 - **Faixa de preço sem intervalo** (catálogo vazio ou todos com o mesmo preço): em vez do controle
   deslizante, aparece só o texto da faixa.
 - **Selo "RARO"/"LIMITADO"** nos cards: aparece só no mobile, como no Figma.
+- **Grade sem escalonamento no mobile**: o Figma mobile desce a coluna da direita em 32 px; ficou
+  torto em telas reais e a grade agora mantém todas as linhas alinhadas (2 colunas até 559 px,
+  3 colunas depois).
 - **Busca no desktop**: os frames lidos não mostram campo de busca no cabeçalho; foi adicionado um
   ícone que expande em campo, com Escape para fechar.
 - **Ordenação no mobile** fica dentro da folha de filtros, e não ao lado das abas.
