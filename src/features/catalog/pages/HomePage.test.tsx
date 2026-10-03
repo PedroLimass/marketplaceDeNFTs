@@ -12,7 +12,8 @@ import { renderAppAt } from '@/test/renderApp'
 
 const server = setupServer(scenarioHandler, ...authHandlers, ...catalogHandlers)
 
-const cards = () => screen.getAllByRole('article')
+const cards = () =>
+  within(screen.getByRole('region', { name: 'Catálogo de NFTs' })).getAllByRole('article')
 
 describe('Início', () => {
   beforeAll(() => {
@@ -42,6 +43,28 @@ describe('Início', () => {
     expect(await screen.findByRole('heading', { name: 'Emerald Ape #042' })).toBeInTheDocument()
     expect(cards()).toHaveLength(9)
     expect(screen.getByText('36 NFTs encontrados. Página 1 de 4.')).toBeInTheDocument()
+  })
+
+  it('mostra os destaques, o Diário da Cunhagem e o rodapé abaixo do catálogo', async () => {
+    await renderAppAt('/')
+    await screen.findByRole('heading', { name: 'Emerald Ape #042' })
+
+    expect(screen.getByRole('region', { name: 'Destaques' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Diário da Cunhagem' })).toBeInTheDocument()
+    expect(screen.getAllByRole('link', { name: /^Explorar/ }).length).toBeGreaterThanOrEqual(2)
+    expect(screen.getByRole('contentinfo')).toHaveTextContent('© 2026 Kurio')
+  })
+
+  it('filtra o catálogo pela coleção escolhida no rodapé', async () => {
+    const { user, router } = await renderAppAt('/')
+    await screen.findByRole('heading', { name: 'Emerald Ape #042' })
+
+    const footer = within(screen.getByRole('contentinfo'))
+    await user.click(footer.getByRole('link', { name: 'Fotografia' }))
+
+    await waitFor(() => {
+      expect(router.state.location.search).toMatchObject({ category: 'fotografia' })
+    })
   })
 
   it('exibe o preço anterior riscado quando o NFT teve desconto', async () => {

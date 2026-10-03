@@ -1,3 +1,6 @@
+import { MintDiary } from '@/features/home/components/MintDiary'
+import { PromoBanners } from '@/features/home/components/PromoBanners'
+
 import { CatalogSection } from '../components/CatalogSection'
 import { HeroBanner } from '../components/HeroBanner'
 import { MobileCatalogBar } from '../components/MobileCatalogBar'
@@ -15,6 +18,8 @@ export function HomePage() {
         <HeroBanner />
       </div>
       <CatalogSection filters={filters} list={list} onChange={update} onClear={clear} />
+      <PromoBanners />
+      <MintDiary />
     </div>
   )
 }
