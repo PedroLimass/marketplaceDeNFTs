@@ -4,9 +4,12 @@ import { ensureSession } from '@/features/auth/session/ensureSession'
 import { safeRedirect } from '@/features/auth/utils/safeRedirect'
 import {
   featuredNftsQueryOptions,
+  nftDetailQueryOptions,
   nftListQueryOptions,
 } from '@/features/catalog/api/catalogQueries'
 import { HomePage } from '@/features/catalog/pages/HomePage'
+import { CartPage } from '@/features/cart/pages/CartPage'
+import { NftDetailPage } from '@/features/nft/pages/NftDetailPage'
 import { searchToFilters, validateCatalogSearch } from '@/features/catalog/search/catalogSearch'
 
 import { NotFoundPage } from '../layout/NotFoundPage'
@@ -41,6 +44,24 @@ const homeRoute = createRoute({
   component: HomePage,
 })
 
+const nftRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/nfts/$nftId',
+  loader: ({ context, params }) => {
+    void context.queryClient.query(nftDetailQueryOptions(params.nftId)).catch(noop)
+  },
+  component: function NftRoute() {
+    const { nftId } = nftRoute.useParams()
+    return <NftDetailPage nftId={nftId} />
+  },
+})
+
+const cartRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/cart',
+  component: CartPage,
+})
+
 /**
  * O roteador mescla o resultado desta função sobre a busca bruta da URL. Por isso um
  * destino inválido precisa voltar como `redirect: undefined`, e não simplesmente sumir:
@@ -72,4 +93,10 @@ const signupRoute = createRoute({
   },
 })
 
-export const routeTree = rootRoute.addChildren([homeRoute, loginRoute, signupRoute])
+export const routeTree = rootRoute.addChildren([
+  homeRoute,
+  nftRoute,
+  cartRoute,
+  loginRoute,
+  signupRoute,
+])

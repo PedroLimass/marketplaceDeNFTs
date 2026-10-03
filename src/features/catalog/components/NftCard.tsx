@@ -1,3 +1,5 @@
+import { Link } from '@tanstack/react-router'
+
 import { formatEth } from '@/shared/lib/money'
 
 import type { Nft } from '../types/catalog'
@@ -12,7 +14,7 @@ interface NftCardProps {
 
 export function NftCard({ nft, priority = false }: NftCardProps) {
   return (
-    <article className="flex flex-col gap-2 md:gap-3">
+    <article className="group relative flex flex-col gap-2 has-[a:focus-visible]:rounded-lg has-[a:focus-visible]:ring-2 has-[a:focus-visible]:ring-primary md:gap-3">
       <div className="relative overflow-hidden rounded-[20px] bg-linear-to-br from-surface-card from-12% to-surface-raised px-1 pt-3 pb-5 md:rounded-none md:bg-surface-card md:bg-none md:pt-6 md:pb-[26px]">
         <img
           src={nft.thumbnailUrl}
@@ -21,7 +23,7 @@ export function NftCard({ nft, priority = false }: NftCardProps) {
           height={500}
           loading={priority ? 'eager' : 'lazy'}
           decoding="async"
-          className={`aspect-square w-full rounded-2xl object-cover md:rounded-[15px] ${nft.status === 'sold_out' ? 'opacity-50' : ''}`}
+          className={`aspect-square w-full rounded-2xl object-cover motion-safe:transition-transform motion-safe:duration-300 motion-safe:group-hover:scale-[1.02] md:rounded-[15px] ${nft.status === 'sold_out' ? 'opacity-50' : ''}`}
         />
         {nft.badge ? (
           // No desktop o design não mostra selo nos cards; só o mobile mostra o "RARO".
@@ -38,7 +40,14 @@ export function NftCard({ nft, priority = false }: NftCardProps) {
 
       <div className="flex flex-col pl-2 md:gap-3 md:pl-0">
         <h3 className="text-[15px] leading-[1.2] text-foreground md:text-base md:leading-4">
-          {nft.name}
+          {/* O link cobre o card inteiro (after:absolute) para o alvo de clique ser o card todo. */}
+          <Link
+            to="/nfts/$nftId"
+            params={{ nftId: nft.id }}
+            className="outline-none after:absolute after:inset-0 after:content-[''] group-hover:text-text-accent"
+          >
+            {nft.name}
+          </Link>
         </h3>
         <p className="flex items-center gap-3 text-base leading-4 font-bold text-text-accent md:text-lg">
           <span>{formatEth(nft.priceEth)}</span>

@@ -13,3 +13,9 @@ export const listingLabels = {
   new: 'Novos lançamentos',
   trending: 'Em alta',
 } as const
+
+export const networkLabels = {
+  ethereum: 'Ethereum',
+  polygon: 'Polygon',
+  solana: 'Solana',
+} as const

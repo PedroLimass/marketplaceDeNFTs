@@ -1,11 +1,34 @@
 import { Link } from '@tanstack/react-router'
+import { ShoppingCart } from 'lucide-react'
 
 import { useLogout } from '@/features/auth/hooks/useAuthMutations'
 import { useSession } from '@/features/auth/hooks/useSession'
+import { useCartCount } from '@/features/cart/hooks/useCart'
 import loginIcon from '@/shared/assets/icons/login.svg'
 import { Button, buttonVariants } from '@/shared/ui/button'
 
 import { HeaderSearch } from './HeaderSearch'
+
+function CartLink() {
+  const count = useCartCount()
+  return (
+    <Link
+      to="/cart"
+      aria-label={count > 0 ? `Carrinho, ${String(count)} item(ns)` : 'Carrinho'}
+      className="relative flex size-9 items-center justify-center rounded-md text-foreground outline-none hover:text-text-accent focus-visible:ring-2 focus-visible:ring-primary"
+    >
+      <ShoppingCart aria-hidden="true" className="size-5" />
+      {count > 0 ? (
+        <span
+          aria-hidden="true"
+          className="absolute -top-0.5 -right-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-primary px-1 text-[10px] leading-none font-bold text-ink"
+        >
+          {count > 99 ? '99+' : count}
+        </span>
+      ) : null}
+    </Link>
+  )
+}
 
 const unavailableNav = ['Mercado', 'Criadores', 'Aprenda'] as const
 
@@ -55,6 +78,7 @@ export function AppHeader() {
 
         <div className="flex items-center gap-4">
           <HeaderSearch />
+          <CartLink />
           {session ? (
             <>
               <span className="hidden max-w-40 truncate text-sm text-text-secondary sm:inline">
