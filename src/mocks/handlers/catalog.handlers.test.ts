@@ -52,6 +52,14 @@ describe('GET /nfts', () => {
     expect(page.items).toHaveLength(9)
   })
 
+  it('expõe o preço anterior das ofertas', async () => {
+    const page = await list()
+    const neon = page.items.find((item) => item.id === 'neon-vessel-552')
+
+    expect(neon).toMatchObject({ price_eth: '1.99', previous_price_eth: '2.29' })
+    expect(page.items[0]?.previous_price_eth).toBeNull()
+  })
+
   it('pagina sem repetir itens e devolve página vazia além do fim', async () => {
     const pages = await Promise.all([1, 2, 3, 4].map((n) => list(`page=${String(n)}`)))
     const ids = pages.flatMap((page) => page.items.map((item) => item.id))

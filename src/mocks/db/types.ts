@@ -34,6 +34,7 @@ export interface NftRecord {
   tokenId: string
   name: string
   priceEth: string
+  previousPriceEth: string | null
   /** Qual das 4 artes do Figma ilustra o NFT (`art-N.webp`). */
   art: 1 | 2 | 3 | 4
   collectionId: string

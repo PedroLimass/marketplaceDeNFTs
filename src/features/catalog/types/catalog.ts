@@ -16,6 +16,8 @@ export interface Nft {
   tokenId: string
   name: string
   priceEth: string
+  /** Preço antes da oferta, mostrado ao lado do atual; `null` quando não há promoção. */
+  previousPriceEth: string | null
   imageUrl: string
   thumbnailUrl: string
   collection: NamedRef

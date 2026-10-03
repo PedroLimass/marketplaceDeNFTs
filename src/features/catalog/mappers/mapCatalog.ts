@@ -13,6 +13,7 @@ export function mapNft(dto: NftSummaryDto): Nft {
     tokenId: dto.token_id,
     name: dto.name,
     priceEth: dto.price_eth,
+    previousPriceEth: dto.previous_price_eth,
     imageUrl: dto.image_url,
     thumbnailUrl: dto.thumbnail_url,
     collection: dto.collection,

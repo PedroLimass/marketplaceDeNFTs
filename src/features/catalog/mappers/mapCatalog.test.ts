@@ -8,6 +8,7 @@ const summary: NftSummaryDto = {
   token_id: '0042',
   name: 'Emerald Ape #042',
   price_eth: '1.19',
+  previous_price_eth: null,
   image_url: '/assets/nfts/art-1.webp',
   thumbnail_url: '/assets/nfts/art-1-500.webp',
   collection: { id: 'kurio-apes', name: 'Kurio Apes' },

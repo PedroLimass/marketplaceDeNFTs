@@ -51,6 +51,13 @@ describe('nftFixtures', () => {
     expect(nftFixtures.filter((nft) => nft.badge === 'rare').length).toBeGreaterThanOrEqual(5)
   })
 
+  it('marca a oferta da Neon Vessel com o preço anterior do design', () => {
+    const neon = nftFixtures.find((nft) => nft.id === 'neon-vessel-552')
+
+    expect(neon).toMatchObject({ priceEth: '1.99', previousPriceEth: '2.29' })
+    expect(nftFixtures.filter((nft) => nft.previousPriceEth !== null).length).toBeGreaterThan(1)
+  })
+
   it('só referencia coleções existentes e tem abas Novos e Em alta preenchidas', () => {
     const collections = new Set(collectionFixtures.map((collection) => collection.id))
 

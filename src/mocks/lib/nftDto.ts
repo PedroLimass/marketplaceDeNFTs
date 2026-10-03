@@ -29,6 +29,7 @@ export function toNftSummaryDto(nft: NftRecord): NftSummaryDto {
     token_id: nft.tokenId,
     name: nft.name,
     price_eth: nft.priceEth,
+    previous_price_eth: nft.previousPriceEth,
     image_url: artUrl(nft.art),
     thumbnail_url: artUrl(nft.art, '-500'),
     collection: refOf(collectionFixtures, nft.collectionId),

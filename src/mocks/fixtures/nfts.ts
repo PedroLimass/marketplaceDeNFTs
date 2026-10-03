@@ -73,8 +73,8 @@ const nounPt: Record<string, string> = {
 
 /**
  * Os 9 primeiros são os cards do design, na ordem da grade (linha a linha). O "Golden Frequency #071"
- * não tem texto no Figma e foi inferido da tela de login, onde aparece a 0.59 ETH. O 2.29 ETH solto
- * sobre o card da Neon Vessel é um rótulo duplicado do design e não vira item.
+ * não tem texto no Figma (o card do meio da última linha) e foi inferido da tela de login, onde
+ * aparece a 0.59 ETH.
  */
 const rows: readonly Row[] = [
   row('Emerald', 'Ape', 42, '1.19', 'ethereum', 'arte-digital', 'rare', 50, 50),
@@ -145,6 +145,13 @@ const trendingOrder = [
   'golden-beat-207',
 ]
 
+/** Ofertas: o Figma mostra a Neon Vessel a 1.99 ETH com 2.29 ETH ao lado (preço anterior). */
+const previousPrices: Record<string, string> = {
+  'neon-vessel-552': '2.29',
+  'violet-bloom-187': '1.85',
+  'ivory-ape-064': '5.90',
+}
+
 const NEW_COUNT = 12
 const LISTING_BASE = Date.parse('2026-06-30T12:00:00.000Z')
 const HOUR = 3_600_000
@@ -197,6 +204,7 @@ function build(source: Row, index: number): NftRecord {
     tokenId: String(source.number).padStart(4, '0'),
     name,
     priceEth: source.price,
+    previousPriceEth: previousPrices[id] ?? null,
     art: info.art,
     collectionId: info.collection,
     categoryId: source.category,

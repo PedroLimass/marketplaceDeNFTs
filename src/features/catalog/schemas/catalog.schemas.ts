@@ -23,6 +23,7 @@ export const nftSummaryDtoSchema = z.object({
   token_id: z.string(),
   name: z.string(),
   price_eth: ethAmountSchema,
+  previous_price_eth: ethAmountSchema.nullable(),
   image_url: z.string(),
   thumbnail_url: z.string(),
   collection: refSchema,

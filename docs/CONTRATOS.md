@@ -19,17 +19,17 @@ Este documento vira a base do `ARCHITECTURE.md` e das fixtures do MSW. A marca d
 A grade da tela Início tem 3 colunas de cards de 258 px e paginação `1 2 3 4`. Isso sugere **9 NFTs por
 página e 36 no total** (a confirmar com a captura de tela na hora de implementar).
 
-| NFT                  | Token  | Preço (ETH) | Onde aparece                                               |
-| -------------------- | ------ | ----------- | ---------------------------------------------------------- |
-| Emerald Ape #042     | `0042` | 1.19        | Grade, detalhe, carrinho, recibo. Badge `RARO` no mobile   |
-| Sage Nomad #009      | `0009` | 1.69        | Grade                                                      |
-| Neon Vessel #552     | `0552` | 1.99        | Grade                                                      |
-| (nome não capturado) | -      | 2.29        | Grade, 4º card. Identificar na captura de tela             |
-| Cosmic Bloom #118    | `0118` | 1.29        | Grade, "Mais desta coleção", "Colecionadores também viram" |
-| Violet Nomad #314    | `0314` | 1.39        | Grade, carrinho, recibo                                    |
-| Ivory Baron #088     | `0088` | 1.79        | Grade, carrinho, recibo                                    |
-| Golden Beat #207     | `0207` | 0.99        | Grade, carrinho mobile                                     |
-| Golden Signal #160   | `0160` | 0.39        | Grade                                                      |
+| NFT                   | Token  | Preço (ETH) | Onde aparece                                                                                |
+| --------------------- | ------ | ----------- | ------------------------------------------------------------------------------------------- |
+| Emerald Ape #042      | `0042` | 1.19        | Grade, detalhe, carrinho, recibo. Badge `RARO` no mobile                                    |
+| Sage Nomad #009       | `0009` | 1.69        | Grade                                                                                       |
+| Neon Vessel #552      | `0552` | 1.99        | Grade, em oferta (preço anterior `2.29` ao lado)                                            |
+| Cosmic Bloom #118     | `0118` | 1.29        | Grade, "Mais desta coleção", "Colecionadores também viram"                                  |
+| Violet Nomad #314     | `0314` | 1.39        | Grade, carrinho, recibo                                                                     |
+| Ivory Baron #088      | `0088` | 1.79        | Grade, carrinho, recibo                                                                     |
+| Golden Beat #207      | `0207` | 0.99        | Grade, carrinho mobile                                                                      |
+| Golden Frequency #071 | `0071` | 0.59        | Grade, card do meio da última linha (sem texto no Figma; nome e preço vêm da tela de login) |
+| Golden Signal #160    | `0160` | 0.39        | Grade                                                                                       |
 
 O vocabulário de nomes (cor/adjetivo + substantivo + `#NNN`) permite gerar os 27 NFTs restantes de
 forma determinística **(definido aqui)**. Adjetivos: Emerald, Sage, Neon, Cosmic, Violet, Ivory,
@@ -206,6 +206,7 @@ Detalhes:
       "token_id": "0042",
       "name": "Emerald Ape #042",
       "price_eth": "1.19",
+      "previous_price_eth": null,
       "image_url": "/assets/nfts/art-1.webp",
       "thumbnail_url": "/assets/nfts/art-1-500.webp",
       "collection": { "id": "kurio-apes", "name": "Kurio Apes" },
@@ -229,7 +230,8 @@ Detalhes:
 }
 ```
 
-`badge` é `"rare" | "limited" | null` e `status` é `"open" | "sold_out"`.
+`badge` é `"rare" | "limited" | null` e `status` é `"open" | "sold_out"`. `previous_price_eth` é o
+preço antes da oferta (a Neon Vessel #552 mostra `1.99` com `2.29` ao lado) ou `null`.
 
 **Facetas.** O filtro lateral do design é "Coleções", mas seus itens (Arte digital, Música...) são
 **categorias**; a "Coleção" do detalhe (Kurio Apes) é a série do NFT. Por isso o contrato separa
