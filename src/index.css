@@ -93,3 +93,27 @@
     @apply font-sans;
   }
 }
+
+/* Placeholder de carregamento (brilho que percorre o bloco). */
+@keyframes shimmer {
+  to {
+    background-position: -200% 0;
+  }
+}
+
+.skeleton {
+  background: linear-gradient(
+    100deg,
+    var(--surface-card) 30%,
+    var(--surface-raised) 50%,
+    var(--surface-card) 70%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.4s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeleton {
+    animation: none;
+  }
+}
