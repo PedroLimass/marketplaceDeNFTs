@@ -1,5 +1,6 @@
 import { Outlet } from '@tanstack/react-router'
 
+import { AppFooter } from './AppFooter'
 import { AppHeader } from './AppHeader'
 
 export function RootLayout() {
@@ -9,6 +10,7 @@ export function RootLayout() {
       <main className="flex-1">
         <Outlet />
       </main>
+      <AppFooter />
     </div>
   )
 }
