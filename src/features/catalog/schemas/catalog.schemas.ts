@@ -14,6 +14,18 @@ export const nftStatusSchema = z.enum(nftStatuses)
 export const listingFilterSchema = z.enum(listingFilters)
 export const sortOptionSchema = z.enum(sortOptions)
 
+export function isNetworkId(value: string): value is NetworkId {
+  return networkIds.some((known) => known === value)
+}
+
+export function isListingFilter(value: string): value is ListingFilter {
+  return listingFilters.some((known) => known === value)
+}
+
+export function isSortOption(value: string): value is SortOption {
+  return sortOptions.some((known) => known === value)
+}
+
 export const ethAmountSchema = z.string().refine(isEthString, 'Valor em ETH inválido.')
 
 const refSchema = z.object({ id: z.string(), name: z.string() })

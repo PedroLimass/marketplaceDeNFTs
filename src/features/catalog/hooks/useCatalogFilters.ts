@@ -1,7 +1,7 @@
 import { useNavigate, useSearch } from '@tanstack/react-router'
 import { useCallback, useMemo } from 'react'
 
-import { filtersToSearch, searchToFilters } from '../search/catalogSearch'
+import { filtersToSearch, searchToFilters, validateCatalogSearch } from '../search/catalogSearch'
 import type { CatalogFilters } from '../types/catalog'
 
 export type FiltersPatch = Partial<CatalogFilters>
@@ -16,7 +16,9 @@ interface UpdateOptions {
  * Qualquer mudança de filtro, aba ou ordem volta para a página 1.
  */
 export function useCatalogFilters() {
-  const search = useSearch({ from: '/' })
+  // `strict: false` evita lançar durante a saída da rota, quando a Home ainda renderiza uma vez.
+  const rawSearch = useSearch({ strict: false })
+  const search = useMemo(() => validateCatalogSearch(rawSearch), [rawSearch])
   const navigate = useNavigate({ from: '/' })
   const filters = useMemo(() => searchToFilters(search), [search])
 

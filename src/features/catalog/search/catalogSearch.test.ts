@@ -78,11 +78,26 @@ describe('validateCatalogSearch', () => {
   })
 
   it('ignora valores que não são texto', () => {
-    expect(validateCatalogSearch({ q: 42, page: 3, min: 1.5 })).toMatchObject({
+    expect(validateCatalogSearch({ q: 42, min: 1.5 })).toMatchObject({
       q: undefined,
-      page: undefined,
       min: undefined,
     })
+  })
+
+  it('é idempotente: revalidar uma busca já validada não perde nada', () => {
+    const once = validateCatalogSearch({
+      q: 'ape',
+      category: ['musica', 'arte-3d'],
+      network: 'solana',
+      min: '0.5',
+      max: '3',
+      listing: 'new',
+      sort: 'name',
+      page: '3',
+    })
+
+    expect(once.page).toBe(3)
+    expect(validateCatalogSearch({ ...once })).toEqual(once)
   })
 })
 

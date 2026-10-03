@@ -2,7 +2,7 @@ import { compareEth, isEthString } from '@/shared/lib/money'
 
 import { MAX_SEARCH_LENGTH } from '../constants'
 import {
-  networkIds,
+  isNetworkId,
   type ListingFilter,
   type NetworkId,
   type SortOption,
@@ -59,9 +59,7 @@ export function validateCatalogSearch(raw: Record<string, unknown>): CatalogSear
   const q = asText(raw.q)?.trim().slice(0, MAX_SEARCH_LENGTH)
 
   const category = uniqueSorted(asList(raw.category).filter((id) => CATEGORY_PATTERN.test(id)))
-  const network = uniqueSorted(
-    asList(raw.network).filter((id): id is NetworkId => networkIds.some((known) => known === id)),
-  )
+  const network = uniqueSorted(asList(raw.network).filter(isNetworkId))
 
   let min = asText(raw.min)
   let max = asText(raw.max)
@@ -71,7 +69,8 @@ export function validateCatalogSearch(raw: Record<string, unknown>): CatalogSear
 
   const listing = asText(raw.listing)
   const sort = asText(raw.sort)
-  const page = Number(asText(raw.page))
+  // Aceita número porque a busca já validada pelo roteador volta a passar por aqui.
+  const page = typeof raw.page === 'number' ? raw.page : Number(asText(raw.page))
 
   return {
     q: q === '' ? undefined : q,
