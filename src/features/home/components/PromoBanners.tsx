@@ -36,37 +36,50 @@ function PromoCard({ promo }: { promo: Promo }) {
   return (
     <article
       aria-labelledby={titleId}
-      className="relative isolate flex flex-col overflow-hidden rounded-lg bg-surface-card md:h-[250px] md:flex-row"
+      className="group relative isolate flex flex-col overflow-hidden rounded-lg bg-surface-card ring-1 ring-transparent transition-shadow duration-200 hover:ring-border-soft has-[a:focus-visible]:ring-2 has-[a:focus-visible]:ring-primary md:h-[250px] md:flex-row"
     >
-      <img
-        src={assetUrl(`assets/nfts/${promo.art}-500.webp`)}
-        alt=""
-        width={500}
-        height={500}
-        loading="lazy"
-        decoding="async"
-        className="h-44 w-full object-cover md:-ml-1 md:h-full md:w-1/2 md:rounded-[18px]"
-      />
+      <div className="h-44 w-full overflow-hidden md:-ml-1 md:h-full md:w-1/2 md:rounded-[18px]">
+        <img
+          src={assetUrl(`assets/nfts/${promo.art}-500.webp`)}
+          alt=""
+          width={500}
+          height={500}
+          loading="lazy"
+          decoding="async"
+          className="size-full object-cover motion-safe:transition-transform motion-safe:duration-500 motion-safe:group-hover:scale-105"
+        />
+      </div>
 
       <div className="flex flex-1 flex-col gap-6 p-6 md:items-end md:justify-between md:pt-[37px] md:pr-[30px] md:pb-[46px] md:pl-0 md:text-right">
         <div className="flex flex-col gap-2 md:gap-[9px]">
-          <h2 id={titleId} className="flex flex-col text-lg leading-6 font-bold text-foreground">
+          <h2
+            id={titleId}
+            className="flex flex-col text-lg leading-6 font-bold text-balance text-foreground"
+          >
             {promo.title.map((line) => (
               <span key={line}>{line}</span>
             ))}
           </h2>
-          <p className="text-sm leading-6 text-text-secondary">{promo.description}</p>
+          <p className="text-sm leading-6 text-pretty text-text-secondary">{promo.description}</p>
         </div>
 
+        {/* O link cobre o card inteiro (after:absolute) para o alvo de clique ser o banner todo. */}
         <Link
           to="/"
           search={promo.listing ? { listing: promo.listing } : {}}
           hash="catalogo"
-          className="inline-flex h-10 w-[140px] items-center justify-center rounded-[6px] bg-primary text-sm leading-5 font-medium text-ink outline-none hover:bg-primary/90 focus-visible:ring-2 focus-visible:ring-text-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface-card"
+          aria-label={`Explorar: ${promo.title.join(' ')}`}
+          className="inline-flex h-10 w-[140px] items-center justify-center rounded-[6px] bg-primary text-sm leading-5 font-medium text-ink outline-none after:absolute after:inset-0 after:z-10 after:content-[''] group-hover:bg-text-accent"
         >
           Explorar
           <span aria-hidden="true" className="flex size-[18px] items-center justify-center">
-            <img src={promoArrow} alt="" width={11} height={13} className="-rotate-90" />
+            <img
+              src={promoArrow}
+              alt=""
+              width={11}
+              height={13}
+              className="-rotate-90 motion-safe:transition-transform motion-safe:group-hover:translate-x-0.5"
+            />
           </span>
         </Link>
       </div>
@@ -81,12 +94,15 @@ function PromoCard({ promo }: { promo: Promo }) {
   )
 }
 
-/** Dois destaques lado a lado abaixo do catálogo; empilham quando falta espaço. */
+/**
+ * Dois destaques. Cada banner só tem espaço para texto e imagem lado a lado com ~586 px, por isso
+ * as duas colunas começam em `xl`; abaixo disso eles ocupam a largura toda, um por linha.
+ */
 export function PromoBanners() {
   return (
     <section
       aria-label="Destaques"
-      className="mx-auto mt-12 grid w-full max-w-[1200px] gap-6 px-6 md:mt-0 md:px-8 lg:grid-cols-2 lg:gap-7 xl:px-0"
+      className="mx-auto mt-12 grid w-full max-w-[1200px] gap-6 px-6 md:mt-0 md:px-8 xl:grid-cols-2 xl:gap-7 xl:px-0"
     >
       {promos.map((promo) => (
         <PromoCard key={promo.id} promo={promo} />
