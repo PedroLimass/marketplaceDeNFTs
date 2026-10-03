@@ -1,6 +1,6 @@
 import type { NetworkId, NftBadge } from '@/features/catalog/schemas/catalog.schemas'
 
-export const DB_SCHEMA_VERSION = 2
+export const DB_SCHEMA_VERSION = 3
 
 export interface UserRecord {
   id: string
