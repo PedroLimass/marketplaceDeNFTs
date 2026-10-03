@@ -1,5 +1,7 @@
 import { Outlet } from '@tanstack/react-router'
 
+import { Toaster } from '@/shared/ui/toaster'
+
 import { AppFooter } from './AppFooter'
 import { AppHeader } from './AppHeader'
 
@@ -11,6 +13,7 @@ export function RootLayout() {
         <Outlet />
       </main>
       <AppFooter />
+      <Toaster />
     </div>
   )
 }
