@@ -87,6 +87,10 @@ Todos os botões saem de `src/shared/ui/button.tsx` (`Button` e `buttonVariants`
   3 colunas depois).
 - **Busca no desktop**: os frames lidos não mostram campo de busca no cabeçalho; foi adicionado um
   ícone que expande em campo, com Escape para fechar.
+- **Abas de listagem**: no Figma mobile a última aba aparece cortada ("Em..."), ou seja, a faixa
+  rola de lado. A rolagem foi mantida, sem a barra visível e com o texto em 13 px (Figma: 14 px)
+  para as três abas caberem em telas a partir de 390 px. Em tablet e desktop a ordenação passa para
+  a linha de baixo quando não há espaço, em vez de espremer as abas.
 - **Ordenação no mobile** fica dentro da folha de filtros, e não ao lado das abas.
 - **Cards ainda sem link** para o detalhe, favoritos (coração) e barra de abas inferior: dependem
   de telas que ainda não foram feitas.
