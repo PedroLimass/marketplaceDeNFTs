@@ -31,7 +31,9 @@ export function installInterceptors(client: AxiosInstance): void {
     if (token) {
       config.headers.set('Authorization', `Bearer ${token}`)
     }
-    config.headers.set(GUEST_ID_HEADER, getGuestId())
+    if (!config.headers.has(GUEST_ID_HEADER)) {
+      config.headers.set(GUEST_ID_HEADER, getGuestId())
+    }
     return config
   })
 
