@@ -62,6 +62,15 @@ export function mulEthByInt(value: string, quantity: number): string {
   return weiToEth(parseEth(value) * BigInt(quantity))
 }
 
+/** Fração do valor em pontos-base (1% = 100), em inteiros e truncando abaixo de 1 wei. */
+export function percentOfEth(value: string, basisPoints: number): string {
+  if (!Number.isSafeInteger(basisPoints) || basisPoints < 0 || basisPoints > 10_000) {
+    throw new RangeError(`Pontos-base devem estar entre 0 e 10000: ${String(basisPoints)}`)
+  }
+
+  return weiToEth((parseEth(value) * BigInt(basisPoints)) / 10_000n)
+}
+
 export function compareEth(a: string, b: string): -1 | 0 | 1 {
   const left = parseEth(a)
   const right = parseEth(b)

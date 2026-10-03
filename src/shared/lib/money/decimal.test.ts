@@ -9,6 +9,7 @@ import {
   mulEthByInt,
   normalizeEth,
   parseEth,
+  percentOfEth,
   subEth,
   sumEth,
   weiToEth,
@@ -84,5 +85,24 @@ describe('operações', () => {
 
   it('normaliza representações equivalentes', () => {
     expect(normalizeEth('01.500')).toBe('1.5')
+  })
+})
+
+describe('percentOfEth', () => {
+  it('calcula a fração em pontos-base com inteiros', () => {
+    expect(percentOfEth('26.83', 1000)).toBe('2.683')
+    expect(percentOfEth('1.19', 500)).toBe('0.0595')
+    expect(percentOfEth('10', 0)).toBe('0')
+    expect(percentOfEth('10', 10_000)).toBe('10')
+  })
+
+  it('trunca abaixo de 1 wei em vez de arredondar para cima', () => {
+    expect(percentOfEth('0.000000000000000001', 5000)).toBe('0')
+  })
+
+  it('recusa pontos-base inválidos', () => {
+    expect(() => percentOfEth('1', -1)).toThrow(RangeError)
+    expect(() => percentOfEth('1', 10_001)).toThrow(RangeError)
+    expect(() => percentOfEth('1', 0.5)).toThrow(RangeError)
   })
 })

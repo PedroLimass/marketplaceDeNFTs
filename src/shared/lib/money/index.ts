@@ -9,6 +9,7 @@ export {
   mulEthByInt,
   normalizeEth,
   parseEth,
+  percentOfEth,
   subEth,
   sumEth,
   weiToEth,
