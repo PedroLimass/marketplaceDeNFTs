@@ -1,6 +1,7 @@
 import { isCancel, type AxiosInstance } from 'axios'
 
 import { toApiError, type ApiError } from './errors'
+import { getGuestId, GUEST_ID_HEADER } from './guestId'
 
 export const SESSION_EXPIRED_CODE = 'session_expired'
 
@@ -30,6 +31,7 @@ export function installInterceptors(client: AxiosInstance): void {
     if (token) {
       config.headers.set('Authorization', `Bearer ${token}`)
     }
+    config.headers.set(GUEST_ID_HEADER, getGuestId())
     return config
   })
 

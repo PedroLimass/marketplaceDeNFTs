@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client'
 
 import { App } from '@/app/App'
 import { connectAuthToHttp } from '@/app/config/authBridge'
+import { connectCartToSession } from '@/app/config/cartBridge'
 import { env } from '@/app/config/env'
 import { queryClient } from '@/app/config/queryClient'
 import { AppProviders } from '@/app/providers/AppProviders'
@@ -21,6 +22,7 @@ if (!container) {
 }
 
 connectAuthToHttp(queryClient)
+connectCartToSession(queryClient)
 
 void enableMocking().then(() => {
   createRoot(container).render(

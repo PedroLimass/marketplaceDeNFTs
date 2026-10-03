@@ -3,6 +3,7 @@ import type { QueryClient } from '@tanstack/react-query'
 import { authKeys } from '../api/authKeys'
 import { sessionQueryOptions } from '../api/sessionQuery'
 import { tokenStorage } from '../storage/tokenStorage'
+import { notifySessionStarted } from './sessionEvents'
 import type { AuthResult } from '../types/auth'
 
 /**
@@ -19,6 +20,7 @@ export function startSession(queryClient: QueryClient, result: AuthResult): void
   tokenStorage.set(result.accessToken)
   dropUserScopedQueries(queryClient)
   queryClient.setQueryData(sessionQueryOptions.queryKey, result.session)
+  notifySessionStarted(queryClient, result)
 }
 
 export function endSession(queryClient: QueryClient): void {
