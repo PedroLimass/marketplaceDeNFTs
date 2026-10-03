@@ -1,3 +1,4 @@
+import { nftFixtures } from '../fixtures/nfts'
 import { userFixtures } from '../fixtures/users'
 import { deterministicSalt, hashPassword } from '../lib/password'
 import { DB_SCHEMA_VERSION, type MockDbState, type UserRecord } from './types'
@@ -25,5 +26,10 @@ export async function createSeedState(): Promise<MockDbState> {
     }),
   )
 
-  return { schemaVersion: DB_SCHEMA_VERSION, users, sessions: [] }
+  return {
+    schemaVersion: DB_SCHEMA_VERSION,
+    users,
+    sessions: [],
+    nfts: structuredClone([...nftFixtures]),
+  }
 }

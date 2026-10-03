@@ -15,7 +15,8 @@ function isPersistedState(value: unknown): value is MockDbState {
   return (
     candidate.schemaVersion === DB_SCHEMA_VERSION &&
     Array.isArray(candidate.users) &&
-    Array.isArray(candidate.sessions)
+    Array.isArray(candidate.sessions) &&
+    Array.isArray(candidate.nfts)
   )
 }
 
