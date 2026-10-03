@@ -11,9 +11,11 @@
   --foreground: #f5f1eb;
   --surface-card: #241612;
   --surface-raised: #2f1d15;
+  --surface-dark: #38220f;
   --border: #3f2319;
   --border-soft: #55321f;
   --primary: #d28a4c;
+  --text-primary: #f7f3ec;
   --text-accent: #e89b55;
   --text-secondary: #cfb28c;
   --brand-secondary: #b39463;
@@ -47,7 +49,9 @@
   --color-ink: var(--ink);
   --color-surface-card: var(--surface-card);
   --color-surface-raised: var(--surface-raised);
+  --color-surface-dark: var(--surface-dark);
   --color-border-soft: var(--border-soft);
+  --color-text-primary: var(--text-primary);
   --color-text-accent: var(--text-accent);
   --color-text-secondary: var(--text-secondary);
   --color-brand-secondary: var(--brand-secondary);
