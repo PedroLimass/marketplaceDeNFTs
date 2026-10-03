@@ -182,18 +182,19 @@ Detalhes:
 | `GET /nfts/featured` | Público | NFT em destaque e itens "em alta" para a Home      |
 | `GET /nfts/:id`      | Público | Detalhe. `404 nft_not_found` se não existir        |
 
-**Parâmetros de `GET /nfts`** (repetem chave para múltiplos valores, como `collection=a&collection=b`):
+**Parâmetros de `GET /nfts`** (repetem chave para múltiplos valores, como `category=a&category=b`):
 
-| Parâmetro                | Valores                                              |
-| ------------------------ | ---------------------------------------------------- |
-| `q`                      | texto livre (nome, token, coleção)                   |
-| `collection`             | id de coleção (múltiplo)                             |
-| `network`                | `ethereum`, `polygon`, `solana` (múltiplo)           |
-| `min_price`, `max_price` | strings decimais                                     |
-| `listing`                | `all` (padrão), `new`, `trending` (as três abas)     |
-| `sort`                   | `recent` (padrão), `price-asc`, `price-desc`, `name` |
-| `page`, `page_size`      | padrão `1` e `9`                                     |
-| `exclude`                | id a omitir (usado em "Mais desta coleção")          |
+| Parâmetro                | Valores                                                   |
+| ------------------------ | --------------------------------------------------------- |
+| `q`                      | texto livre (nome, token, coleção)                        |
+| `category`               | id de categoria, o filtro "Coleções" do design (múltiplo) |
+| `collection`             | id da coleção/série do NFT, ex. `kurio-apes` (único)      |
+| `network`                | `ethereum`, `polygon`, `solana` (múltiplo)                |
+| `min_price`, `max_price` | strings decimais                                          |
+| `listing`                | `all` (padrão), `new`, `trending` (as três abas)          |
+| `sort`                   | `recent` (padrão), `price-asc`, `price-desc`, `name`      |
+| `page`, `page_size`      | padrão `1` e `9`                                          |
+| `exclude`                | id a omitir (usado em "Mais desta coleção")               |
 
 **Resposta da listagem:**
 
@@ -205,8 +206,10 @@ Detalhes:
       "token_id": "0042",
       "name": "Emerald Ape #042",
       "price_eth": "1.19",
-      "image_url": "/assets/nfts/emerald-ape-042.webp",
+      "image_url": "/assets/nfts/art-1.webp",
+      "thumbnail_url": "/assets/nfts/art-1-500.webp",
       "collection": { "id": "kurio-apes", "name": "Kurio Apes" },
+      "category": { "id": "arte-digital", "name": "Arte digital" },
       "network": "ethereum",
       "badge": "rare",
       "status": "open",
@@ -219,14 +222,22 @@ Detalhes:
   "total": 36,
   "total_pages": 4,
   "facets": {
-    "collections": [{ "id": "digital-art", "name": "Digital Art", "count": 33 }],
-    "networks": [{ "id": "ethereum", "name": "Ethereum", "count": 119 }],
+    "categories": [{ "id": "arte-digital", "name": "Arte digital", "count": 5 }],
+    "networks": [{ "id": "ethereum", "name": "Ethereum", "count": 12 }],
     "price_range": { "min_eth": "0.02", "max_eth": "12.30" }
   }
 }
 ```
 
 `badge` é `"rare" | "limited" | null` e `status` é `"open" | "sold_out"`.
+
+**Facetas.** O filtro lateral do design é "Coleções", mas seus itens (Arte digital, Música...) são
+**categorias**; a "Coleção" do detalhe (Kurio Apes) é a série do NFT. Por isso o contrato separa
+`category` e `collection`. As contagens do design (33, 12, 65... e 119/78/86) somam mais que os 36 NFTs
+do catálogo, então as facetas são **calculadas a partir dos dados**: cada contagem respeita todos os
+filtros ativos, menos o da própria faceta. `price_range` é sempre o intervalo do catálogo inteiro.
+
+**`GET /nfts/featured`** devolve `{ featured: <resumo>, trending: <resumo>[] }` (até 4 em alta).
 
 **Detalhe** acrescenta ao resumo: `description`, `gallery[{ url, alt }]`,
 `editions[{ id: "1/50", label, supply, available, status }]`, `attributes: string[]`,
