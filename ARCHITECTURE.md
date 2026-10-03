@@ -92,5 +92,37 @@ Todos os botões saem de `src/shared/ui/button.tsx` (`Button` e `buttonVariants`
   para as três abas caberem em telas a partir de 390 px. Em tablet e desktop a ordenação passa para
   a linha de baixo quando não há espaço, em vez de espremer as abas.
 - **Ordenação no mobile** fica dentro da folha de filtros, e não ao lado das abas.
-- **Cards ainda sem link** para o detalhe, favoritos (coração) e barra de abas inferior: dependem
-  de telas que ainda não foram feitas.
+- **Cards** levam ao detalhe (o título é o link e cobre o card inteiro). Favoritos (coração) e a barra
+  de abas inferior dependem de telas que ainda não foram feitas.
+
+### Detalhes do NFT
+
+- **Desktop e mobile são marcações separadas** (`useMediaQuery`), porque a hierarquia muda: galeria
+  em trilho de miniaturas versus carrossel com pontos, e botão "Comprar" fixo na base no mobile.
+- **Trilha de navegação** inclui o nome do NFT (`Início / Mercado / {nome}`); "Mercado" não existe
+  nesta demonstração e aparece sem link.
+- **Edição e quantidade**: a edição sugerida é a de maior disponibilidade, e a quantidade é limitada
+  ao menor valor entre o estoque da edição e o máximo por pedido (10). O limite é explicado em texto
+  (`role="status"`), não só pelo botão desabilitado.
+- **Avaliações**: o Figma mostra só a média e a contagem; a aba "Avaliações" informa que os
+  comentários individuais não estão disponíveis, em vez de inventar conteúdo.
+- **Relacionados**: grade de até 5 NFTs da mesma coleção, sem os pontos de carrossel do Figma.
+- **Compartilhar**: links reais (LinkedIn, e-mail, X). Os ícones de marca foram copiados do rodapé,
+  pois o `lucide-react` v1 não tem ícones de marca.
+- **Estados não desenhados**: carregamento (skeleton), NFT inexistente, erro com nova tentativa e
+  edição esgotada.
+
+### Carrinho
+
+- **Dono do carrinho**: visitante (cabeçalho `X-Guest-Id`, gerado no navegador) ou usuário
+  autenticado. No login o carrinho do visitante é mesclado ao da conta (`POST /cart/merge`, idempotente),
+  e o aviso de ajustes aparece se algum item precisou mudar.
+- **Tabela e cartões**: a coluna "Edições" do Figma virou "Quantidade" (o controle de quantidade
+  ocupa o lugar); no mobile cada item é um cartão com imagem de 100 px. O contador do cabeçalho
+  soma unidades, não linhas.
+- **Cupom**: o código só é guardado (`sessionStorage`) depois de validado por uma cotação; erro de
+  cupom aparece no próprio campo. Se o cupom deixar de valer depois, ele é removido com aviso.
+- **Mudanças de preço e estoque** aparecem num aviso `role="status"` com ação por item (aceitar o
+  novo preço, ajustar a quantidade, remover). Enquanto houver pendências, "Conectar e finalizar"
+  fica desabilitado: não se segue para o pagamento com uma cotação defasada.
+- **Taxa de rede** é uma estimativa por rede (a cotação usa Ethereum até a escolha no pagamento).
