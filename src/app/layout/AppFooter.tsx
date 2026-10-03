@@ -107,7 +107,7 @@ export function AppFooter() {
     <footer className="mx-auto flex w-full max-w-[1200px] flex-col px-6 md:px-8 xl:px-0">
       <section
         aria-label="Vantagens e newsletter"
-        className="flex flex-col gap-8 bg-surface-card p-8 xl:h-[250px] xl:flex-row xl:items-end xl:justify-between"
+        className="flex flex-col gap-8 bg-surface-card p-8 xl:h-[250px] xl:gap-0 xl:flex-row xl:items-end xl:justify-between"
       >
         <div className="grid gap-8 sm:grid-cols-3 xl:contents">
           {benefits.map((benefit, index) => (
@@ -155,7 +155,7 @@ export function AppFooter() {
       </div>
 
       <div className="flex flex-col gap-1.5">
-        <div className="grid grid-cols-2 gap-8 bg-surface-card p-8 md:grid-cols-4 lg:grid-cols-[1fr_1fr_1fr_228px] lg:gap-12 xl:gap-[124px] xl:py-8">
+        <div className="grid grid-cols-1 gap-8 bg-surface-card p-8 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-[1fr_1fr_1fr_228px] lg:gap-12 xl:gap-[124px] xl:py-8">
           <LinkColumn title="Meu perfil">
             {profileLinks.map((label) => (
               <li key={label} className="leading-[30px]">
@@ -184,7 +184,7 @@ export function AppFooter() {
               </li>
             ))}
           </LinkColumn>
-          <div className="col-span-2 flex flex-col gap-8 md:col-span-1">
+          <div className="flex flex-col gap-8 sm:col-span-2 md:col-span-3 md:flex-row md:justify-between lg:col-span-1 lg:flex-col lg:justify-start">
             <div className="flex flex-col gap-5">
               <h2 className="text-lg leading-4 font-bold text-foreground">Redes sociais</h2>
               <ul className="flex items-center gap-2.5">
