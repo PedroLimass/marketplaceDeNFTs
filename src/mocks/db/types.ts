@@ -1,6 +1,6 @@
 import type { NetworkId, NftBadge } from '@/features/catalog/schemas/catalog.schemas'
 
-export const DB_SCHEMA_VERSION = 3
+export const DB_SCHEMA_VERSION = 4
 
 export interface UserRecord {
   id: string
@@ -55,9 +55,22 @@ export interface NftRecord {
   rating: { average: number; count: number }
 }
 
+export interface CartItemRecord {
+  id: string
+  nftId: string
+  editionId: string
+  quantity: number
+  /** Preço que o usuário viu ao adicionar ou ao aceitar a última mudança. */
+  priceSeenEth: string
+}
+
 export interface MockDbState {
   schemaVersion: number
   users: UserRecord[]
   sessions: SessionRecord[]
   nfts: NftRecord[]
+  /** Ids de NFT favoritados, por id de usuário. */
+  favorites: Record<string, string[]>
+  /** Itens do carrinho por dono: `user:<id>` ou `guest:<uuid>`. */
+  carts: Record<string, CartItemRecord[]>
 }

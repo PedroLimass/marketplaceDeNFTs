@@ -31,5 +31,7 @@ export async function createSeedState(): Promise<MockDbState> {
     users,
     sessions: [],
     nfts: structuredClone([...nftFixtures]),
+    favorites: {},
+    carts: {},
   }
 }
