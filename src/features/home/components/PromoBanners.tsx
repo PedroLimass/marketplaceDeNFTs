@@ -1,6 +1,8 @@
 import { Link } from '@tanstack/react-router'
 
 import { assetUrl } from '@/shared/lib/assetUrl'
+import { cn } from '@/shared/lib/utils'
+import { buttonVariants } from '@/shared/ui/button'
 
 import promoArrow from '../assets/promo-arrow.svg'
 import promoCircles from '../assets/promo-circles.svg'
@@ -70,7 +72,10 @@ function PromoCard({ promo }: { promo: Promo }) {
             search={promo.listing ? { listing: promo.listing } : {}}
             hash="catalogo"
             aria-label={`Explorar: ${promo.title.join(' ')}`}
-            className="inline-flex h-10 w-[140px] items-center justify-center rounded-[6px] bg-primary text-sm leading-5 font-medium text-ink outline-none after:absolute after:inset-0 after:z-10 after:content-[''] group-hover:bg-text-accent"
+            className={cn(
+              buttonVariants(),
+              "w-fit min-w-[140px] font-medium group-hover:bg-text-accent focus-visible:ring-0 focus-visible:ring-offset-0 after:absolute after:inset-0 after:z-10 after:content-['']",
+            )}
           >
             Explorar
             <span aria-hidden="true" className="flex size-[18px] items-center justify-center">

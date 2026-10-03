@@ -22,12 +22,7 @@ export function FormMessage({ tone, children }: { tone: 'error' | 'info'; childr
 
 export function SubmitButton({ pending, children }: { pending: boolean; children: ReactNode }) {
   return (
-    <Button
-      type="submit"
-      disabled={pending}
-      aria-busy={pending}
-      className="h-[60px] w-full rounded-[10px] bg-primary text-base font-bold text-primary-foreground hover:bg-primary/90 md:h-[45px] md:rounded-[5px]"
-    >
+    <Button type="submit" size="lg" loading={pending} className="w-full">
       {children}
     </Button>
   )

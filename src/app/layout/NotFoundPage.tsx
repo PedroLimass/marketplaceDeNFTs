@@ -1,5 +1,7 @@
 import { Link } from '@tanstack/react-router'
 
+import { buttonVariants } from '@/shared/ui/button'
+
 export function NotFoundPage() {
   return (
     <section className="mx-auto flex w-full max-w-[600px] flex-col items-center gap-4 px-4 py-24 text-center">
@@ -8,10 +10,7 @@ export function NotFoundPage() {
       <p className="text-sm leading-6 text-text-secondary">
         O endereço que você acessou não existe ou foi movido.
       </p>
-      <Link
-        to="/"
-        className="mt-2 flex h-10 items-center rounded-md bg-primary px-5 text-base font-bold text-primary-foreground"
-      >
+      <Link to="/" className={buttonVariants({ className: 'mt-2' })}>
         Voltar ao início
       </Link>
     </section>

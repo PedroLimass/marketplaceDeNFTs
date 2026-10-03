@@ -34,7 +34,7 @@ export function CatalogError({ error, onRetry }: { error: unknown; onRetry: () =
       <TriangleAlert className="size-8 text-text-coral" aria-hidden="true" />
       <h3 className="text-lg font-bold text-foreground">{title}</h3>
       <p className="max-w-md text-sm text-text-secondary">{message}</p>
-      <Button type="button" onClick={onRetry} className="h-10 px-5 text-base font-bold">
+      <Button type="button" onClick={onRetry}>
         Tentar novamente
       </Button>
     </div>
@@ -58,7 +58,7 @@ export function CatalogEmpty({
           : 'O catálogo está vazio no momento. Volte em breve para ver novos lançamentos.'}
       </p>
       {hasFilters ? (
-        <Button type="button" onClick={onClear} className="h-10 px-5 text-base font-bold">
+        <Button type="button" onClick={onClear}>
           Limpar filtros
         </Button>
       ) : null}

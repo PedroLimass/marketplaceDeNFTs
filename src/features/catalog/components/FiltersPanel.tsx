@@ -124,7 +124,7 @@ function PriceFilter({
           onClick={() => {
             onApply(toPriceSelection(draft, bounds))
           }}
-          className="h-auto rounded-[6px] px-3 py-2 text-base leading-5 font-bold"
+          size="sm"
         >
           Aplicar
         </Button>

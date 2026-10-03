@@ -106,12 +106,13 @@ export function MobileFiltersSheet({
               variant="outline"
               onClick={onClear}
               disabled={activeCount === 0}
-              className="h-11 flex-1 text-base"
+              size="lg"
+              className="flex-1"
             >
               Limpar
             </Button>
             <Dialog.Close asChild>
-              <Button type="button" className="h-11 flex-[2] text-base font-bold">
+              <Button type="button" size="lg" className="flex-[2]">
                 {total === undefined ? 'Ver resultados' : `Ver ${String(total)} resultados`}
               </Button>
             </Dialog.Close>

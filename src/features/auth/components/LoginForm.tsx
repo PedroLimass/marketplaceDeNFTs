@@ -3,6 +3,7 @@ import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 
 import { applyApiError } from '@/shared/lib/forms/applyApiError'
+import { Button } from '@/shared/ui/button'
 
 import { useLogin } from '../hooks/useAuthMutations'
 import { loginRequestSchema, type LoginRequest } from '../schemas/auth.schemas'
@@ -64,15 +65,16 @@ export function LoginForm({ onSuccess }: { onSuccess: () => void }) {
           {...register('password')}
         />
         <div className="flex justify-end">
-          <button
+          <Button
             type="button"
-            className="rounded-sm text-sm leading-4 text-text-accent outline-none focus-visible:ring-2 focus-visible:ring-primary"
+            variant="link"
+            className="text-sm"
             onClick={() => {
               setNotice(UNAVAILABLE_NOTICE)
             }}
           >
             Esqueceu a senha?
-          </button>
+          </Button>
         </div>
         <FormMessage tone="error">{formError}</FormMessage>
         <FormMessage tone="info">{notice}</FormMessage>

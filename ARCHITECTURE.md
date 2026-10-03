@@ -59,6 +59,22 @@ as mesmas usadas no Figma, em vez dos PNGs de ~2 MB do arquivo de design.
   Os links de **Coleções** funcionam e filtram o catálogo.
 - A newsletter valida o e-mail e confirma localmente, sem enviar nada.
 
+### Botões
+
+Todos os botões saem de `src/shared/ui/button.tsx` (`Button` e `buttonVariants`, este último para
+`<Link>` com aparência de botão). Antes, cada tela repetia suas próprias classes, com alturas de
+35, 40, 45 e 60 px e hover/foco diferentes.
+
+- **Variantes**: `default` (laranja, hover mais claro), `outline`, `ghost` e `link`.
+- **Tamanhos**: `sm` (36 px no desktop, 40 px no mobile), `default` (40 px), `lg` (48 px) e `icon`.
+  No mobile nenhum botão tem alvo de toque abaixo de 40 px.
+- **Estados iguais para todos**: foco visível com anel, `disabled` esmaecido com cursor
+  "não permitido", e `loading` (desabilita, marca `aria-busy` e mostra um indicador).
+- **Desvios do Figma**: botão de envio dos formulários de login e cadastro com 48 px (Figma: 60 px
+  no mobile e 45 px no desktop); "Entrar"/"Sair" com 36 px (Figma: 35 px); botões do Figma com
+  raios de 5, 6 e 10 px passam todos a 6 px. O link "EXPLORAR" do banner no mobile segue como link
+  de texto, como no Figma, mas com área de toque ampliada.
+
 ### Catálogo e cabeçalho
 
 - **Estados não desenhados**: carregamento (skeletons), erro com "Tentar novamente", catálogo vazio

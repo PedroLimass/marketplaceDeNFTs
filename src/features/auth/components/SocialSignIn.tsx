@@ -6,6 +6,7 @@ import google4 from '@/shared/assets/icons/google-4.svg'
 import google5 from '@/shared/assets/icons/google-5.svg'
 import google6 from '@/shared/assets/icons/google-6.svg'
 import google7 from '@/shared/assets/icons/google-7.svg'
+import { Button } from '@/shared/ui/button'
 
 export type SocialProvider = 'Google' | 'Facebook'
 
@@ -41,8 +42,7 @@ interface SocialSignInProps {
  * em vez de fingir uma autenticação.
  */
 export function SocialSignIn({ onSelect }: SocialSignInProps) {
-  const buttonClass =
-    'flex h-10 w-full items-center justify-center gap-3 rounded-[5px] border border-border text-[13px] leading-4 font-medium text-text-secondary outline-none focus-visible:border-primary'
+  const buttonClass = 'w-full gap-3 text-[13px]'
 
   return (
     <div className="flex flex-col gap-3">
@@ -52,8 +52,9 @@ export function SocialSignIn({ onSelect }: SocialSignInProps) {
         <span className="h-px flex-1 bg-border-soft" aria-hidden="true" />
       </div>
       <div className="flex flex-col gap-4 md:px-20">
-        <button
+        <Button
           type="button"
+          variant="outline"
           aria-disabled="true"
           className={buttonClass}
           onClick={() => {
@@ -62,9 +63,10 @@ export function SocialSignIn({ onSelect }: SocialSignInProps) {
         >
           <GoogleMark />
           Continuar com Google
-        </button>
-        <button
+        </Button>
+        <Button
           type="button"
+          variant="outline"
           aria-disabled="true"
           className={buttonClass}
           onClick={() => {
@@ -73,7 +75,7 @@ export function SocialSignIn({ onSelect }: SocialSignInProps) {
         >
           <img src={facebookIcon} alt="" width={20} height={20} className="size-5" />
           Continuar com Facebook
-        </button>
+        </Button>
       </div>
     </div>
   )

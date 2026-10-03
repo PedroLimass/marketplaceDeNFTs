@@ -2,6 +2,7 @@ import { useId, useState, type SubmitEvent } from 'react'
 import { z } from 'zod'
 
 import { cn } from '@/shared/lib/utils'
+import { Button } from '@/shared/ui/button'
 
 const emailSchema = z.email().max(254)
 
@@ -55,12 +56,12 @@ export function NewsletterForm() {
           }}
           className="h-full min-w-0 flex-1 bg-transparent pl-3 text-sm text-foreground outline-none placeholder:text-brand-secondary"
         />
-        <button
+        <Button
           type="submit"
-          className="h-10 w-[85px] shrink-0 cursor-pointer rounded-r-[6px] bg-primary pr-1 pl-4 text-lg font-bold text-ink outline-none hover:bg-primary/90 focus-visible:ring-2 focus-visible:ring-text-accent"
+          className="h-full min-w-[85px] rounded-l-none px-4 text-lg focus-visible:ring-inset focus-visible:ring-offset-0"
         >
           Enviar
-        </button>
+        </Button>
       </div>
       <p
         id={feedbackId}

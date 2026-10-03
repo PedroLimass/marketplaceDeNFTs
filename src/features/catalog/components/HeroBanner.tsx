@@ -2,6 +2,8 @@ import { Link } from '@tanstack/react-router'
 
 import { useMediaQuery, DESKTOP_QUERY } from '@/shared/hooks/useMediaQuery'
 import { assetUrl } from '@/shared/lib/assetUrl'
+import { cn } from '@/shared/lib/utils'
+import { buttonVariants } from '@/shared/ui/button'
 
 import arrowCta from '../assets/arrow-cta.svg'
 import heroBgMobile from '../assets/hero-bg-mobile.svg'
@@ -59,7 +61,10 @@ export function HeroBanner() {
             to="/"
             hash="catalogo"
             search={(previous) => previous}
-            className="flex items-center gap-2 text-xs leading-[14px] font-bold text-text-accent outline-none focus-visible:ring-2 focus-visible:ring-primary md:h-10 md:w-[140px] md:justify-center md:rounded-[6px] md:bg-primary md:py-2.5 md:pr-9 md:pl-7 md:text-base md:leading-5 md:text-ink md:hover:bg-primary/90"
+            className={cn(
+              buttonVariants(),
+              'max-md:h-auto max-md:justify-start max-md:rounded-sm max-md:bg-transparent max-md:-my-3 max-md:px-0 max-md:py-3 max-md:text-xs max-md:text-text-accent max-md:hover:bg-transparent max-md:focus-visible:ring-offset-0 w-fit md:min-w-[140px]',
+            )}
           >
             EXPLORAR
             <img src={arrowCta} alt="" width={10} height={12} className="-rotate-90 md:hidden" />
