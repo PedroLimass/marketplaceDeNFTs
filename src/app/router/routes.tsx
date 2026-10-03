@@ -2,7 +2,12 @@ import { createRootRouteWithContext, createRoute } from '@tanstack/react-router'
 
 import { ensureSession } from '@/features/auth/session/ensureSession'
 import { safeRedirect } from '@/features/auth/utils/safeRedirect'
+import {
+  featuredNftsQueryOptions,
+  nftListQueryOptions,
+} from '@/features/catalog/api/catalogQueries'
 import { HomePage } from '@/features/catalog/pages/HomePage'
+import { searchToFilters, validateCatalogSearch } from '@/features/catalog/search/catalogSearch'
 
 import { NotFoundPage } from '../layout/NotFoundPage'
 import { RootLayout } from '../layout/RootLayout'
@@ -20,9 +25,19 @@ export const rootRoute = createRootRouteWithContext<RouterContext>()({
   notFoundComponent: NotFoundPage,
 })
 
+const noop = () => undefined
+
 const homeRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/',
+  validateSearch: validateCatalogSearch,
+  loaderDeps: ({ search }) => ({ search }),
+  // Dispara as consultas sem aguardar: a tela abre na hora com skeletons em vez de ficar
+  // presa na navegação, e a primeira carga não espera a árvore de componentes montar.
+  loader: ({ context, deps }) => {
+    void context.queryClient.query(nftListQueryOptions(searchToFilters(deps.search))).catch(noop)
+    void context.queryClient.query(featuredNftsQueryOptions()).catch(noop)
+  },
   component: HomePage,
 })
 
