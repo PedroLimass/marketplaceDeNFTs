@@ -4,7 +4,7 @@ import { useEffect } from 'react'
 
 import { NftCard } from '@/features/catalog/components/NftCard'
 import { useFeaturedNfts } from '@/features/catalog/hooks/useCatalog'
-import { useMediaQuery, DESKTOP_QUERY } from '@/shared/hooks/useMediaQuery'
+import { useMediaQuery, WIDE_QUERY } from '@/shared/hooks/useMediaQuery'
 import { isApiError } from '@/infrastructure/http/errors'
 import { Button, buttonVariants } from '@/shared/ui/button'
 
@@ -54,7 +54,7 @@ function AlsoViewed() {
 }
 
 export function CartPage() {
-  const isDesktop = useMediaQuery(DESKTOP_QUERY)
+  const isWide = useMediaQuery(WIDE_QUERY)
   const cart = useCart()
 
   useEffect(() => {
@@ -117,7 +117,7 @@ export function CartPage() {
           <div className="grid gap-12 lg:grid-cols-[minmax(0,1fr)_332px] lg:gap-[86px]">
             <div className="flex min-w-0 flex-col gap-6">
               <CartIssues items={cart.items} />
-              {isDesktop ? <CartTable items={cart.items} /> : <CartCards items={cart.items} />}
+              {isWide ? <CartTable items={cart.items} /> : <CartCards items={cart.items} />}
             </div>
             <CartSummary items={cart.items} />
           </div>
