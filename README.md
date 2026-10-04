@@ -53,6 +53,7 @@ No console do navegador (só com mocks ativos):
 window.__mockControl.scenarios // lista
 window.__mockControl.getScenario()
 window.__mockControl.setScenario('offline') // recarrega do zero
+window.__mockControl.applyScenario('server-error') // só as próximas requisições
 window.__mockControl.reset() // banco inicial + reload
 
 // Tempo real (a UI só reage ao socket, nunca a estes setters)
