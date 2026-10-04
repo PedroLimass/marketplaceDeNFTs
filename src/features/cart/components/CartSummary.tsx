@@ -113,13 +113,13 @@ export function CartSummary({ items }: { items: CartItem[] }) {
 
       <div className="flex flex-col gap-4">
         <Button
-          type="button"
+          asChild={!blocked}
           size="lg"
           className="w-full"
           disabled={blocked}
           aria-describedby="resumo-bloqueio"
         >
-          Conectar e finalizar
+          {blocked ? 'Conectar e finalizar' : <Link to="/checkout">Conectar e finalizar</Link>}
         </Button>
         <p id="resumo-bloqueio" className="sr-only">
           {hasIssues ? 'Resolva as pendências do carrinho para continuar.' : ''}

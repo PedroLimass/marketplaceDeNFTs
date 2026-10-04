@@ -159,3 +159,54 @@ volta ao destino depois. Os frames do Figma são só desktop; a versão mobile s
   vale para endereços reais da Solana, e é uma limitação assumida da demonstração.
 - **Conexão com a carteira** (`/wallets/:id/connect` e `/disconnect`) já existe no mock, com o
   cenário `wallet-refused`, e será usada no pagamento.
+
+### Pagamento e confirmação
+
+O limite de chamadas do Figma acabou antes da leitura visual destes dois frames. As telas foram
+construídas a partir da estrutura salva (textos, medidas e hierarquia do recibo) e do contrato
+(`docs/CONTRATOS.md`, seção 1.5). Por isso o desenho abaixo é uma interpretação, não uma cópia, e
+convém compará-la com o Figma quando houver acesso.
+
+- **Formulário do Figma**: o frame reaproveita o formulário de perfil (Nome do perfil, Nome de
+  usuário, Código de indicação, Nome ENS, "ENS ou carteira secundária"). Estes campos não entram
+  no pedido, que só leva `collector { display_name, email }` e a observação, então ficaram só
+  **Nome de exibição**, **E-mail** e **Observação do colecionador (opcional)**. Os dois primeiros
+  vêm preenchidos com os dados da conta. O asterisco de "Código de indicação" e "Nome ENS" (decisão
+  em aberto no contrato) perdeu o sentido ao tirar esses campos.
+- **Carteira e rede**: "Rede", "Endereço da carteira", "Tipo de carteira" e "Usar outra carteira?"
+  viraram uma lista de escolha entre as carteiras já cadastradas (principal e secundária). A rede da
+  compra é a da carteira escolhida, e a taxa de rede acompanha. O texto "Quer usar outra carteira?"
+  leva a `/profile/wallets`, onde o cadastro já existe, em vez de duplicar o formulário aqui.
+- **Overlay "Page Content (behind overlay)"**: não foi possível ver o conteúdo do overlay. A
+  conexão da carteira acontece ao confirmar a compra, em duas fases visíveis no botão
+  ("Conectando a carteira…" e "Enviando pedido…"), sem um passo extra de revisão.
+- **Resumo**: itens com `(x N)` e subtotal, cupom (o mesmo componente do carrinho), taxa, total e
+  "Confirmar compra". Em telas estreitas o resumo vai para baixo do formulário.
+- **Recibo** (`/orders/:id`): o desenho é um modal de 578 px sobre a página de pagamento. Aqui é
+  uma página própria, que serve também para quem recarrega ou volta pelo histórico, e o "X" leva
+  ao início. O ícone `thank-you` (80 px) é um ícone do `lucide-react` sobre um círculo, porque o
+  arquivo não estava disponível. Os quatro dados da transação ficam em quatro colunas no desktop e
+  em duas no celular, e os itens usam imagem de 48 px abaixo de 640 px (70 px no desenho).
+  "Ver no Etherscan" muda com a rede (Polygonscan, Solscan) e abre em outra aba.
+- **Pendente e recusado**: o contrato prevê os dois e o Figma não os mostra. Pendente é um cartão
+  com aviso `role="status"`, que se atualiza sozinho. Recusado explica o motivo, avisa que o
+  carrinho foi mantido e oferece "Tentar novamente" e "Voltar ao carrinho".
+
+**Idempotência.** A tentativa de compra fica em `sessionStorage` (`checkout.attempt`), com a chave
+(`crypto.randomUUID()`), o corpo enviado, o `order_id` quando já existe e uma "intenção" (carrinho,
+carteira, cupom e dados). Mesma intenção reaproveita chave e corpo, mesmo que a cotação tenha sido
+recalculada no meio; outra intenção gera chave nova, depois de conferir `GET /orders?status=pending`
+para não duplicar um pedido cuja resposta se perdeu. Falha de comunicação (timeout, rede, 5xx)
+também confere os pedidos pendentes antes de pedir ao usuário que tente de novo. Falhas definitivas
+(validação, disponibilidade) encerram a tentativa. `quote_stale` só a encerra quando o usuário
+confirma os novos valores. Ao voltar para `/checkout` com um pedido em andamento, o app leva direto
+ao pedido, e a tentativa termina quando o pedido chega a `confirmed` ou `rejected`.
+
+**Mock do servidor.** As cotações passam a ser guardadas no banco do mock, e `POST /orders` as
+confere: cotação vencida, preço, versão ou quantidade diferentes viram `quote_stale` com a cotação
+nova; falta de estoque vira `insufficient_availability`. O estoque é reservado na criação e devolvido
+se o pedido for recusado; o carrinho só perde o que foi comprado quando o pedido é confirmado. Um
+pedido pendente é resolvido pelo prazo do cenário (2 s) de duas formas: um temporizador, para o
+evento chegar na hora, e uma resolução preguiçosa nas leituras, para o pedido não ficar preso
+quando a aba foi recarregada. As mudanças passam por um barramento interno (`mocks/realtime/bus`),
+no qual o Socket.IO se apoia.

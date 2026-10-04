@@ -11,6 +11,8 @@ import { HomePage } from '@/features/catalog/pages/HomePage'
 import { CartPage } from '@/features/cart/pages/CartPage'
 import { AccountLayout } from '@/features/account/components/AccountLayout'
 import { ProfilePage } from '@/features/profile/pages/ProfilePage'
+import { CheckoutPage } from '@/features/orders/pages/CheckoutPage'
+import { OrderPage } from '@/features/orders/pages/OrderPage'
 import { WalletsPage } from '@/features/wallets/pages/WalletsPage'
 import { NftDetailPage } from '@/features/nft/pages/NftDetailPage'
 import { searchToFilters, validateCatalogSearch } from '@/features/catalog/search/catalogSearch'
@@ -63,6 +65,23 @@ const cartRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/cart',
   component: CartPage,
+})
+
+const checkoutRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/checkout',
+  beforeLoad: requireAuth,
+  component: CheckoutPage,
+})
+
+const orderRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/orders/$orderId',
+  beforeLoad: requireAuth,
+  component: function OrderRoute() {
+    const { orderId } = orderRoute.useParams()
+    return <OrderPage orderId={orderId} />
+  },
 })
 
 const profileRoute = createRoute({
@@ -119,6 +138,8 @@ export const routeTree = rootRoute.addChildren([
   homeRoute,
   nftRoute,
   cartRoute,
+  checkoutRoute,
+  orderRoute,
   profileRoute.addChildren([profileIndexRoute, walletsRoute]),
   loginRoute,
   signupRoute,
