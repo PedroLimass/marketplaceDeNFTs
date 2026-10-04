@@ -1,9 +1,12 @@
 import { queryOptions, useQuery } from '@tanstack/react-query'
 
+import { isRealtimeConnected } from '@/infrastructure/realtime/instance'
+
 import { fetchOrder, orderKeys } from '../api/ordersApi'
 import { isTerminal } from '../types/order'
 
 const POLL_INTERVAL_MS = 3_000
+const POLL_INTERVAL_CONNECTED_MS = 15_000
 
 export const orderQueryOptions = (orderId: string) =>
   queryOptions({
@@ -13,7 +16,8 @@ export const orderQueryOptions = (orderId: string) =>
     // cobre o caso de o socket estar fora do ar. Para sozinha no estado final.
     refetchInterval: (query) => {
       const order = query.state.data
-      return order && isTerminal(order) ? false : POLL_INTERVAL_MS
+      if (order && isTerminal(order)) return false
+      return isRealtimeConnected() ? POLL_INTERVAL_CONNECTED_MS : POLL_INTERVAL_MS
     },
   })
 

@@ -1,6 +1,7 @@
 import { QueryClient } from '@tanstack/react-query'
 
 import { isApiError } from '@/infrastructure/http/errors'
+import { keepNewestVersion } from '@/infrastructure/realtime/keepNewestVersion'
 
 export const STALE_TIME_MS = 30_000
 export const GC_TIME_MS = 5 * 60_000
@@ -27,6 +28,7 @@ export function createQueryClient(): QueryClient {
         gcTime: GC_TIME_MS,
         retry: shouldRetryQuery,
         retryDelay,
+        structuralSharing: keepNewestVersion,
         refetchOnWindowFocus: true,
         refetchOnReconnect: true,
       },
