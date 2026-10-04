@@ -4,7 +4,7 @@ import { authKeys } from '../api/authKeys'
 import { sessionQueryOptions } from '../api/sessionQuery'
 import { tokenStorage } from '../storage/tokenStorage'
 import { notifySessionStarted } from './sessionEvents'
-import type { AuthResult } from '../types/auth'
+import type { AuthResult, Session, User } from '../types/auth'
 
 /**
  * Dados em cache (carrinho, favoritos, pedidos) pertencem a quem os pediu.
@@ -27,4 +27,11 @@ export function endSession(queryClient: QueryClient): void {
   tokenStorage.clear()
   dropUserScopedQueries(queryClient)
   queryClient.setQueryData(sessionQueryOptions.queryKey, null)
+}
+
+/** Reflete no cabeçalho (e em quem lê a sessão) uma alteração feita no perfil. */
+export function patchSessionUser(queryClient: QueryClient, changes: Partial<User>): void {
+  queryClient.setQueryData<Session | null>(sessionQueryOptions.queryKey, (current) =>
+    current ? { ...current, user: { ...current.user, ...changes } } : current,
+  )
 }

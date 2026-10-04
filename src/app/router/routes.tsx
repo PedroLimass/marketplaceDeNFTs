@@ -9,6 +9,9 @@ import {
 } from '@/features/catalog/api/catalogQueries'
 import { HomePage } from '@/features/catalog/pages/HomePage'
 import { CartPage } from '@/features/cart/pages/CartPage'
+import { AccountLayout } from '@/features/account/components/AccountLayout'
+import { ProfilePage } from '@/features/profile/pages/ProfilePage'
+import { WalletsPage } from '@/features/wallets/pages/WalletsPage'
 import { NftDetailPage } from '@/features/nft/pages/NftDetailPage'
 import { searchToFilters, validateCatalogSearch } from '@/features/catalog/search/catalogSearch'
 
@@ -16,7 +19,7 @@ import { NotFoundPage } from '../layout/NotFoundPage'
 import { RootLayout } from '../layout/RootLayout'
 import { AuthRoute } from './AuthRoute'
 import type { RouterContext } from './context'
-import { redirectIfAuthenticated } from './guards'
+import { redirectIfAuthenticated, requireAuth } from './guards'
 
 export const rootRoute = createRootRouteWithContext<RouterContext>()({
   // A sessão é resolvida antes da primeira tela para o cabeçalho não piscar como visitante.
@@ -62,6 +65,25 @@ const cartRoute = createRoute({
   component: CartPage,
 })
 
+const profileRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/profile',
+  beforeLoad: requireAuth,
+  component: AccountLayout,
+})
+
+const profileIndexRoute = createRoute({
+  getParentRoute: () => profileRoute,
+  path: '/',
+  component: ProfilePage,
+})
+
+const walletsRoute = createRoute({
+  getParentRoute: () => profileRoute,
+  path: 'wallets',
+  component: WalletsPage,
+})
+
 /**
  * O roteador mescla o resultado desta função sobre a busca bruta da URL. Por isso um
  * destino inválido precisa voltar como `redirect: undefined`, e não simplesmente sumir:
@@ -97,6 +119,7 @@ export const routeTree = rootRoute.addChildren([
   homeRoute,
   nftRoute,
   cartRoute,
+  profileRoute.addChildren([profileIndexRoute, walletsRoute]),
   loginRoute,
   signupRoute,
 ])

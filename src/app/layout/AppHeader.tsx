@@ -1,5 +1,5 @@
 import { Link } from '@tanstack/react-router'
-import { ShoppingCart } from 'lucide-react'
+import { ShoppingCart, User } from 'lucide-react'
 
 import { useLogout } from '@/features/auth/hooks/useAuthMutations'
 import { useSession } from '@/features/auth/hooks/useSession'
@@ -81,9 +81,26 @@ export function AppHeader() {
           <CartLink />
           {session ? (
             <>
-              <span className="hidden max-w-40 truncate text-sm text-text-secondary sm:inline">
-                {session.user.displayName}
-              </span>
+              <Link
+                to="/profile"
+                aria-label={`Meu perfil, ${session.user.displayName}`}
+                className="flex min-h-9 items-center gap-2 rounded-md text-sm text-text-secondary outline-none hover:text-foreground focus-visible:ring-2 focus-visible:ring-primary"
+              >
+                {session.user.avatarUrl ? (
+                  <img
+                    src={session.user.avatarUrl}
+                    alt=""
+                    className="size-7 rounded-full object-cover"
+                  />
+                ) : (
+                  <span className="flex size-7 items-center justify-center rounded-full bg-surface-card text-foreground">
+                    <User aria-hidden="true" className="size-4" />
+                  </span>
+                )}
+                <span className="hidden max-w-40 truncate sm:inline">
+                  {session.user.displayName}
+                </span>
+              </Link>
               <Button
                 type="button"
                 size="sm"

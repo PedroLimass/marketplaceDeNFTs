@@ -79,7 +79,7 @@ export function CouponForm({ appliedCode, network }: CouponFormProps) {
               toast.info('Cupom removido.')
             }}
           >
-            Remover<span className="sr-only"> cupom {appliedCode}</span>
+            Remover <span className="sr-only">cupom {appliedCode}</span>
           </Button>
         </div>
       </div>
