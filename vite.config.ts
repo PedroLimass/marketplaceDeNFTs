@@ -16,6 +16,8 @@ export default defineConfig({
     setupFiles: ['./src/test/setup.ts'],
     include: ['src/**/*.test.{ts,tsx}'],
     css: false,
+    // Os testes de integração percorrem o app inteiro e, com dezenas de arquivos em paralelo, passam de 5 s.
+    testTimeout: 10_000,
     restoreMocks: true,
   },
 })

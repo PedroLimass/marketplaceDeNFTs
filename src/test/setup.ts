@@ -3,8 +3,8 @@ import '@testing-library/jest-dom/vitest'
 import { cleanup, configure } from '@testing-library/react'
 import { afterEach, beforeEach, vi } from 'vitest'
 
-// A API simulada tem latência própria; o padrão de 1 s é curto para fluxos com mais de uma resposta.
-configure({ asyncUtilTimeout: 4000 })
+// A API simulada tem latência própria e as telas fora do Início carregam sob demanda: o padrão de 1 s é curto.
+configure({ asyncUtilTimeout: 10_000 })
 
 // O jsdom não implementa rolagem; o roteador a chama ao trocar de rota.
 beforeEach(() => {

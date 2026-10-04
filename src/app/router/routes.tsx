@@ -1,4 +1,5 @@
-import { createRootRouteWithContext, createRoute } from '@tanstack/react-router'
+import { createRootRouteWithContext, createRoute, lazyRouteComponent } from '@tanstack/react-router'
+import { createElement, lazy, Suspense, type ComponentType } from 'react'
 
 import { ensureSession } from '@/features/auth/session/ensureSession'
 import { safeRedirect } from '@/features/auth/utils/safeRedirect'
@@ -8,18 +9,11 @@ import {
   nftListQueryOptions,
 } from '@/features/catalog/api/catalogQueries'
 import { HomePage } from '@/features/catalog/pages/HomePage'
-import { CartPage } from '@/features/cart/pages/CartPage'
-import { AccountLayout } from '@/features/account/components/AccountLayout'
-import { ProfilePage } from '@/features/profile/pages/ProfilePage'
-import { CheckoutPage } from '@/features/orders/pages/CheckoutPage'
-import { OrderPage } from '@/features/orders/pages/OrderPage'
-import { WalletsPage } from '@/features/wallets/pages/WalletsPage'
 import { NftDetailPage } from '@/features/nft/pages/NftDetailPage'
 import { searchToFilters, validateCatalogSearch } from '@/features/catalog/search/catalogSearch'
 
 import { NotFoundPage } from '../layout/NotFoundPage'
 import { RootLayout } from '../layout/RootLayout'
-import { AuthRoute } from './AuthRoute'
 import type { RouterContext } from './context'
 import { redirectIfAuthenticated, requireAuth } from './guards'
 
@@ -34,6 +28,23 @@ export const rootRoute = createRootRouteWithContext<RouterContext>()({
 })
 
 const noop = () => undefined
+
+/**
+ * Início e Detalhe (as telas de entrada) ficam no pacote principal; o resto carrega sob
+ * demanda para o primeiro acesso não pagar pelo código de pagamento, perfil e carteiras.
+ */
+function lazyPage<Props extends object, Name extends string>(
+  importer: () => Promise<Record<Name, ComponentType<Props>>>,
+  name: Name,
+) {
+  const Page = lazy<ComponentType<Props>>(async () => ({ default: (await importer())[name] }))
+  return function LazyPage(props: Props) {
+    return <Suspense fallback={null}>{createElement(Page, props)}</Suspense>
+  }
+}
+
+const OrderPage = lazyPage(() => import('@/features/orders/pages/OrderPage'), 'OrderPage')
+const AuthRoute = lazyPage(() => import('./AuthRoute'), 'AuthRoute')
 
 const homeRoute = createRoute({
   getParentRoute: () => rootRoute,
@@ -64,14 +75,17 @@ const nftRoute = createRoute({
 const cartRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/cart',
-  component: CartPage,
+  component: lazyRouteComponent(() => import('@/features/cart/pages/CartPage'), 'CartPage'),
 })
 
 const checkoutRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/checkout',
   beforeLoad: requireAuth,
-  component: CheckoutPage,
+  component: lazyRouteComponent(
+    () => import('@/features/orders/pages/CheckoutPage'),
+    'CheckoutPage',
+  ),
 })
 
 const orderRoute = createRoute({
@@ -88,19 +102,28 @@ const profileRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/profile',
   beforeLoad: requireAuth,
-  component: AccountLayout,
+  component: lazyRouteComponent(
+    () => import('@/features/account/components/AccountLayout'),
+    'AccountLayout',
+  ),
 })
 
 const profileIndexRoute = createRoute({
   getParentRoute: () => profileRoute,
   path: '/',
-  component: ProfilePage,
+  component: lazyRouteComponent(
+    () => import('@/features/profile/pages/ProfilePage'),
+    'ProfilePage',
+  ),
 })
 
 const walletsRoute = createRoute({
   getParentRoute: () => profileRoute,
   path: 'wallets',
-  component: WalletsPage,
+  component: lazyRouteComponent(
+    () => import('@/features/wallets/pages/WalletsPage'),
+    'WalletsPage',
+  ),
 })
 
 /**

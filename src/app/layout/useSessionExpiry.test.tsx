@@ -1,4 +1,4 @@
-import { screen, waitFor } from '@testing-library/react'
+import { screen, waitFor, within } from '@testing-library/react'
 import { setupServer } from 'msw/node'
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest'
 
@@ -18,7 +18,10 @@ async function signIn(path: string) {
   await app.user.type(await screen.findByLabelText('E-mail'), 'nova@kurio.test')
   await app.user.type(screen.getByLabelText('Senha'), 'Kurio@2026')
   await app.user.click(screen.getByRole('button', { name: 'Entrar' }))
-  await screen.findByRole('button', { name: 'Sair' })
+  await waitFor(() => {
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+  })
+  await within(screen.getByRole('banner')).findByRole('button', { name: 'Sair' })
   return app
 }
 
