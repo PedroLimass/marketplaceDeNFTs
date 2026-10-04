@@ -1,6 +1,13 @@
 import { expect, test, type Page } from '@playwright/test'
 
-import { NOVA, confirmPurchase, login, open, startCheckout } from './support/app'
+import {
+  NOVA,
+  addToCartFromDetail,
+  confirmPurchase,
+  login,
+  open,
+  startCheckout,
+} from './support/app'
 
 const NFT_PATH = '/nfts/emerald-ape-042'
 
@@ -261,6 +268,82 @@ test.describe('Navegação inferior (mobile)', () => {
 
     await open(page, '/')
     await expect(page.getByRole('navigation', { name: 'Navegação inferior' })).toHaveCount(0)
+  })
+})
+
+test.describe('Catálogo (filtros e detalhe)', () => {
+  test('filtros combinados e ordenação entram na URL e sobrevivem ao refresh', async ({
+    page,
+  }, testInfo) => {
+    test.skip(testInfo.project.name !== 'desktop', 'Ordenação do toolbar é desktop.')
+    await open(page, '/')
+
+    await page.getByRole('button', { name: /Arte digital/ }).click()
+    await page.getByRole('button', { name: /Ethereum/ }).click()
+    await expect(page).toHaveURL(/categories=/)
+    await expect(page).toHaveURL(/networks=ethereum/)
+
+    await page.getByRole('button', { name: /Ordenar por/ }).click()
+    await page.getByRole('menuitemradio', { name: 'Menor preço' }).click()
+    await expect(page).toHaveURL(/sort=price-asc/)
+
+    await page.reload()
+    await expect(page.getByRole('button', { name: /Arte digital/ })).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    )
+    await expect(page.getByRole('button', { name: /Ordenar por/ })).toContainText('Menor preço')
+  })
+
+  test('acesso direto a um NFT inexistente mostra o estado vazio', async ({ page }) => {
+    await open(page, '/nfts/nao-existe')
+    await expect(page.getByRole('heading', { name: 'NFT não encontrado' })).toBeVisible()
+  })
+})
+
+test.describe('Favoritos e sessão entre usuários', () => {
+  test('favoritar falha e o coração volta ao estado anterior', async ({ page }) => {
+    await login(page, '/nfts/emerald-ape-042', NOVA)
+    await page.goto('/nfts/emerald-ape-042?scenario=server-error')
+    await page.waitForFunction(() => window.__mockControl !== undefined)
+
+    await page.getByRole('button', { name: 'Favoritar Emerald Ape #042' }).click()
+    await expect(page.getByText('Não foi possível adicionar aos favoritos')).toBeVisible()
+    await expect(page.getByRole('button', { name: 'Favoritar Emerald Ape #042' })).toBeVisible()
+  })
+
+  test('trocar de usuário isola o carrinho', async ({ page }) => {
+    await login(page)
+    await addToCartFromDetail(page)
+    await expect(page.getByRole('link', { name: 'Emerald Ape #042' }).first()).toBeVisible()
+
+    await page.getByRole('banner').getByRole('button', { name: 'Sair' }).click()
+    await login(page, '/cart', { email: 'rafael@kurio.test', password: 'Kurio@2026' })
+
+    await expect(page.getByRole('heading', { name: 'Seu carrinho está vazio' })).toBeVisible()
+  })
+})
+
+test.describe('Pedido com timeout e carregamento lento', () => {
+  test('timeout na criação recupera o mesmo pedido ao reenviar', async ({ page }) => {
+    test.setTimeout(60_000)
+    await buyUntilCheckout(page, 'order-timeout')
+    await confirmPurchase(page)
+
+    await expect(page.getByText('Não recebemos a resposta do servidor')).toBeVisible({
+      timeout: 20_000,
+    })
+    await confirmPurchase(page)
+    await expect(page).toHaveURL(/\/orders\/ord_/)
+    await expect(
+      page.getByRole('heading', { name: 'Aguardando a confirmação na rede' }),
+    ).toBeVisible()
+  })
+
+  test('rede lenta mostra skeleton e depois o catálogo', async ({ page }) => {
+    await open(page, '/', 'slow-network')
+    await expect(page.getByText('Carregando NFTs…')).toBeAttached()
+    await expect(page.getByText(/NFTs encontrados\. Página 1 de/)).toBeVisible({ timeout: 15_000 })
   })
 })
 
