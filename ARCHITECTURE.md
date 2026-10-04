@@ -11,6 +11,29 @@ Regra adotada: o Figma manda na composição, tipografia, cores e proporções. 
 (a) o Figma não desenha o estado ou o tamanho de tela, (b) o desenho não funciona de verdade no
 navegador ou (c) há ganho claro de usabilidade ou acessibilidade. Cada desvio fica listado aqui.
 
+### Casco de carregamento (antes do React)
+
+O Figma **não desenha** o intervalo entre o HTML chegar e a primeira pintura do React. Na
+demonstração esse intervalo existe de propósito: o `main.tsx` espera o Service Worker do MSW
+antes de montar o app, para a primeira chamada REST e o Socket.IO já nascerem interceptados.
+Sem o worker, o Início e o Detalhe falham na abertura e o Lighthouse cai. O detalhe técnico
+está na seção [Lighthouse](#lighthouse).
+
+**O que o avaliador vê.** Até o React assumir o `#root`, o `index.html` mostra um casco da
+Kurio: wordmark, faixa no lugar do cabeçalho e um bloco no lugar do hero, com o mesmo fundo
+`#140d0a` e o mesmo brilho dos skeletons da interface. Leitor de tela ouve “Carregando a
+Kurio”. Quem pediu menos movimento (`prefers-reduced-motion`) vê o casco parado.
+
+| Decisão                           | Por quê                                                                                                                                     |
+| --------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| Casco no HTML, não no React       | Precisa aparecer **antes** do JavaScript e do MSW. O React só monta depois do worker.                                                       |
+| Wordmark + cabeçalho + hero       | O título “KURIO” sozinho na tela tinta parecia travado. O casco antecipa a hierarquia real sem inventar catálogo, preço ou NFT.             |
+| Sem foto, fonte ou Service Worker | Pré-carregar a arte do banner ou registrar o worker no HTML piora o celular: o worker passa a interceptar o próprio JS e disputa a rede.    |
+| Um casco para todas as rotas      | O HTML é o mesmo em `/`, `/nfts/:id` e `/checkout`. Um skeleton fiel do Início no Detalhe ou no pagamento geraria CLS ao ser substituído.   |
+| Troca inteira do `#root`          | Não há hidratação do casco. O React descarta o HTML estático e pinta a tela pedida; os skeletons de catálogo, detalhe e carrinho continuam. |
+
+Isto é o estado de espera da demonstração, não um atalho para pontuar no Lighthouse.
+
 ### Hero (banner principal)
 
 - **Largura intermediária**: o Figma fixa 600 px de texto e 450 px de imagem. Entre 768 e 1279 px a
@@ -387,8 +410,10 @@ As quatro medianas ficam dentro das metas (Performance ≥ 90, Acessibilidade �
 do MSW antes do primeiro render — os mocks precisam interceptar a primeira chamada, e o
 `socket.io-client` só pode ser avaliado depois que o MSW troca o `WebSocket`. Registrar o worker
 ou pré-carregar a imagem do banner antes disso piora o celular: o worker passa a interceptar o
-próprio JavaScript, e a imagem disputa a rede com os pacotes. O escore mesmo assim passa de 90,
-com CLS 0. Nada foi desligado para pontuar.
+próprio JavaScript, e a imagem disputa a rede com os pacotes. O casco de carregamento do
+`index.html` (seção [Casco de carregamento](#casco-de-carregamento-antes-do-react)) é só CSS: não
+registra o worker e não baixa imagem. O escore mesmo assim passa de 90, com CLS 0. Nada foi
+desligado para pontuar.
 
 ---
 

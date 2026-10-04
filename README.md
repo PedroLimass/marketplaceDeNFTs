@@ -25,7 +25,9 @@ cp .env.example .env
 pnpm dev
 ```
 
-Abra `http://localhost:5173`. Os mocks já vêm ligados.
+Abra `http://localhost:5173`. Os mocks já vêm ligados. Enquanto o Service Worker do MSW sobe, a
+página mostra o casco de carregamento (wordmark, cabeçalho e o espaço do hero). O motivo está em
+[`ARCHITECTURE.md`](./ARCHITECTURE.md#casco-de-carregamento-antes-do-react).
 
 ## Contas de demonstração
 
