@@ -5,6 +5,14 @@ import { safeRedirect } from '@/features/auth/utils/safeRedirect'
 
 import type { RouterContext } from './context'
 
+export const PRIVATE_PATH_PREFIXES = ['/profile', '/checkout', '/orders'] as const
+
+export function isPrivatePath(pathname: string): boolean {
+  return PRIVATE_PATH_PREFIXES.some(
+    (prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`),
+  )
+}
+
 /** Rota privada: sem sessão, vai para o login e volta ao destino original depois. */
 export async function requireAuth({
   context,

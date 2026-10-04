@@ -22,3 +22,19 @@ export function notifySessionStarted(queryClient: QueryClient, result: AuthResul
     listener(queryClient, result)
   })
 }
+
+const expiredListeners = new Set<() => void>()
+
+/** Avisa a interface de que o servidor encerrou a sessão (token vencido ou revogado). */
+export function onSessionExpired(listener: () => void): () => void {
+  expiredListeners.add(listener)
+  return () => {
+    expiredListeners.delete(listener)
+  }
+}
+
+export function notifySessionExpired(): void {
+  expiredListeners.forEach((listener) => {
+    listener()
+  })
+}
