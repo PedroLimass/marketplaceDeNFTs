@@ -52,5 +52,9 @@ export async function createSeedState(): Promise<MockDbState> {
     favorites: {},
     carts: {},
     wallets,
+    quotes: {},
+    orders: [],
+    idempotency: {},
+    scenarioEffects: {},
   }
 }

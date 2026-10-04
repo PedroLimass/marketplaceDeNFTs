@@ -5,6 +5,7 @@ import { env } from '@/app/config/env'
 import { createMockControl } from './control'
 import { initMockDb } from './db/mockDb'
 import { handlers } from './handlers'
+import { schedulePendingOrders } from './lib/orders'
 import { resolveInitialScenario, setScenario, SCENARIO_STORAGE_KEY } from './scenarios/current'
 
 /** Inicia o Service Worker do MSW e o banco do mock. Deve terminar antes do primeiro render. */
@@ -18,6 +19,8 @@ export async function startMocking(): Promise<void> {
   window.sessionStorage.setItem(SCENARIO_STORAGE_KEY, scenario)
 
   await initMockDb({ storage: window.localStorage })
+
+  schedulePendingOrders()
 
   await setupWorker(...handlers).start({
     serviceWorker: { url: `${import.meta.env.BASE_URL}mockServiceWorker.js` },

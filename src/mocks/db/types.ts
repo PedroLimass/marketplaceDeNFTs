@@ -1,7 +1,9 @@
 import type { NetworkId, NftBadge } from '@/features/catalog/schemas/catalog.schemas'
+import type { OrderDto } from '@/features/orders/schemas/order.schemas'
+import type { QuoteDto } from '@/features/cart/schemas/cart.schemas'
 import type { WalletRole, WalletType } from '@/features/wallets/schemas/wallet.schemas'
 
-export const DB_SCHEMA_VERSION = 5
+export const DB_SCHEMA_VERSION = 6
 
 export interface UserRecord {
   id: string
@@ -78,6 +80,31 @@ export interface WalletRecord {
   sameAsPrimary: boolean
 }
 
+/** Cotação emitida: guardada para o servidor conferir, na hora do pedido, se ainda vale. */
+export interface QuoteRecord {
+  ownerKey: string
+  couponCode: string | null
+  createdAt: number
+  dto: QuoteDto
+}
+
+export interface OrderRecord {
+  userId: string
+  /** Instante em que um pedido pendente passa a ser resolvido (milissegundos desde a época). */
+  resolveAt: number
+  /** Resultado que o pedido terá ao ser resolvido, decidido pelo cenário na criação. */
+  outcome: 'confirmed' | 'rejected'
+  /** Itens e quantidades por linha do carrinho comprada, para limpar só o que foi pago. */
+  purchased: { nftId: string; editionId: string; quantity: number }[]
+  dto: OrderDto
+}
+
+export interface IdempotencyRecord {
+  bodyHash: string
+  orderId: string
+  createdAt: number
+}
+
 export interface MockDbState {
   schemaVersion: number
   users: UserRecord[]
@@ -89,4 +116,11 @@ export interface MockDbState {
   carts: Record<string, CartItemRecord[]>
   /** Carteiras por id de usuário (no máximo uma por papel). */
   wallets: Record<string, WalletRecord[]>
+  /** Cotações recentes, por id. */
+  quotes: Record<string, QuoteRecord>
+  orders: OrderRecord[]
+  /** Chaves de idempotência, no formato `<userId>:<chave>`. */
+  idempotency: Record<string, IdempotencyRecord>
+  /** Efeitos de cenário que já aconteceram (por exemplo, a mudança de preço no checkout). */
+  scenarioEffects: Record<string, true>
 }

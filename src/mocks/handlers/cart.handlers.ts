@@ -11,6 +11,7 @@ import type { CartItemRecord } from '../db/types'
 import { apiPath } from '../lib/apiPath'
 import {
   cartItemsOf,
+  cartKeyOfUser,
   findNft,
   GUEST_HEADER,
   isResponse,
@@ -135,7 +136,7 @@ export const cartHandlers = [
     if ('response' in auth) return auth.response
 
     const guestId = request.headers.get(GUEST_HEADER)
-    const userKey = `user:${auth.user.id}`
+    const userKey = cartKeyOfUser(auth.user.id)
     const guestKey = guestId ? `guest:${guestId}` : null
     const adjusted: CartMergeResponse['adjusted'] = []
 

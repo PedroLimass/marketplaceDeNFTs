@@ -17,6 +17,8 @@ export const NETWORK_FEES: Record<NetworkId, string> = {
   solana: '0.0005',
 }
 
+export const cartKeyOfUser = (userId: string) => `user:${userId}`
+
 export interface CartOwner {
   key: string
   userId: string | null
@@ -30,7 +32,7 @@ export interface CartOwner {
 export function resolveCartOwner(request: Request): CartOwner | { response: Response } | null {
   const auth = authenticate(request)
 
-  if (auth.authenticated) return { key: `user:${auth.user.id}`, userId: auth.user.id }
+  if (auth.authenticated) return { key: cartKeyOfUser(auth.user.id), userId: auth.user.id }
   if (auth.reason === 'expired') return { response: sessionExpiredResponse() }
 
   const guestId = request.headers.get(GUEST_HEADER)
