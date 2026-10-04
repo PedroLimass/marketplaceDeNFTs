@@ -49,7 +49,7 @@ export async function addToCartFromDetail(page: Page, nftId = 'emerald-ape-042')
 }
 
 export async function startCheckout(page: Page) {
-  await expect(page.getByRole('table', { name: 'NFTs no carrinho' })).toBeVisible()
+  await expect(page.getByRole('heading', { level: 1, name: 'Carrinho de NFTs' })).toBeVisible()
   const summary = page.getByRole('complementary', { name: 'Resumo da carteira' })
   await summary.getByRole('link', { name: 'Conectar e finalizar' }).click()
   await expect(page.getByRole('heading', { level: 1, name: 'Pagamento' })).toBeVisible()
