@@ -40,11 +40,11 @@ export default defineConfig([
     rules: {
       '@typescript-eslint/consistent-type-imports': ['error', { fixStyle: 'inline-type-imports' }],
       '@typescript-eslint/restrict-template-expressions': ['error', { allowNumber: true }],
-      // O TanStack Router controla redirecionamentos lançando um objeto `redirect()`.
       '@typescript-eslint/only-throw-error': [
         'error',
         { allow: [{ from: 'package', package: '@tanstack/router-core', name: 'Redirect' }] },
       ],
+      'no-empty': ['error', { allowEmptyCatch: true }],
     },
   },
   {
@@ -55,6 +55,7 @@ export default defineConfig([
     files: ['**/*.js', '**/*.config.ts'],
     extends: [js.configs.recommended],
     languageOptions: { globals: globals.node },
+    rules: { 'no-empty': ['error', { allowEmptyCatch: true }] },
   },
   prettier,
 ])

@@ -32,9 +32,17 @@ dist-ssr
 playwright-report
 test-results
 
-.vercel
+# Coverage do Vitest
+coverage
 
 # Relatórios HTML/JSON do Lighthouse (a mediana versionada fica em summary.json)
 lighthouse-report/*
 !lighthouse-report/summary.json
+
+# Cópias JS ao lado do TypeScript. O fonte versionado é .ts/.tsx.
+src/**/*.js
+e2e/**/*.js
+vite.config.js
+playwright.config.js
+
 .vercel
