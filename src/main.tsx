@@ -11,22 +11,28 @@ if (!container) {
  * Os mocks começam antes de qualquer outro módulo do app ser carregado: o `socket.io-client`
  * guarda o `WebSocket` global na hora em que é importado, e o MSW só o substitui quando inicia.
  */
-const MOCK_START_TIMEOUT_MS = 8_000
+const MOCK_START_TIMEOUT_MS = 12_000
+
+function withTimeout<T>(task: Promise<T>, label: string): Promise<T> {
+  return Promise.race([
+    task,
+    new Promise<never>((_, reject) => {
+      window.setTimeout(() => {
+        reject(new Error(`${label} excedeu ${String(MOCK_START_TIMEOUT_MS)} ms.`))
+      }, MOCK_START_TIMEOUT_MS)
+    }),
+  ])
+}
 
 async function start(root: HTMLElement): Promise<void> {
   if (env.enableMocks) {
+    const { startMocking, clearBrokenMockWorkers } = await import('@/mocks/browser')
     try {
-      const { startMocking } = await import('@/mocks/browser')
-      await Promise.race([
-        startMocking(),
-        new Promise<never>((_, reject) => {
-          window.setTimeout(() => {
-            reject(new Error('O Service Worker do MSW não iniciou a tempo.'))
-          }, MOCK_START_TIMEOUT_MS)
-        }),
-      ])
+      await withTimeout(startMocking(), 'O Service Worker do MSW')
     } catch (error) {
-      console.error(error)
+      console.warn(error)
+      await clearBrokenMockWorkers()
+      await withTimeout(startMocking(), 'A segunda tentativa do MSW')
     }
   }
 
