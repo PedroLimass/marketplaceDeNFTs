@@ -31,3 +31,7 @@ dist-ssr
 # Playwright
 playwright-report
 test-results
+
+# Relatórios HTML/JSON do Lighthouse (a mediana versionada fica em summary.json)
+lighthouse-report/*
+!lighthouse-report/summary.json
