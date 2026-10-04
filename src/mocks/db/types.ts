@@ -1,6 +1,7 @@
 import type { NetworkId, NftBadge } from '@/features/catalog/schemas/catalog.schemas'
+import type { WalletRole, WalletType } from '@/features/wallets/schemas/wallet.schemas'
 
-export const DB_SCHEMA_VERSION = 4
+export const DB_SCHEMA_VERSION = 5
 
 export interface UserRecord {
   id: string
@@ -64,6 +65,19 @@ export interface CartItemRecord {
   priceSeenEth: string
 }
 
+export interface WalletRecord {
+  id: string
+  role: WalletRole
+  type: WalletType
+  network: NetworkId
+  address: string
+  nickname: string
+  /** Rótulo ENS sem o sufixo `.eth`. */
+  ensName: string | null
+  /** Só na secundária: os dados exibidos vêm sempre da principal, mesmo se ela mudar depois. */
+  sameAsPrimary: boolean
+}
+
 export interface MockDbState {
   schemaVersion: number
   users: UserRecord[]
@@ -73,4 +87,6 @@ export interface MockDbState {
   favorites: Record<string, string[]>
   /** Itens do carrinho por dono: `user:<id>` ou `guest:<uuid>`. */
   carts: Record<string, CartItemRecord[]>
+  /** Carteiras por id de usuário (no máximo uma por papel). */
+  wallets: Record<string, WalletRecord[]>
 }

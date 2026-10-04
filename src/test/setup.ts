@@ -9,7 +9,7 @@ configure({ asyncUtilTimeout: 4000 })
 // O jsdom não implementa rolagem; o roteador a chama ao trocar de rota.
 beforeEach(() => {
   vi.stubGlobal('scrollTo', vi.fn())
-  Element.prototype.scrollIntoView = vi.fn()
+  if (typeof Element !== 'undefined') Element.prototype.scrollIntoView = vi.fn()
   // O jsdom não tem matchMedia: os testes rodam como desktop, salvo se a suíte trocar `matches`.
   vi.stubGlobal(
     'matchMedia',

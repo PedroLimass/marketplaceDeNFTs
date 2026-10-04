@@ -18,7 +18,8 @@ function isPersistedState(value: unknown): value is MockDbState {
     Array.isArray(candidate.sessions) &&
     Array.isArray(candidate.nfts) &&
     typeof candidate.favorites === 'object' &&
-    typeof candidate.carts === 'object'
+    typeof candidate.carts === 'object' &&
+    typeof candidate.wallets === 'object'
   )
 }
 

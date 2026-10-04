@@ -1,7 +1,8 @@
 import { nftFixtures } from '../fixtures/nfts'
 import { userFixtures } from '../fixtures/users'
+import { walletFixtures } from '../fixtures/wallets'
 import { deterministicSalt, hashPassword } from '../lib/password'
-import { DB_SCHEMA_VERSION, type MockDbState, type UserRecord } from './types'
+import { DB_SCHEMA_VERSION, type MockDbState, type UserRecord, type WalletRecord } from './types'
 
 export const SEED_CREATED_AT = '2026-07-01T12:00:00.000Z'
 
@@ -26,6 +27,23 @@ export async function createSeedState(): Promise<MockDbState> {
     }),
   )
 
+  const wallets: Record<string, WalletRecord[]> = {}
+  for (const fixture of walletFixtures) {
+    wallets[fixture.userId] = [
+      ...(wallets[fixture.userId] ?? []),
+      {
+        id: `wlt_${fixture.userId}_${fixture.role}`,
+        role: fixture.role,
+        type: fixture.type,
+        network: fixture.network,
+        address: fixture.address,
+        nickname: fixture.nickname,
+        ensName: fixture.ensName,
+        sameAsPrimary: false,
+      },
+    ]
+  }
+
   return {
     schemaVersion: DB_SCHEMA_VERSION,
     users,
@@ -33,5 +51,6 @@ export async function createSeedState(): Promise<MockDbState> {
     nfts: structuredClone([...nftFixtures]),
     favorites: {},
     carts: {},
+    wallets,
   }
 }
