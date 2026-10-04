@@ -32,7 +32,10 @@ export function NftInfoTabs({ nft }: { nft: NftDetail }) {
         </Tabs.Trigger>
       </Tabs.List>
 
-      <Tabs.Content value="details" className="flex flex-col gap-3 outline-none">
+      <Tabs.Content
+        value="details"
+        className="flex flex-col gap-3 rounded-sm outline-none focus-visible:ring-2 focus-visible:ring-primary"
+      >
         <p className="text-sm leading-6 text-text-secondary">{nft.description}</p>
         <Row label="Rede:">
           Cunhado na {network} com procedência imutável e metadados armazenados no IPFS (
@@ -48,7 +51,10 @@ export function NftInfoTabs({ nft }: { nft: NftDetail }) {
         </Row>
       </Tabs.Content>
 
-      <Tabs.Content value="reviews" className="flex flex-col gap-2 outline-none">
+      <Tabs.Content
+        value="reviews"
+        className="flex flex-col gap-2 rounded-sm outline-none focus-visible:ring-2 focus-visible:ring-primary"
+      >
         <p className="text-sm leading-6 text-text-primary">
           Nota média {nft.rating.average.toFixed(1)} de 5, com {nft.rating.count} avaliações de
           colecionadores.
