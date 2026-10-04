@@ -19,7 +19,6 @@ export default defineConfig({
     trace: 'retain-on-failure',
     locale: 'pt-BR',
     timezoneId: 'America/Sao_Paulo',
-    // O Service Worker do MSW precisa do contexto de segurança do localhost.
     serviceWorkers: 'allow',
   },
   projects: [
