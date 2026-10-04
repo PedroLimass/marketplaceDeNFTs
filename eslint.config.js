@@ -15,6 +15,8 @@ export default defineConfig([
     'playwright-report',
     'test-results',
     'public/mockServiceWorker.js',
+    '.vercel',
+    'lighthouse-report',
   ]),
   {
     files: ['**/*.{ts,tsx}'],

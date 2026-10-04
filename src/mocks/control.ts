@@ -15,6 +15,8 @@ export interface MockControl {
   getScenario: () => MockScenarioId
   /** Troca o cenário e recarrega a página para começar do zero com ele. */
   setScenario: (id: MockScenarioId) => void
+  /** Troca o cenário nesta aba, sem recarregar (próximas requisições já usam o novo). */
+  applyScenario: (id: MockScenarioId) => void
   /** Restaura o banco do mock ao estado inicial e recarrega a página. */
   reset: () => Promise<void>
   /**
@@ -53,6 +55,10 @@ export function createMockControl({ storage, reload }: ControlDeps): MockControl
       setScenario(id)
       storage.setItem(SCENARIO_STORAGE_KEY, id)
       reload()
+    },
+    applyScenario(id) {
+      setScenario(id)
+      storage.setItem(SCENARIO_STORAGE_KEY, id)
     },
     async reset() {
       await resetMockDb()

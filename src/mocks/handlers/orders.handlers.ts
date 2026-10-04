@@ -136,7 +136,7 @@ export const ordersHandlers = [
       }
       const existing = findOrder(previous.orderId)
       if (existing) {
-        await delay(getScenario().order.responseDelayMs)
+        // Atraso do cenário vale na criação, não na recuperação da mesma chave.
         return orderResponse(existing.dto, 200)
       }
     }

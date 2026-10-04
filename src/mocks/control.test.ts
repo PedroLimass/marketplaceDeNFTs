@@ -36,6 +36,17 @@ describe('createMockControl', () => {
     expect(reload).toHaveBeenCalledOnce()
   })
 
+  it('aplica o cenário sem recarregar', () => {
+    const storage = memoryStorage()
+    const reload = vi.fn()
+
+    createMockControl({ storage, reload }).applyScenario('server-error')
+
+    expect(getScenarioId()).toBe('server-error')
+    expect(storage.getItem(SCENARIO_STORAGE_KEY)).toBe('server-error')
+    expect(reload).not.toHaveBeenCalled()
+  })
+
   it('restaura o banco do mock e recarrega a página', async () => {
     const dbStorage = memoryStorage()
     await initMockDb({ storage: dbStorage })

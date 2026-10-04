@@ -7,7 +7,13 @@ import { connectWallet } from '@/features/wallets/api/walletsApi'
 import type { Wallet } from '@/features/wallets/types/wallet'
 import { isApiError } from '@/infrastructure/http/errors'
 
-import { createOrder, fetchOrder, fetchPendingOrders, orderKeys } from '../api/ordersApi'
+import {
+  createOrder,
+  fetchOrder,
+  fetchOrders,
+  fetchPendingOrders,
+  orderKeys,
+} from '../api/ordersApi'
 import type { CreateOrderRequest } from '../schemas/order.schemas'
 import {
   clearAttempt,
@@ -105,10 +111,11 @@ export function useCheckoutSubmit(onPhase?: (phase: CheckoutPhase) => void) {
       } catch (error) {
         if (!isUnknownOutcome(error)) throw error
 
-        const [pending] = await fetchPendingOrders(new AbortController().signal).catch(() => [])
-        if (!pending) throw error
-        saveAttempt({ ...current, orderId: pending.id })
-        return pending
+        // O pedido pode já ter sido criado (e até confirmado) sem a resposta ter chegado.
+        const [recent] = await fetchOrders(new AbortController().signal).catch(() => [])
+        if (!recent) throw error
+        saveAttempt({ ...current, orderId: recent.id })
+        return recent
       }
     },
     onSuccess: (order) => {

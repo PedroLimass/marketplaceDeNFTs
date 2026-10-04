@@ -1,5 +1,6 @@
 /** Parte de `window.__mockControl` (ver `src/mocks/control.ts`) usada pelos testes. */
 interface E2eMockControl {
+  applyScenario: (id: string) => void
   setNftPrice: (nftId: string, priceEth: string) => void
   setNftStock: (nftId: string, editionId: string, available: number) => void
   resolveOrder: (orderId: string) => void

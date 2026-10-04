@@ -25,10 +25,18 @@ export async function fetchOrder(orderId: string, signal: AbortSignal): Promise<
   return mapOrder(orderDtoSchema.parse(data))
 }
 
-export async function fetchPendingOrders(signal: AbortSignal): Promise<Order[]> {
-  const { data } = await http.get<unknown>('/orders', { params: { status: 'pending' }, signal })
+export async function fetchOrders(
+  signal: AbortSignal,
+  status?: 'pending' | 'confirmed' | 'rejected',
+): Promise<Order[]> {
+  const { data } = await http.get<unknown>('/orders', {
+    signal,
+    ...(status ? { params: { status } } : {}),
+  })
   return ordersResponseSchema.parse(data).items.map(mapOrder)
 }
+
+export const fetchPendingOrders = (signal: AbortSignal) => fetchOrders(signal, 'pending')
 
 /** Cria o pedido com a chave de idempotência: reenviar a mesma chave nunca cria outro pedido. */
 export async function createOrder(body: CreateOrderRequest, idempotencyKey: string) {

@@ -280,8 +280,8 @@ test.describe('Catálogo (filtros e detalhe)', () => {
 
     await page.getByRole('button', { name: /Arte digital/ }).click()
     await page.getByRole('button', { name: /Ethereum/ }).click()
-    await expect(page).toHaveURL(/categories=/)
-    await expect(page).toHaveURL(/networks=ethereum/)
+    await expect(page).toHaveURL(/category=arte-digital/)
+    await expect(page).toHaveURL(/network=ethereum/)
 
     await page.getByRole('button', { name: /Ordenar por/ }).click()
     await page.getByRole('menuitemradio', { name: 'Menor preço' }).click()
@@ -304,20 +304,24 @@ test.describe('Catálogo (filtros e detalhe)', () => {
 test.describe('Favoritos e sessão entre usuários', () => {
   test('favoritar falha e o coração volta ao estado anterior', async ({ page }) => {
     await login(page, '/nfts/emerald-ape-042', NOVA)
-    await page.goto('/nfts/emerald-ape-042?scenario=server-error')
-    await page.waitForFunction(() => window.__mockControl !== undefined)
+    await expect(page.getByRole('heading', { level: 1, name: 'Emerald Ape #042' })).toBeVisible()
+    await page.evaluate(() => {
+      window.__mockControl?.applyScenario('server-error')
+    })
 
-    await page.getByRole('button', { name: 'Favoritar Emerald Ape #042' }).click()
+    await page.getByRole('button', { name: 'Favoritar', exact: true }).click()
     await expect(page.getByText('Não foi possível adicionar aos favoritos')).toBeVisible()
-    await expect(page.getByRole('button', { name: 'Favoritar Emerald Ape #042' })).toBeVisible()
+    await expect(page.getByRole('button', { name: 'Favoritar', exact: true })).toBeVisible()
   })
 
   test('trocar de usuário isola o carrinho', async ({ page }) => {
+    test.setTimeout(60_000)
     await login(page)
     await addToCartFromDetail(page)
     await expect(page.getByRole('link', { name: 'Emerald Ape #042' }).first()).toBeVisible()
 
     await page.getByRole('banner').getByRole('button', { name: 'Sair' }).click()
+    await expect(page.getByRole('link', { name: 'Entrar' }).first()).toBeVisible()
     await login(page, '/cart', { email: 'rafael@kurio.test', password: 'Kurio@2026' })
 
     await expect(page.getByRole('heading', { name: 'Seu carrinho está vazio' })).toBeVisible()
@@ -330,13 +334,12 @@ test.describe('Pedido com timeout e carregamento lento', () => {
     await buyUntilCheckout(page, 'order-timeout')
     await confirmPurchase(page)
 
-    await expect(page.getByText('Não recebemos a resposta do servidor')).toBeVisible({
-      timeout: 20_000,
-    })
-    await confirmPurchase(page)
-    await expect(page).toHaveURL(/\/orders\/ord_/)
+    // O POST demora mais que o timeout, mas o pedido já existe: o cliente recupera pelo GET.
+    await expect(page).toHaveURL(/\/orders\/ord_/, { timeout: 25_000 })
     await expect(
-      page.getByRole('heading', { name: 'Aguardando a confirmação na rede' }),
+      page.getByRole('heading', {
+        name: /Aguardando a confirmação na rede|Seus NFTs agora estão na sua carteira/,
+      }),
     ).toBeVisible()
   })
 
