@@ -31,12 +31,12 @@ página mostra o casco de carregamento (wordmark, cabeçalho e o espaço do hero
 
 ## Contas de demonstração
 
-A senha das duas contas é `Kurio@2026`. No mock ela fica só como salt e hash, nunca em claro.
+No mock a senha fica só como salt e hash, nunca em claro.
 
-| Conta      | E-mail              | Carteiras                                                         |
-| ---------- | ------------------- | ----------------------------------------------------------------- |
-| Nova Alves | `nova@kurio.test`   | Principal (MetaMask, Ethereum) e Reserva (WalletConnect, Polygon) |
-| Rafael     | `rafael@kurio.test` | Só a principal                                                    |
+| Conta      | E-mail              | Senha        | Carteiras                                                         |
+| ---------- | ------------------- | ------------ | ----------------------------------------------------------------- |
+| Nova Alves | `nova@kurio.test`   | `Kurio@2026` | Principal (MetaMask, Ethereum) e Reserva (WalletConnect, Polygon) |
+| Rafael     | `rafael@kurio.test` | `Kurio@2026` | Só a principal                                                    |
 
 Cupons no carrinho: `LANCAMENTO10` (10%), `EXPIRADO` e `INVALIDO`.
 
