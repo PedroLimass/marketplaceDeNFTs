@@ -126,3 +126,36 @@ Todos os botões saem de `src/shared/ui/button.tsx` (`Button` e `buttonVariants`
   novo preço, ajustar a quantidade, remover). Enquanto houver pendências, "Conectar e finalizar"
   fica desabilitado: não se segue para o pagamento com uma cotação defasada.
 - **Taxa de rede** é uma estimativa por rede (a cotação usa Ethereum até a escolha no pagamento).
+
+### Conta: perfil e carteiras
+
+Rotas privadas (`/profile` e `/profile/wallets`, sob o mesmo layout). Visitante é levado ao login e
+volta ao destino depois. Os frames do Figma são só desktop; a versão mobile segue o mesmo padrão.
+
+- **Menu lateral**: no desktop (a partir de 1024 px) é a coluna de 310 px do Figma. Abaixo disso
+  vira duas abas no topo ("Detalhes do perfil" e "Carteiras") mais "Sair", e a grade de dois campos
+  passa a uma coluna. Os itens do Figma fora do escopo (Atividade, Lista de observação, Ofertas,
+  Downloads, Suporte) aparecem desabilitados no desktop, com aviso, e ficam de fora no mobile.
+  Os rótulos estão em português (o Figma os traz em inglês).
+- **Perfil: campos obrigatórios do Figma**: "Nome ENS" e "Apelido da carteira" aparecem com `*` no
+  desenho, mas são opcionais no contrato (o usuário pode não ter ENS), então perderam o asterisco.
+- **ENS**: o bloco `.eth` com seta, à esquerda do campo, foi mantido como um seletor fixo e
+  desabilitado, já que só existe esse domínio. O valor guardado não leva o sufixo.
+- **Salvar**: um único botão salva os dados do perfil e, se algum campo de senha foi preenchido,
+  troca a senha também (os três campos passam a ser obrigatórios). Se o perfil for salvo e a senha
+  falhar, o formulário mostra os dados novos, o erro no campo da senha e uma mensagem explicando.
+- **Avatar**: "Alterar" e "Remover" agem na hora, sem esperar o "Salvar". Formato (JPG/PNG/WebP) e
+  tamanho (2 MB) são validados antes do envio. A imagem é recortada em quadrado de 256 px no
+  navegador e enviada como `multipart/form-data`. No mock ela vira data URL no `localStorage`
+  (limitação: um avatar grande pode estourar a cota do navegador, e nesse caso só vale em memória).
+- **Carteiras: campos fora do contrato**: o Figma reaproveita um formulário de pagamento (Nome de
+  exibição, Nome do perfil, Código de indicação, E-mail e "ENS ou carteira secundária"). Ficaram só
+  os campos de uma carteira: Rede, Tipo de carteira, Endereço, Apelido e Nome ENS.
+- **Principal e secundária**: cada uma tem seu formulário. "Igual à carteira principal" (círculo no
+  Figma) é uma caixa de seleção que salva a secundária como espelho da principal: se a principal
+  mudar depois, a secundária muda junto. Desmarcar abre o formulário com os dados da principal para
+  editar. A secundária não aceita o mesmo endereço da principal.
+- **Validação do endereço**: `0x` + 40 hexadecimais para todas as redes, como no contrato. Isso não
+  vale para endereços reais da Solana, e é uma limitação assumida da demonstração.
+- **Conexão com a carteira** (`/wallets/:id/connect` e `/disconnect`) já existe no mock, com o
+  cenário `wallet-refused`, e será usada no pagamento.
