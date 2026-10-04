@@ -20,7 +20,7 @@ export function Toaster() {
     <div
       aria-label="Notificações"
       role="region"
-      className="pointer-events-none fixed inset-x-4 bottom-4 z-[60] flex flex-col items-center gap-2 md:items-end md:justify-end md:px-4"
+      className="pointer-events-none fixed inset-x-4 bottom-[calc(var(--mobile-bar-h,0px)+1rem)] z-[60] flex flex-col items-center gap-2 md:items-end md:justify-end md:px-4"
     >
       {toasts.map((item) => (
         <div

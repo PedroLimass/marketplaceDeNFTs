@@ -5,6 +5,11 @@ import { safeRedirect } from '@/features/auth/utils/safeRedirect'
 
 import type { RouterContext } from './context'
 
+/** Pagamento e recibo: fluxos com uma ação principal, sem a navegação inferior do mobile. */
+export function isFocusedFlowPath(pathname: string): boolean {
+  return pathname === '/checkout' || pathname.startsWith('/orders/')
+}
+
 export const PRIVATE_PATH_PREFIXES = ['/profile', '/checkout', '/orders'] as const
 
 export function isPrivatePath(pathname: string): boolean {

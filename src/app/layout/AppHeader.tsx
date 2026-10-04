@@ -41,12 +41,12 @@ export function AppHeader() {
       <div className="mx-auto flex w-full max-w-[1200px] items-start justify-between gap-4 px-4 pt-6 pb-4 md:px-8 xl:px-0">
         <Link
           to="/"
-          className="flex h-[34px] w-40 items-center rounded-sm text-sm font-bold tracking-[1.4px] text-foreground outline-none focus-visible:ring-2 focus-visible:ring-primary"
+          className="flex h-[34px] w-auto shrink-0 items-center lg:w-40 rounded-sm text-sm font-bold tracking-[1.4px] text-foreground outline-none focus-visible:ring-2 focus-visible:ring-primary"
         >
           KURIO
         </Link>
 
-        <nav aria-label="Principal" className="hidden items-start gap-10 md:flex">
+        <nav aria-label="Principal" className="hidden items-start gap-5 md:flex lg:gap-10">
           <Link
             to="/"
             activeOptions={{ exact: true }}
@@ -97,7 +97,7 @@ export function AppHeader() {
                     <User aria-hidden="true" className="size-4" />
                   </span>
                 )}
-                <span className="hidden max-w-40 truncate sm:inline">
+                <span className="hidden max-w-40 truncate lg:inline">
                   {session.user.displayName}
                 </span>
               </Link>

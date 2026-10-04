@@ -19,3 +19,5 @@ export function useMediaQuery(query: string): boolean {
 }
 
 export const DESKTOP_QUERY = '(min-width: 768px)'
+/** A partir daqui cabem tabelas largas ao lado de um painel lateral (Tailwind `lg`). */
+export const WIDE_QUERY = '(min-width: 1024px)'

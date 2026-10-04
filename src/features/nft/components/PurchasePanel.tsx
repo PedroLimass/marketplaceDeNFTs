@@ -63,7 +63,7 @@ export function MobileBuyBar({
   const hint = quantityHint(selection, nft.maxPerOrder)
 
   return (
-    <div className="sticky bottom-0 z-20 flex flex-col gap-4 border-t border-border bg-surface-card px-6 pt-5 pb-6">
+    <div className="sticky bottom-[var(--mobile-bar-h,0px)] z-20 flex flex-col gap-4 border-t border-border bg-surface-card px-6 pt-5 pb-6">
       <div className="flex items-center justify-between gap-4">
         <div className="flex items-center gap-3">
           <span className="text-sm text-text-secondary">Qtd.</span>
