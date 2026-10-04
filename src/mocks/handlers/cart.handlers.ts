@@ -129,8 +129,6 @@ export const cartHandlers = [
     return new HttpResponse(null, { status: 204 })
   }),
 
-  // Une o carrinho do visitante ao do usuário logo após o login. É idempotente: o carrinho
-  // do visitante é esvaziado, então repetir a chamada não soma duas vezes.
   http.post(apiPath('/cart/merge'), ({ request }) => {
     const auth = requireUser(request)
     if ('response' in auth) return auth.response

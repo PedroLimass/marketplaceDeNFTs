@@ -6,7 +6,6 @@ export const envelopeSchema = z.object({
   resource: z.object({ type: z.string(), id: z.string() }),
   version: z.number().int().nonnegative(),
   occurred_at: z.iso.datetime(),
-  /** Presente só em eventos privados; identifica o dono do recurso. */
   user_id: z.string().optional(),
   data: z.unknown(),
 })

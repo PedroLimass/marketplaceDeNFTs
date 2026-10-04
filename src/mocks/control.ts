@@ -13,25 +13,14 @@ import { mockScenarioIds, type MockScenarioId } from './scenarios/scenarioIds'
 export interface MockControl {
   readonly scenarios: readonly MockScenarioId[]
   getScenario: () => MockScenarioId
-  /** Troca o cenário e recarrega a página para começar do zero com ele. */
   setScenario: (id: MockScenarioId) => void
-  /** Troca o cenário nesta aba, sem recarregar (próximas requisições já usam o novo). */
   applyScenario: (id: MockScenarioId) => void
-  /** Restaura o banco do mock ao estado inicial e recarrega a página. */
   reset: () => Promise<void>
-  /**
-   * Alterações no `mocks/db`, que atualizam o REST e emitem o evento Socket.IO juntos. A UI nunca
-   * é acionada diretamente: ela só reage ao que chega pelo socket.
-   */
   setNftPrice: (nftId: string, priceEth: string) => void
   setNftStock: (nftId: string, editionId: string, available: number) => void
-  /** Conclui agora um pedido pendente, sem esperar o prazo do cenário. */
   resolveOrder: (orderId: string) => void
-  /** Derruba as conexões Socket.IO; o cliente precisa reconectar e reconciliar sozinho. */
   disconnectSockets: () => void
-  /** Reenvia o último evento com o mesmo `event_id` (deve ser descartado como repetido). */
   replayLastEvent: () => boolean
-  /** Envia um `nft.updated` de versão antiga (deve ser ignorado). */
   sendStaleNftEvent: (nftId: string) => boolean
   connectedSockets: () => number
 }

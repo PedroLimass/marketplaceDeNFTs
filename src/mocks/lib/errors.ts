@@ -30,7 +30,6 @@ export function validationErrorResponse(error: z.ZodError) {
   )
 }
 
-/** Corpo malformado é tratado como erro de validação, não como falha do servidor. */
 export async function readJson(request: Request): Promise<unknown> {
   try {
     return await request.json()

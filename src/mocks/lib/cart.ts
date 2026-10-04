@@ -10,7 +10,6 @@ import { mulEthByInt } from '@/shared/lib/money'
 
 export const GUEST_HEADER = 'X-Guest-Id'
 
-/** Taxas de rede por blockchain; a do Ethereum é o valor do design. */
 export const NETWORK_FEES: Record<NetworkId, string> = {
   ethereum: '0.016',
   polygon: '0.001',
@@ -24,11 +23,6 @@ export interface CartOwner {
   userId: string | null
 }
 
-/**
- * Dono do carrinho: o usuário autenticado ou, sem sessão, o visitante identificado por
- * `X-Guest-Id`. Token vencido é erro (não vira visitante em silêncio), para o cliente
- * encerrar a sessão em vez de mostrar um carrinho diferente do esperado.
- */
 export function resolveCartOwner(request: Request): CartOwner | { response: Response } | null {
   const auth = authenticate(request)
 

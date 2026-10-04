@@ -13,9 +13,7 @@ type SocketFactory = (
 
 export interface RealtimeClientOptions {
   url: string
-  /** Substituível nos testes; por padrão usa o `socket.io-client`. */
   createSocket?: SocketFactory
-  /** Quantos `event_id` lembrar para descartar repetições. */
   dedupeWindow?: number
 }
 
@@ -24,11 +22,6 @@ export interface RealtimeIdentity {
   userId: string | null
 }
 
-/**
- * Cliente de tempo real genérico: conecta, valida o envelope, descarta repetições e eventos
- * privados de outro usuário e entrega o resto aos handlers registrados por tipo. Não conhece
- * features; quem decide o que fazer com o evento (e se ele é antigo demais) é cada handler.
- */
 export function createRealtimeClient({
   url,
   createSocket = io,
@@ -58,7 +51,6 @@ export function createRealtimeClient({
 
     const event = parsed.data
     if (!seen.markNew(event.event_id)) return
-    // Eventos privados de outro usuário nunca chegam aos handlers.
     if (event.user_id !== undefined && event.user_id !== identity?.userId) return
 
     handlers.get(event.type)?.forEach((handler) => {
@@ -75,7 +67,6 @@ export function createRealtimeClient({
   }
 
   return {
-    /** Conecta com a identidade dada. Repetir a mesma identidade não faz nada. */
     connect(next: RealtimeIdentity): void {
       if (socket && identity?.token === next.token && identity.userId === next.userId) return
 
@@ -94,7 +85,6 @@ export function createRealtimeClient({
       created.on('connect', () => {
         connectCount += 1
         setState('connected')
-        // O segundo `connect` é uma reconexão: o que se perdeu no intervalo vem do REST.
         if (connectCount > 1) {
           reconnectListeners.forEach((listener) => {
             listener()
@@ -107,7 +97,6 @@ export function createRealtimeClient({
       created.onAny(dispatch)
     },
 
-    /** Desconecta, remove os ouvintes do socket e esquece a identidade. Os handlers ficam registrados. */
     disconnect(): void {
       teardown()
       seen.clear()

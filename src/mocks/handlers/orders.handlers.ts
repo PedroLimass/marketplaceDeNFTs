@@ -29,7 +29,6 @@ const walletLabels = {
   coinbase: 'Coinbase Wallet',
 }
 
-/** Hash simples e determinístico do corpo: basta para detectar "mesma chave, corpo diferente". */
 function hashBody(value: unknown): string {
   const text = JSON.stringify(value, (_key, item: unknown) =>
     item && typeof item === 'object' && !Array.isArray(item)
@@ -136,7 +135,6 @@ export const ordersHandlers = [
       }
       const existing = findOrder(previous.orderId)
       if (existing) {
-        // Atraso do cenário vale na criação, não na recuperação da mesma chave.
         return orderResponse(existing.dto, 200)
       }
     }
@@ -261,7 +259,6 @@ export const ordersHandlers = [
       Reflect.deleteProperty(db.quotes, quote.dto.id)
     })
 
-    // Reserva o estoque já na criação; a recusa devolve.
     for (const line of record.purchased) {
       updateNft(line.nftId, (nft) => {
         const edition = nft.editions.find((candidate) => candidate.id === line.editionId)

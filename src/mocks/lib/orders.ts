@@ -27,7 +27,6 @@ export function findOrder(orderId: string): OrderRecord | undefined {
   return getDb().orders.find((order) => order.dto.id === orderId)
 }
 
-/** Devolve o estoque reservado por um pedido que não foi concluído. */
 function releaseStock(record: OrderRecord): void {
   for (const line of record.purchased) {
     updateNft(line.nftId, (nft) => {
@@ -37,7 +36,6 @@ function releaseStock(record: OrderRecord): void {
   }
 }
 
-/** Remove do carrinho só o que foi comprado, preservando o que o usuário acrescentou depois. */
 function clearPurchasedFromCart(record: OrderRecord): void {
   mutateDb((db) => {
     const key = cartKeyOfUser(record.userId)
@@ -54,7 +52,6 @@ function clearPurchasedFromCart(record: OrderRecord): void {
   })
 }
 
-/** Leva um pedido pendente ao estado final definido pelo cenário. É idempotente. */
 export function resolveOrder(orderId: string): void {
   const current = findOrder(orderId)
   if (current?.dto.status !== 'pending') return
@@ -85,7 +82,6 @@ export function resolveOrder(orderId: string): void {
   publish({ kind: 'order', orderId, userId: current.userId })
 }
 
-/** Resolve os pedidos cujo prazo já passou; permite o mock "andar" mesmo com a aba fechada. */
 export function resolveDueOrders(now = Date.now()): void {
   for (const order of getDb().orders) {
     if (order.dto.status === 'pending' && order.resolveAt <= now) resolveOrder(order.dto.id)
@@ -94,7 +90,6 @@ export function resolveDueOrders(now = Date.now()): void {
 
 const timers = new Map<string, ReturnType<typeof setTimeout>>()
 
-/** Agenda a resolução enquanto a aba está aberta, para o evento em tempo real chegar na hora. */
 export function scheduleOrderResolution(order: OrderRecord): void {
   const orderId = order.dto.id
   if (timers.has(orderId)) return
@@ -111,7 +106,6 @@ export function scheduleOrderResolution(order: OrderRecord): void {
   )
 }
 
-/** Retoma os pedidos pendentes de uma sessão anterior (por exemplo, depois de recarregar a página). */
 export function schedulePendingOrders(): void {
   for (const order of getDb().orders) {
     if (order.dto.status === 'pending') scheduleOrderResolution(order)

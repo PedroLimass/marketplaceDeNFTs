@@ -1,5 +1,3 @@
-// @vitest-environment node
-// O jsdom não consegue ler multipart no MSW (o corpo nunca termina de ser lido); no Node o envio é real.
 import { setupServer } from 'msw/node'
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest'
 

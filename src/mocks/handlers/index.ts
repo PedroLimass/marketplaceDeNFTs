@@ -8,7 +8,6 @@ import { quoteHandlers } from './quotes.handlers'
 import { scenarioHandler } from './scenario.handler'
 import { walletsHandlers } from './wallets.handlers'
 
-/** A ordem importa: o handler de cenário precisa vir antes dos de domínio. */
 export const handlers = [
   scenarioHandler,
   ...authHandlers,

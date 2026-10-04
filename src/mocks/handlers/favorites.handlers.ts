@@ -15,7 +15,6 @@ export const favoritesHandlers = [
     return HttpResponse.json({ nft_ids: getDb().favorites[auth.user.id] ?? [] })
   }),
 
-  // PUT e DELETE são idempotentes: repetir a chamada termina no mesmo estado.
   http.put(apiPath('/favorites/:nftId'), ({ request, params }) => {
     const auth = requireUser(request)
     if ('response' in auth) return auth.response

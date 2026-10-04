@@ -1,8 +1,3 @@
-/**
- * Hash de senha do servidor simulado. O banco do mock nunca guarda senhas em claro.
- * PBKDF2-SHA256 via WebCrypto, com sal por usuário.
- */
-
 const ITERATIONS = 100_000
 const HASH_BITS = 256
 
@@ -23,7 +18,6 @@ export function generateSalt(): string {
   return toBase64(crypto.getRandomValues(new Uint8Array(16)))
 }
 
-/** Sal determinístico, usado apenas nas fixtures para que o seed seja reproduzível. */
 export function deterministicSalt(seed: string): string {
   return toBase64(new TextEncoder().encode(`kurio:${seed}`))
 }

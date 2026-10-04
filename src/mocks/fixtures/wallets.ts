@@ -11,7 +11,6 @@ export interface WalletFixture {
   ensName: string | null
 }
 
-/** Endereços fictícios. A abreviação `0xA91F…E82C` é a mesma exibida no design. */
 export const walletFixtures: readonly WalletFixture[] = [
   {
     userId: 'usr_nova',

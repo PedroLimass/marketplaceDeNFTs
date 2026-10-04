@@ -44,12 +44,9 @@ function persist(): void {
 
   try {
     storage.setItem(DB_STORAGE_KEY, JSON.stringify(state))
-  } catch {
-    // Cota do localStorage excedida: o estado segue válido em memória nesta sessão.
-  }
+  } catch {}
 }
 
-/** Carrega o estado persistido ou, na falta dele (ou se estiver inválido), recria o seed. */
 export async function initMockDb(options: { storage?: DbStorage } = {}): Promise<void> {
   storage = options.storage
   state = load(storage) ?? (await createSeedState())
@@ -61,14 +58,12 @@ export function getDb(): MockDbState {
   return state
 }
 
-/** Único ponto de escrita: aplica a alteração e persiste em seguida. */
 export function mutateDb<T>(recipe: (draft: MockDbState) => T): T {
   const result = recipe(getDb())
   persist()
   return result
 }
 
-/** Restaura integralmente o cenário conhecido, descartando qualquer alteração. */
 export async function resetMockDb(): Promise<void> {
   storage?.removeItem(DB_STORAGE_KEY)
   state = await createSeedState()

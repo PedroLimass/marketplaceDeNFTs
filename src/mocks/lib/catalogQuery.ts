@@ -28,7 +28,6 @@ export const catalogParamsSchema = z.object({
 
 export type CatalogParams = z.infer<typeof catalogParamsSchema>
 
-/** Repete chave vira lista (`category=a&category=b`); chave ausente vira `undefined`. */
 export function readCatalogParams(searchParams: URLSearchParams) {
   const single = (key: string) => searchParams.get(key) ?? undefined
 

@@ -27,7 +27,6 @@ export type Authentication =
   | { authenticated: true; user: UserRecord; session: SessionRecord }
   | { authenticated: false; reason: 'guest' | 'expired' }
 
-/** Token ausente = visitante. Token desconhecido ou vencido = sessão expirada. */
 export function authenticate(request: Request, now = Date.now()): Authentication {
   const token = readBearerToken(request)
   if (!token) return { authenticated: false, reason: 'guest' }
@@ -49,7 +48,6 @@ export const sessionExpiredResponse = () =>
 export const unauthenticatedResponse = () =>
   errorResponse(401, 'unauthenticated', 'Entre na sua conta para continuar.')
 
-/** Para rotas privadas: devolve o usuário autenticado ou a resposta de erro adequada. */
 export function requireUser(
   request: Request,
 ): { user: UserRecord; session: SessionRecord } | { response: Response } {

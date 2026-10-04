@@ -11,7 +11,6 @@ export function createHttpClient(baseURL: string): AxiosInstance {
     baseURL,
     timeout: REQUEST_TIMEOUT_MS,
     headers: { Accept: 'application/json' },
-    // Arrays viram parâmetros repetidos (?tag=a&tag=b), em vez de tag[]=a.
     paramsSerializer: { indexes: null },
   })
 

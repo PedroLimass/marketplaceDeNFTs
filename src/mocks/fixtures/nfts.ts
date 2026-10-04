@@ -7,7 +7,6 @@ export interface CatalogRef {
   name: string
 }
 
-/** Itens do filtro "Coleções" do design (na ordem em que aparecem). */
 export const categoryFixtures: readonly CatalogRef[] = [
   { id: 'arte-digital', name: 'Arte digital' },
   { id: 'fotografia', name: 'Fotografia' },
@@ -26,7 +25,6 @@ export const networkFixtures: readonly CatalogRef[] = [
   { id: 'solana', name: 'Solana' },
 ]
 
-/** Séries de NFTs ("Coleção: Kurio Apes" no detalhe). */
 export const collectionFixtures: readonly CatalogRef[] = [
   { id: 'kurio-apes', name: 'Kurio Apes' },
   { id: 'sage-society', name: 'Sage Society' },
@@ -71,11 +69,6 @@ const nounPt: Record<string, string> = {
   Frequency: 'Frequência',
 }
 
-/**
- * Os 9 primeiros são os cards do design, na ordem da grade (linha a linha). O "Golden Frequency #071"
- * não tem texto no Figma (o card do meio da última linha) e foi inferido da tela de login, onde
- * aparece a 0.59 ETH.
- */
 const rows: readonly Row[] = [
   row('Emerald', 'Ape', 42, '1.19', 'ethereum', 'arte-digital', 'rare', 50, 50),
   row('Sage', 'Nomad', 9, '1.69', 'polygon', 'fotografia', null, 25, 25),
@@ -145,7 +138,6 @@ const trendingOrder = [
   'golden-beat-207',
 ]
 
-/** Ofertas: o Figma mostra a Neon Vessel a 1.99 ETH com 2.29 ETH ao lado (preço anterior). */
 const previousPrices: Record<string, string> = {
   'neon-vessel-552': '2.29',
   'violet-bloom-187': '1.85',

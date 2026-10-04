@@ -92,6 +92,7 @@ export const walletsHandlers = [
               nickname: '',
               ensName: null,
               sameAsPrimary: true,
+              connected: existing?.connected !== false,
             }
           : {
               id: existing?.id ?? `wlt_${crypto.randomUUID()}`,
@@ -102,6 +103,7 @@ export const walletsHandlers = [
               nickname: parsed.data.nickname,
               ensName: parsed.data.ens_name ?? null,
               sameAsPrimary: false,
+              connected: existing?.connected !== false,
             }
 
       const others = (db.wallets[userId] ?? []).filter((wallet) => wallet.role !== role.data)
@@ -126,6 +128,13 @@ export const walletsHandlers = [
       )
     }
 
+    mutateDb((db) => {
+      const wallet = (db.wallets[auth.user.id] ?? []).find(
+        (candidate) => candidate.id === params.id,
+      )
+      if (wallet) wallet.connected = true
+    })
+
     return HttpResponse.json({ status: 'connected' })
   }),
 
@@ -133,7 +142,15 @@ export const walletsHandlers = [
     const auth = requireUser(request)
     if ('response' in auth) return auth.response
 
-    if (!walletsOf(auth.user.id).some((wallet) => wallet.id === params.id)) return walletNotFound()
+    const wallet = walletsOf(auth.user.id).find((candidate) => candidate.id === params.id)
+    if (!wallet) return walletNotFound()
+
+    mutateDb((db) => {
+      const current = (db.wallets[auth.user.id] ?? []).find(
+        (candidate) => candidate.id === wallet.id,
+      )
+      if (current) current.connected = false
+    })
 
     return new HttpResponse(null, { status: 204 })
   }),

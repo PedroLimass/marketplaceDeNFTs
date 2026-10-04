@@ -21,7 +21,6 @@ export function setScenario(id: MockScenarioId): void {
   counters.clear()
 }
 
-/** Conta as requisições por método + rota, para cenários como `flaky` e `out-of-order`. */
 export function nextRequestCount(method: string, pathname: string): number {
   const key = `${method} ${pathname}`
   const count = (counters.get(key) ?? 0) + 1
@@ -35,10 +34,6 @@ export interface ResolveScenarioInput {
   fallback: MockScenarioId
 }
 
-/**
- * Precedência: `?scenario=` na URL, depois o valor guardado na sessão do navegador
- * e, por fim, a variável de ambiente. Valores desconhecidos são ignorados.
- */
 export function resolveInitialScenario({
   search,
   storage,

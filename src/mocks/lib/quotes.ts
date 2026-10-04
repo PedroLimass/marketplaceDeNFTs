@@ -15,7 +15,6 @@ interface Coupon {
   basisPoints: number
 }
 
-/** Cupons conhecidos. `EXPIRADO` e `INVALIDO` existem para exercitar os erros do formulário. */
 const COUPONS: Record<string, Coupon> = {
   LANCAMENTO10: { label: 'Desconto do lançamento', basisPoints: 1000 },
 }
@@ -32,7 +31,6 @@ interface BuildQuoteInput {
   network: NetworkId
 }
 
-/** Calcula a cotação do carrinho atual, sem guardá-la. Devolve a resposta de erro quando o cupom não vale. */
 export function buildQuote({
   ownerKey,
   couponCode,
@@ -55,7 +53,6 @@ export function buildQuote({
     return nft && dto ? [{ record, nft, dto }] : []
   })
 
-  // Linhas esgotadas continuam na lista de problemas, mas não entram nos valores.
   const payable = lines.filter(({ dto }) => !dto.issues.some((issue) => issue.code === 'sold_out'))
   const items = payable.map(({ record, nft }) => ({
     nft_id: nft.id,
@@ -89,7 +86,6 @@ export function buildQuote({
   return { dto, couponCode: code ?? null }
 }
 
-/** Guarda a cotação para o `POST /orders` conferir depois; mantém só as mais recentes. */
 export function storeQuote(ownerKey: string, dto: QuoteDto, couponCode: string | null): void {
   mutateDb((db) => {
     db.quotes[dto.id] = { ownerKey, couponCode, createdAt: Date.now(), dto }

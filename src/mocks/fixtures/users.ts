@@ -3,8 +3,10 @@ export interface UserFixture {
   username: string
   displayName: string
   email: string
-  /** Credencial fictícia, documentada no README. O banco só guarda o hash. */
   password: string
+
+  passwordSalt: string
+  passwordHash: string
   ensName: string | null
   walletNickname: string | null
 }
@@ -16,6 +18,8 @@ export const userFixtures: readonly UserFixture[] = [
     displayName: 'Nova Alves',
     email: 'nova@kurio.test',
     password: 'Kurio@2026',
+    passwordSalt: 'a3VyaW86dXNyX25vdmE=',
+    passwordHash: 'u+JjHRTFauiyB+dBjZLyW7YSThpR5dIS3Z/ceFiSvfw=',
     ensName: 'nova',
     walletNickname: 'Principal',
   },
@@ -25,6 +29,8 @@ export const userFixtures: readonly UserFixture[] = [
     displayName: 'Rafael Costa',
     email: 'rafael@kurio.test',
     password: 'Kurio@2026',
+    passwordSalt: 'a3VyaW86dXNyX3JhZmFlbA==',
+    passwordHash: 'R2FmYI9QyxZEMsQ+eAKjyRqdAfZ39g/uyqmDDLC/rW4=',
     ensName: null,
     walletNickname: null,
   },

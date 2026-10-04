@@ -38,7 +38,6 @@ export function installInterceptors(client: AxiosInstance): void {
   })
 
   client.interceptors.response.use(undefined, (error: unknown) => {
-    // Cancelamentos são intencionais e o TanStack Query os trata sozinho.
     if (isCancel(error)) {
       return Promise.reject(error)
     }

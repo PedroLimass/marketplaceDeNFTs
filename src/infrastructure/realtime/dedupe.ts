@@ -1,4 +1,3 @@
-/** Guarda os últimos ids vistos; ao encher, esquece os mais antigos. */
 export class SeenWindow {
   private readonly ids = new Set<string>()
 
@@ -8,7 +7,6 @@ export class SeenWindow {
     this.limit = limit
   }
 
-  /** Devolve `true` na primeira vez que o id aparece e `false` nas repetições. */
   markNew(id: string): boolean {
     if (this.ids.has(id)) return false
 

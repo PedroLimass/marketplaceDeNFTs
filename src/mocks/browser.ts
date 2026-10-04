@@ -9,7 +9,6 @@ import { schedulePendingOrders } from './lib/orders'
 import { socketHandlers, startSocketServer } from './realtime/socketServer'
 import { resolveInitialScenario, setScenario, SCENARIO_STORAGE_KEY } from './scenarios/current'
 
-/** Tira registros de Service Worker sem worker ativo — o `start()` do MSW espera para sempre neles. */
 export async function clearBrokenMockWorkers(): Promise<void> {
   if (!('serviceWorker' in navigator)) return
 
@@ -21,7 +20,6 @@ export async function clearBrokenMockWorkers(): Promise<void> {
   )
 }
 
-/** Inicia o Service Worker do MSW e o banco do mock. Deve terminar antes do primeiro render. */
 export async function startMocking(): Promise<void> {
   await clearBrokenMockWorkers()
 

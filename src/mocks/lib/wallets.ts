@@ -11,7 +11,6 @@ export function findWallet(userId: string, role: WalletRole): WalletRecord | und
   return walletsOf(userId).find((wallet) => wallet.role === role)
 }
 
-/** A secundária "igual à principal" espelha a principal, inclusive depois de uma edição dela. */
 export function toWalletDto(wallet: WalletRecord, userId: string): WalletDto {
   const source = wallet.sameAsPrimary ? (findWallet(userId, 'primary') ?? wallet) : wallet
 
@@ -24,5 +23,6 @@ export function toWalletDto(wallet: WalletRecord, userId: string): WalletDto {
     nickname: source.nickname,
     ens_name: source.ensName,
     same_as_primary: wallet.sameAsPrimary,
+    connected: wallet.connected !== false,
   }
 }

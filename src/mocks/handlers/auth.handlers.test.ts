@@ -21,7 +21,6 @@ const memoryStorage = (): DbStorage => {
   }
 }
 
-/** Casa com qualquer lista de mensagens de erro de um campo. */
 const messages: unknown = expect.arrayContaining([expect.any(String)])
 
 const bearer = (token: string) => ({ headers: { Authorization: `Bearer ${token}` } })

@@ -6,7 +6,6 @@ export const SLOW_LATENCY_MS = 2_500
 export const SESSION_TTL_MS = 30 * 60_000
 export const SHORT_SESSION_TTL_MS = 15_000
 export const ORDER_RESOLVE_AFTER_MS = 2_000
-/** Maior que o timeout do cliente HTTP (10 s), para que ele desista antes da resposta. */
 export const ORDER_TIMEOUT_RESPONSE_DELAY_MS = 15_000
 export const FLAKY_FAILURES_PER_ROUTE = 2
 

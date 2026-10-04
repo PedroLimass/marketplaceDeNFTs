@@ -138,9 +138,12 @@ describe('/wallets', () => {
 
     const connected = await client.post(`/wallets/${primary?.id}/connect`, null, options)
     expect(connected.data).toEqual({ status: 'connected' })
+    expect((await list(options))[0]).toMatchObject({ connected: true })
+
     expect((await client.post(`/wallets/${primary?.id}/disconnect`, null, options)).status).toBe(
       204,
     )
+    expect((await list(options))[0]).toMatchObject({ connected: false })
 
     setScenario('wallet-refused')
     await expect(

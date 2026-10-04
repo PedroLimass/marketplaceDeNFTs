@@ -44,11 +44,6 @@ function apply(value: unknown, known: Map<string, VersionedRecord>): unknown {
   return changed ? next : value
 }
 
-/**
- * `structuralSharing` das consultas: uma resposta do REST que chega depois de um evento em tempo
- * real mais novo não pode desfazê-lo. Entidades com `id` e `version` mantêm a versão maior entre
- * o que já está em cache e o que acabou de chegar.
- */
 export function keepNewestVersion(oldData: unknown, newData: unknown): unknown {
   if (oldData === undefined) return newData
 

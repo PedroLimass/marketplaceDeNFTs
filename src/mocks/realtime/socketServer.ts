@@ -5,17 +5,6 @@ import { authenticate } from '../lib/session'
 import { nftEnvelope, orderEnvelope, type MockEnvelope } from './envelopes'
 import { subscribe, type DomainEvent } from './bus'
 
-/**
- * Servidor Socket.IO do mock, sobre a API de WebSocket do MSW. Limitações (documentadas no
- * ARCHITECTURE.md): só existe no navegador, exige `transports: ['websocket']` (sem long polling)
- * e vive na mesma aba que o app, então não há outro processo "do servidor" para falhar.
- */
-
-/**
- * O MSW compara a URL do WebSocket inclusive com a query (`?EIO=4&transport=websocket`), então
- * nenhum padrão com caminho casa com o Socket.IO. Por isso o link pega todas as conexões e o
- * filtro por caminho é feito no handler; as demais (como o HMR do Vite) seguem para o servidor real.
- */
 export const socketLink = ws.link('*')
 const SOCKET_PATH = '/socket.io/'
 
@@ -30,7 +19,6 @@ interface Connection {
 const connections = new Set<Connection>()
 let lastEnvelope: MockEnvelope | undefined
 
-/** Identifica o usuário pelo token enviado no pacote CONNECT do Socket.IO (`40{"token":"..."}`). */
 function userIdFromConnectPacket(raw: string): string | null {
   const payload = raw.slice(2)
   if (!payload.startsWith('{')) return null
@@ -87,7 +75,6 @@ export const socketHandlers = [
       }
     })
 
-    // Engine.IO: o servidor envia ping e o cliente responde pong; sem isso ele desconecta.
     const timer = setInterval(() => {
       raw.client.send('2')
     }, PING_INTERVAL_MS)
@@ -98,7 +85,6 @@ export const socketHandlers = [
   }),
 ]
 
-/** Começa a transformar as mudanças do banco em eventos Socket.IO. */
 export function startSocketServer(): () => void {
   return subscribe(onDomainEvent)
 }
@@ -107,19 +93,16 @@ export function connectedClientCount(): number {
   return connections.size
 }
 
-/** Fecha todas as conexões; o cliente deve reconectar sozinho. */
 export function disconnectAllClients(): void {
   for (const connection of [...connections]) connection.close()
 }
 
-/** Reenvia o último evento com o mesmo `event_id`, para exercitar a deduplicação. */
 export function replayLastEvent(): boolean {
   if (!lastEnvelope) return false
   deliver(lastEnvelope)
   return true
 }
 
-/** Envia um `nft.updated` com versão antiga e valores falsos, que o cliente deve ignorar. */
 export function sendStaleNftEvent(nftId: string): boolean {
   const current = nftEnvelope(nftId)
   if (!current) return false
