@@ -10,7 +10,7 @@ async function settle(page: Page) {
     await Promise.all(
       Array.from(document.images).map((image) =>
         image.complete
-          ? undefined
+          ? Promise.resolve()
           : new Promise((resolve) => {
               image.addEventListener('load', resolve, { once: true })
               image.addEventListener('error', resolve, { once: true })
