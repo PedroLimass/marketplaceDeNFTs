@@ -1,8 +1,9 @@
 # Arquitetura do Kurio
 
-Contratos REST e eventos, sessão, carrinho, cache, reconciliação REST × Socket.IO, limitações e
-**desvios em relação ao Figma**. Os contratos detalhados (campos, códigos de erro, exemplos) estão
-em `docs/CONTRATOS.md`; este arquivo registra o que o código faz de fato.
+Como a aplicação entregue está organizada: camadas, sessão, carrinho, cache, reconciliação entre
+REST e Socket.IO, resultados do Lighthouse, limitações e desvios em relação ao Figma. Campos,
+códigos de erro e exemplos de payload estão em [`docs/CONTRATOS.md`](./docs/CONTRATOS.md). Como
+instalar e rodar está no [`README.md`](./README.md).
 
 ## Desvios do Figma
 
@@ -92,8 +93,8 @@ Todos os botões saem de `src/shared/ui/button.tsx` (`Button` e `buttonVariants`
   para as três abas caberem em telas a partir de 390 px. Em tablet e desktop a ordenação passa para
   a linha de baixo quando não há espaço, em vez de espremer as abas.
 - **Ordenação no mobile** fica dentro da folha de filtros, e não ao lado das abas.
-- **Cards** levam ao detalhe (o título é o link e cobre o card inteiro). Favoritos (coração) e a barra
-  de abas inferior dependem de telas que ainda não foram feitas.
+- **Cards** levam ao detalhe: o título é o link e cobre o card inteiro. Favoritar fica na página
+  do NFT. A barra inferior do mobile está descrita na seção própria, mais abaixo.
 
 ### Detalhes do NFT
 
@@ -157,37 +158,46 @@ volta ao destino depois. Os frames do Figma são só desktop; a versão mobile s
   editar. A secundária não aceita o mesmo endereço da principal.
 - **Validação do endereço**: `0x` + 40 hexadecimais para todas as redes, como no contrato. Isso não
   vale para endereços reais da Solana, e é uma limitação assumida da demonstração.
-- **Conexão com a carteira** (`/wallets/:id/connect` e `/disconnect`) é chamada ao confirmar a
-  compra. O cenário `wallet-refused` recusa a conexão e não cria o pedido.
+- **Conexão com a carteira** (`/wallets/:id/connect` e `/disconnect`) fica no pagamento: as
+  carteiras do seed começam conectadas, "Desconectar" impede a confirmação e "Conectar" religa.
+  Confirmar a compra também chama `connect`. O cenário `wallet-refused` recusa a conexão e não
+  cria o pedido. O estado `connected` fica no banco do mock.
 
 ### Pagamento e confirmação
 
-O limite de chamadas do Figma acabou antes da leitura visual destes dois frames. As telas foram
-construídas a partir da estrutura salva (textos, medidas e hierarquia do recibo) e do contrato
-(`docs/CONTRATOS.md`, seção 1.5). Por isso o desenho abaixo é uma interpretação, não uma cópia, e
-convém compará-la com o Figma quando houver acesso.
+A referência visual são os frames Desktop / Pagamento, Mobile / Pagamento e Desktop / Confirmação
+de Pedido.
 
-- **Formulário do Figma**: o frame reaproveita o formulário de perfil (Nome do perfil, Nome de
-  usuário, Código de indicação, Nome ENS, "ENS ou carteira secundária"). Estes campos não entram
-  no pedido, que só leva `collector { display_name, email }` e a observação, então ficaram só
-  **Nome de exibição**, **E-mail** e **Observação do colecionador (opcional)**. Os dois primeiros
-  vêm preenchidos com os dados da conta. O asterisco de "Código de indicação" e "Nome ENS" (decisão
-  em aberto no contrato) perdeu o sentido ao tirar esses campos.
-- **Carteira e rede**: "Rede", "Endereço da carteira", "Tipo de carteira" e "Usar outra carteira?"
-  viraram uma lista de escolha entre as carteiras já cadastradas (principal e secundária). A rede da
-  compra é a da carteira escolhida, e a taxa de rede acompanha. O texto "Quer usar outra carteira?"
-  leva a `/profile/wallets`, onde o cadastro já existe, em vez de duplicar o formulário aqui.
-- **Overlay "Page Content (behind overlay)"**: não foi possível ver o conteúdo do overlay. A
-  conexão da carteira acontece ao confirmar a compra, em duas fases visíveis no botão
-  ("Conectando a carteira…" e "Enviando pedido…"), sem um passo extra de revisão.
-- **Resumo**: itens com `(x N)` e subtotal, cupom (o mesmo componente do carrinho), taxa, total e
-  "Confirmar compra". Em telas estreitas o resumo vai para baixo do formulário.
-- **Recibo** (`/orders/:id`): o desenho é um modal de 578 px sobre a página de pagamento. Aqui é
-  uma página própria, que serve também para quem recarrega ou volta pelo histórico, e o "X" leva
-  ao início. O ícone `thank-you` (80 px) é um ícone do `lucide-react` sobre um círculo, porque o
-  arquivo não estava disponível. Os quatro dados da transação ficam em quatro colunas no desktop e
-  em duas no celular, e os itens usam imagem de 48 px abaixo de 640 px (70 px no desenho).
-  "Ver no Etherscan" muda com a rede (Polygonscan, Solscan) e abre em outra aba.
+- **Formulário**: as duas colunas do Figma estão na tela (Nome de exibição, Rede, Endereço,
+  Tipo, E-mail, Nome de usuário, Nome do perfil, ENS ou carteira secundária, Código de
+  indicação, Nome ENS, "Usar outra carteira?", observação). Só `collector { display_name, email }`
+  e a observação entram no `POST /orders`. Os demais campos vêm preenchidos da conta ou da
+  carteira escolhida e não são editáveis, para não fingir que o pedido grava perfil, ENS ou
+  indicação. "Código de indicação" fica vazio e sem asterisco (o `*` do Figma é herança de
+  modelo; ver contrato §1.7 item 7).
+- **Carteira e rede**: o resumo lista MetaMask, WalletConnect e Coinbase Wallet. Escolher uma
+  marca seleciona a carteira cadastrada daquele tipo e preenche Rede / Endereço / Tipo / ENS.
+  Marca sem carteira cadastrada fica desabilitada. "Usar outra carteira?" e o "Trocar carteira"
+  do mobile levam a `/profile/wallets`.
+- **Overlay "Page Content (behind overlay)"**: o nome do grupo no Figma não esconde um modal
+  de revisão — o conteúdo visível é o próprio formulário. A conexão da carteira continua nas
+  duas fases do botão ("Conectando a carteira…" e "Enviando pedido…").
+- **Resumo**: título "Seus NFTs", itens com miniatura de 70 px, `ID do token` e `(x N)`, link
+  "Tem um código promocional? Aplique aqui", "Taxa estimada" sob a taxa de rede, total e
+  "Confirmar compra". Há um `h1` "Pagamento" além da trilha (o Figma só tem a trilha).
+  Largura de 405 px a partir de 1280 px; abaixo disso o resumo desce.
+- **Mobile**: o frame não desenha o formulário do colecionador e titula a tela
+  "Pagamento com carteira". Há o cabeçalho com voltar, os cartões Principal/Reserva e
+  "Trocar carteira"; o formulário e o `h1` "Pagamento" ficam abaixo para validar os
+  campos do pedido e manter o E2E. A linha decorativa
+  `METAMASK • WALLETCONNECT • COINBASE` do desktop foi omitida: as três marcas já
+  aparecem como opções reais.
+- **Recibo** (`/orders/:id`): o Figma cobre a tela de pagamento com um fundo tinta sólido e o
+  modal de 578 px. O pedido confirmado usa esse overlay (sem a trilha "Pedido"), com o SVG
+  `thank-you` do arquivo, título em `text-secondary`, faixa laranja na base e o botão
+  "Ver no Etherscan" centralizado. Recarregar ou voltar pelo histórico reabre o mesmo modal.
+  O "X" leva ao início. "Ver no Etherscan" muda com a rede (Polygonscan, Solscan). Sem frame
+  mobile de confirmação: o modal ocupa a largura disponível com o mesmo conteúdo.
 - **Pendente e recusado**: o contrato prevê os dois e o Figma não os mostra. Pendente é um cartão
   com aviso `role="status"`, que se atualiza sozinho. Recusado explica o motivo, avisa que o
   carrinho foi mantido e oferece "Tentar novamente" e "Voltar ao carrinho".
@@ -241,16 +251,16 @@ Query. A UI só lê o cache.
 Prefixo `/api`. Autenticação: `Authorization: Bearer <token>`. Visitante do carrinho: `X-Guest-Id`
 (o interceptor só preenche se a chamada ainda não trouxe o cabeçalho). Timeout do cliente: 10 s.
 
-| Recurso   | Rotas                                                                             |
-| --------- | --------------------------------------------------------------------------------- |
-| Sessão    | `POST /auth/signup`, `POST /auth/login`, `GET /auth/session`, `POST /auth/logout` |
-| Catálogo  | `GET /nfts`, `GET /nfts/featured`, `GET /nfts/:id`                                |
-| Favoritos | `GET /favorites`, `PUT                                                            | DELETE /favorites/:nftId`                   |
-| Carrinho  | `GET /cart`, `POST /cart/items`, `PATCH                                           | DELETE /cart/items/:id`, `POST /cart/merge` |
-| Cotação   | `POST /quotes`                                                                    |
-| Pedidos   | `POST /orders` (`Idempotency-Key`), `GET /orders`, `GET /orders/:id`              |
-| Perfil    | `GET                                                                              | PATCH /profile`, `PUT                       | DELETE /profile/avatar`, `POST /profile/password` |
-| Carteiras | `GET /wallets`, `PUT /wallets/:role`, `POST /wallets/:id/connect\|disconnect`     |
+| Recurso   | Rotas                                                                                                       |
+| --------- | ----------------------------------------------------------------------------------------------------------- |
+| Sessão    | `POST /auth/register`, `POST /auth/login`, `GET /auth/session`, `POST /auth/logout`                         |
+| Catálogo  | `GET /nfts`, `GET /nfts/featured`, `GET /nfts/:id`                                                          |
+| Favoritos | `GET /favorites`, `PUT /favorites/:nftId`, `DELETE /favorites/:nftId`                                       |
+| Carrinho  | `GET /cart`, `POST /cart/items`, `PATCH /cart/items/:id`, `DELETE /cart/items/:id`, `POST /cart/merge`      |
+| Cotação   | `POST /quotes`                                                                                              |
+| Pedidos   | `POST /orders` (cabeçalho `Idempotency-Key`), `GET /orders`, `GET /orders/:id`                              |
+| Perfil    | `GET /profile`, `PATCH /profile`, `PUT /profile/avatar`, `DELETE /profile/avatar`, `POST /profile/password` |
+| Carteiras | `GET /wallets`, `PUT /wallets/:role`, `POST /wallets/:id/connect`, `POST /wallets/:id/disconnect`           |
 
 Erros: `{ error: { code, message, fieldErrors?, details? } }`. O cliente vira isso em `ApiError`
 com `kind` (`validation`, `unauthorized`, `forbidden`, `not_found`, `conflict`, `transient`,
@@ -263,8 +273,9 @@ com `kind` (`validation`, `unauthorized`, `forbidden`, `not_found`, `conflict`, 
 
 ## Sessão
 
-O token fica em `sessionStorage` (some ao fechar a aba). `GET /auth/session` reconstitui o usuário
-depois de um refresh. Sem token a consulta nem sai: a sessão é `null` na hora.
+O token fica em `localStorage` (`kurio.session`) e sobrevive ao refresh. `GET /auth/session`
+reconstitui o usuário. Sem token a consulta nem sai: a sessão é `null` na hora. Logout remove a
+chave.
 
 Login e logout **descartam** toda consulta cujo `queryKey[0]` não é `'auth'`
 (`dropUserScopedQueries`). Assim favoritos, pedidos e perfil de um usuário não vazam para o outro.
@@ -275,8 +286,10 @@ começa.
 ao login com `?redirect=` da URL atual e volta depois; em rota pública só vê o aviso. O cenário
 `expired-session` vence o token em 15 s.
 
-Senhas do mock nunca ficam em claro: o seed guarda `passwordSalt` + `passwordHash`. As credenciais
-de demonstração estão no `README.md`.
+Senhas do mock nunca ficam em claro: o seed guarda `passwordSalt` + `passwordHash`, já calculados
+(PBKDF2, 100 mil iterações) para a abertura da página não derivar a chave de novo. Login, cadastro
+e troca de senha continuam usando o WebCrypto na hora. As credenciais de demonstração estão no
+`README.md`.
 
 ---
 
@@ -354,29 +367,28 @@ Limitações do mock de tempo real:
 
 ## Lighthouse
 
-Comando: `pnpm build && pnpm lighthouse` (3 rodadas por página e perfil; vale a mediana). Relatórios
-em `lighthouse-report/` (`summary.json` versionado; HTML/JSON da última rodada gerados localmente).
+Comando: `pnpm build && pnpm lighthouse` (3 rodadas por página e perfil; vale a mediana). Cada
+combinação grava o HTML e o JSON da última rodada em `lighthouse-report/`, e a mediana fica em
+`summary.json`.
 
-Ambiente da última medição completa (1 rodada, para inspeção): Lighthouse 13, Chromium do
-Playwright, `vite preview` em `127.0.0.1`, cenário `default`, sem cache entre rodadas.
+Ambiente desta medição (2026-10-04): Lighthouse 13.5.0, Chromium do Playwright 1.63.0, Node
+25.3.0, `vite preview` em `127.0.0.1:4174`, cenário `default`, perfil novo a cada rodada (sem
+cache nem Service Worker residual). Throttling padrão do Lighthouse.
 
-| Página  | Perfil  | Perf |    A11y |  BP | SEO | LCP (ms) | TBT (ms) | CLS |
-| ------- | ------- | ---: | ------: | --: | --: | -------: | -------: | --: |
-| Início  | mobile  |   71 |     100 | 100 | 100 |     3396 |      546 |   0 |
-| Detalhe | mobile  |   80 | 97→100* | 100 | 100 |     3234 |      360 |   0 |
-| Início  | desktop |   97 |     100 | 100 | 100 |     1092 |       24 |   0 |
-| Detalhe | desktop |   99 |     100 | 100 | 100 |      878 |        4 |   0 |
+| Página  | Perfil  | Perf | A11y |  BP | SEO | LCP (ms) | TBT (ms) | CLS |
+| ------- | ------- | ---: | ---: | --: | --: | -------: | -------: | --: |
+| Início  | mobile  |   92 |  100 | 100 | 100 |     2894 |      208 |   0 |
+| Detalhe | mobile  |   92 |  100 | 100 | 100 |     2988 |      170 |   0 |
+| Início  | desktop |  100 |  100 | 100 | 100 |      806 |        0 |   0 |
+| Detalhe | desktop |  100 |  100 | 100 | 100 |      812 |        0 |   0 |
 
-\* `aria-prohibited-attr` no selo de nota do detalhe mobile: o `aria-label` num `<p>` foi trocado
-por texto `sr-only`. Reexecute `pnpm lighthouse` para a mediana de 3 rodadas.
-
-**Por que o mobile fica abaixo de 90 em Performance.** O `main.tsx` espera o Service Worker do MSW
-(e o banco do mock) antes do primeiro render do React — exigência do enunciado: os mocks precisam
-interceptar a primeira chamada e o `socket.io-client` precisa ver o `WebSocket` já substituído.
-Isso empurra FCP/LCP para ~3 s e o TBT para algumas centenas de ms no perfil mobile do Lighthouse.
-Não desligamos os mocks nem omitimos imagens/fontes para pontuar. O que foi feito sem furar o
-enunciado: rotas pesadas sob demanda, imagens WebP, skeletons com as medidas finais (CLS 0) e um
-casco estático "KURIO" no `index.html` para a tela não ficar em branco enquanto o SW sobe.
+As quatro medianas ficam dentro das metas (Performance ≥ 90, Acessibilidade ≥ 95, Boas práticas ≥
+95, SEO ≥ 90). No mobile o LCP continua perto de 3 s porque o `main.tsx` espera o Service Worker
+do MSW antes do primeiro render — os mocks precisam interceptar a primeira chamada, e o
+`socket.io-client` só pode ser avaliado depois que o MSW troca o `WebSocket`. Registrar o worker
+ou pré-carregar a imagem do banner antes disso piora o celular: o worker passa a interceptar o
+próprio JavaScript, e a imagem disputa a rede com os pacotes. O escore mesmo assim passa de 90,
+com CLS 0. Nada foi desligado para pontuar.
 
 ---
 
@@ -386,9 +398,9 @@ casco estático "KURIO" no `index.html` para a tela não ficar em branco enquant
 - Endereço de carteira: `0x` + 40 hex em todas as redes (Solana real não cabe nisso).
 - Avatar vira data URL no `localStorage`; um arquivo grande pode estourar a cota e valer só em
   memória nesta sessão.
-- Páginas editoriais (Mercado, Criadores, Aprenda, Atividade, Ofertas…) não existem; os links
-  aparecem desabilitados, sem fingir sucesso.
-- O Figma de Pagamento e Confirmação não pôde ser lido (cota do plano). Essas telas seguem o
-  contrato e os metadados salvos; os desvios estão na seção acima.
+- Páginas editoriais (Mercado, Criadores, Aprenda, Atividade, Ofertas) não existem. Os links
+  aparecem desabilitados, com o aviso de que estão indisponíveis nesta demonstração.
+- Onde o Figma não desenha a tela (confirmação no mobile, perfil e carteiras no mobile), o layout
+  segue o mesmo padrão visual das telas que existem.
 - O Service Worker do MSW precisa de contexto seguro (localhost ou HTTPS). Se ele falhar em 8 s,
   o app ainda monta, mas as APIs não respondem.

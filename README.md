@@ -1,13 +1,19 @@
 # Kurio — Marketplace de NFTs
 
-Demonstração do desafio de frontend: descoberta, compra e conta do colecionador, com APIs, sessão,
-carteiras, pedidos e tempo real **simulados** (MSW + Socket.IO). Não há blockchain nem pagamento
-real.
+Marketplace de descoberta, compra e conta do colecionador. APIs, sessão, carteiras, pedidos e
+tempo real são simulados com MSW e Socket.IO. Não há blockchain nem pagamento real. Um checkout
+limpo sobe sem backend externo.
 
-- **Stack:** React 19, TypeScript, Vite, TanStack Router/Query, Axios, Socket.IO, Tailwind CSS,
-  shadcn/ui, MSW, Playwright, Lighthouse.
-- **Arquitetura e desvios do Figma:** [`ARCHITECTURE.md`](./ARCHITECTURE.md)
-- **Contratos:** [`docs/CONTRATOS.md`](./docs/CONTRATOS.md)
+**Stack:** React 19, TypeScript, Vite, TanStack Router, TanStack Query, Axios, Socket.IO, Tailwind
+CSS, shadcn/ui, MSW, Playwright e Lighthouse.
+
+## Onde ler
+
+| Documento                                  | O que responde                                                                                                    |
+| ------------------------------------------ | ----------------------------------------------------------------------------------------------------------------- |
+| Este README                                | Instalar, rodar, testar, escolher cenários e reproduzir falhas                                                    |
+| [`ARCHITECTURE.md`](./ARCHITECTURE.md)     | Camadas, sessão, carrinho, cache, REST × Socket.IO, Lighthouse, limitações e desvios do Figma                     |
+| [`docs/CONTRATOS.md`](./docs/CONTRATOS.md) | Contratos REST, códigos de erro, eventos, idempotência, fixtures e decisões de contrato já aplicadas na aplicação |
 
 ## Setup
 
@@ -21,6 +27,17 @@ pnpm dev
 
 Abra `http://localhost:5173`. Os mocks já vêm ligados.
 
+## Contas de demonstração
+
+A senha das duas contas é `Kurio@2026`. No mock ela fica só como salt e hash, nunca em claro.
+
+| Conta      | E-mail              | Carteiras                                                         |
+| ---------- | ------------------- | ----------------------------------------------------------------- |
+| Nova Alves | `nova@kurio.test`   | Principal (MetaMask, Ethereum) e Reserva (WalletConnect, Polygon) |
+| Rafael     | `rafael@kurio.test` | Só a principal                                                    |
+
+Cupons no carrinho: `LANCAMENTO10` (10%), `EXPIRADO` e `INVALIDO`.
+
 ## Variáveis de ambiente
 
 | Variável             | Padrão    | Função                                     |
@@ -31,17 +48,6 @@ Abra `http://localhost:5173`. Os mocks já vêm ligados.
 | `VITE_MOCK_SCENARIO` | `default` | Cenário inicial (a URL tem prioridade)     |
 
 O build publicado precisa de `VITE_ENABLE_MOCKS=true`. Sem isso as rotas `/api` não existem.
-
-## Credenciais fictícias
-
-| Conta      | E-mail              | Senha        | Carteiras                                                         |
-| ---------- | ------------------- | ------------ | ----------------------------------------------------------------- |
-| Nova Alves | `nova@kurio.test`   | `Kurio@2026` | Principal (MetaMask, Ethereum) e Reserva (WalletConnect, Polygon) |
-| Rafael     | `rafael@kurio.test` | `Kurio@2026` | Só a principal                                                    |
-
-As senhas no mock são armazenadas como salt + hash, nunca em claro.
-
-Cupons: `LANCAMENTO10` (10%), `EXPIRADO`, `INVALIDO`.
 
 ## Cenários e reset
 
@@ -90,21 +96,38 @@ O banco do mock fica no `localStorage` (`kurio.mock-db`). `reset()` ou
 
 ## Comandos
 
+Desenvolvimento e build:
+
 ```bash
-pnpm dev              # desenvolvimento com mocks
-pnpm build            # typecheck + bundle
-pnpm preview          # serve o build
+pnpm dev        # http://localhost:5173, com mocks
+pnpm build      # verificação de tipos e bundle em dist/
+pnpm preview    # serve o build
 pnpm typecheck
 pnpm lint
 pnpm format
-pnpm test             # Vitest
-pnpm e2e              # Playwright (Chromium desktop + mobile)
-pnpm e2e:update       # atualiza snapshots visuais
-pnpm lighthouse       # 3 rodadas × Início/Detalhe × mobile/desktop
 ```
 
-O `pnpm e2e` gera o build, sobe o preview e grava trace/HTML em falha
-(`playwright-report/`, `test-results/`).
+Testes. Os de unidade não abrem o navegador. Os de ponta a ponta usam o Chromium do Playwright,
+nos viewports desktop (1280×900) e mobile (Pixel 7), e observam a interface:
+
+```bash
+pnpm test             # Vitest
+pnpm test:coverage    # texto, HTML e lcov em coverage/
+pnpm exec playwright install chromium
+pnpm e2e              # build, preview e Playwright
+pnpm e2e:update       # atualiza as baselines visuais versionadas
+```
+
+`pnpm e2e` grava trace e relatório HTML quando um teste falha (`playwright-report/`,
+`test-results/`). Cada teste parte de um estado isolado.
+
+Auditoria. O preview do Lighthouse serve o `dist/`, então o build vem antes. São três rodadas de
+Início e Detalhe, em mobile e desktop; a mediana fica em `lighthouse-report/summary.json`, com o
+HTML e o JSON da última rodada ao lado.
+
+```bash
+pnpm build && pnpm lighthouse
+```
 
 ## Reproduzir falhas
 
@@ -118,10 +141,12 @@ O `pnpm e2e` gera o build, sobe o preview e grava trace/HTML em falha
    `setNftPrice('emerald-ape-042', '1.45')`. O aviso aparece e o pagamento bloqueia até aceitar.
 6. **Checkout:** `?scenario=checkout-price-change` ou `checkout-sold-out` na hora de confirmar.
 7. **Carteira recusada:** `?scenario=wallet-refused` e "Confirmar compra".
-8. **Pagamento recusado:** `?scenario=payment-rejected`; o carrinho permanece.
-9. **Timeout do pedido:** `?scenario=order-timeout`. A primeira confirmação estoura os 10 s; a
-   segunda reenvia a mesma `Idempotency-Key` e recupera o pedido já criado.
-10. **Cadastro em conflito:** `?scenario=signup-conflict` ou use `nova@kurio.test` de novo.
+8. **Carteira desconectada:** no pagamento, "Desconectar" bloqueia "Confirmar compra" até
+   "Conectar".
+9. **Pagamento recusado:** `?scenario=payment-rejected`; o carrinho permanece.
+10. **Timeout do pedido:** `?scenario=order-timeout`. A primeira confirmação estoura os 10 s; a
+    segunda reenvia a mesma `Idempotency-Key` e recupera o pedido já criado.
+11. **Cadastro em conflito:** `?scenario=signup-conflict` ou use `nova@kurio.test` de novo.
 
 ## Telas
 

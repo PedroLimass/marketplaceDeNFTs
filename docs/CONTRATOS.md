@@ -1,23 +1,21 @@
 # Contratos REST, eventos e dados simulados
 
-> **Status:** rascunho para revisão. Nenhum mock ou handler foi escrito ainda.
->
-> **Fontes:** o enunciado (`docs/DESAFIO.md`) e o arquivo do Figma duplicado
-> (`XHIySDsV2teGC6LjYTTmLM`). Os dados da seção 1 foram lidos das camadas de texto dos frames, então
-> nomes e valores abaixo são os do design, não inventados. O que foi inventado está marcado como
-> **(definido aqui)**.
+Contrato que a aplicação implementa: rotas, corpos, erros, eventos Socket.IO, cenários e fixtures.
+O comportamento de sessão, cache e reconciliação está em [`ARCHITECTURE.md`](../ARCHITECTURE.md).
+Como executar está no [`README.md`](../README.md).
 
-Este documento vira a base do `ARCHITECTURE.md` e das fixtures do MSW. A marca do produto é
-**Kurio** (hero, wordmark mobile); "GreenMint" é só o nome da página no Figma.
+Os nomes e preços da seção 1 saem dos frames do Figma. O que o desenho não definia está marcado
+como **(definido aqui)** e já vale no código. A marca do produto é **Kurio**. "GreenMint" é só o
+nome da página no arquivo de design.
 
 ---
 
-## 1. O que o Figma nos dá
+## 1. O que o Figma define
 
 ### 1.1 Catálogo
 
-A grade da tela Início tem 3 colunas de cards de 258 px e paginação `1 2 3 4`. Isso sugere **9 NFTs por
-página e 36 no total** (a confirmar com a captura de tela na hora de implementar).
+A grade da tela Início tem 3 colunas de cards de 258 px e paginação `1 2 3 4`. A aplicação entrega
+**9 NFTs por página e 36 no total**.
 
 | NFT                   | Token  | Preço (ETH) | Onde aparece                                                                                |
 | --------------------- | ------ | ----------- | ------------------------------------------------------------------------------------------- |
@@ -117,7 +115,7 @@ Etherscan`.
 | 4   | O filtro de preço usa vírgula (`0,02`); todo o resto usa ponto (`1.19 ETH`)                                    | Ponto em tudo, por consistência. Registrar como desvio no `ARCHITECTURE.md`                |
 | 5   | `ID da transação` do recibo é igual ao endereço da carteira (`0xA91F…E82C`)                                    | Gerar um hash de transação próprio, exibido abreviado no mesmo formato                     |
 | 6   | Edição `1/1` com quantidade > 1 no carrinho (Violet Nomad, 6 unidades)                                         | A edição é um **lote** com `supply` e `available`. A quantidade é limitada por `available` |
-| 7   | `Código de indicação*` e `Nome ENS*` marcados como obrigatórios, mas parecem herança de modelo                 | Decidir campo a campo na tela de pagamento (seção 9)                                       |
+| 7   | `Código de indicação*` e `Nome ENS*` marcados como obrigatórios, mas parecem herança de modelo                 | Código de indicação fica vazio e sem asterisco. Nome ENS é opcional (seção 9)              |
 | 8   | Não há frames mobile de Confirmação, Perfil e Carteiras                                                        | O enunciado exige que funcionem; seguem o mesmo padrão visual                              |
 
 ---
@@ -379,14 +377,14 @@ No mock, o avatar é redimensionado no cliente e guardado como data URL dentro d
 
 ### 3.8 Carteiras
 
-| Método e rota                  | Acesso | Descrição                                                                          |
-| ------------------------------ | ------ | ---------------------------------------------------------------------------------- |
-| `GET /wallets`                 | Auth   | `{ items: Wallet[] }` com no máximo 2 itens (`role: "primary" \| "secondary"`)     |
-| `PUT /wallets/:role`           | Auth   | Cadastra ou atualiza a carteira `primary` ou `secondary`                           |
-| `POST /wallets/:id/connect`    | Auth   | Simula a conexão: `200 { status: "connected" }` ou `403 wallet_connection_refused` |
-| `POST /wallets/:id/disconnect` | Auth   | `204`                                                                              |
+| Método e rota                  | Acesso | Descrição                                                                                         |
+| ------------------------------ | ------ | ------------------------------------------------------------------------------------------------- |
+| `GET /wallets`                 | Auth   | `{ items: Wallet[] }` com no máximo 2 itens (`role: "primary" \| "secondary"`)                    |
+| `PUT /wallets/:role`           | Auth   | Cadastra ou atualiza a carteira `primary` ou `secondary`                                          |
+| `POST /wallets/:id/connect`    | Auth   | Marca a carteira como conectada: `200 { status: "connected" }` ou `403 wallet_connection_refused` |
+| `POST /wallets/:id/disconnect` | Auth   | `204` e marca a carteira como desconectada                                                        |
 
-`Wallet = { id, role, type, network, address, nickname, ens_name?, same_as_primary }`.
+`Wallet = { id, role, type, network, address, nickname, ens_name?, same_as_primary, connected }`.
 O endereço é validado (`0x` + 40 hexadecimais) e `type` é `metamask | walletconnect | coinbase`.
 Conexão, recusa e desconexão passam por estes endpoints, para que **nenhuma lógica de mock fique em
 componentes**.
@@ -512,7 +510,7 @@ Também há comportamento **guiado por dados**, que independe do cenário:
   menos um `sold_out`, um com 1 unidade restante, um badge `limited` (o "NFT EM DESTAQUE") e vários
   `rare`.
 - Emerald Ape #042 com as edições `1/1`, `1/10`, `1/50` e os demais atributos da seção 1.3.
-- As imagens vêm dos assets do arquivo do Figma, baixados na etapa de implementação.
+- As imagens são as artes do Figma, em WebP, servidas em `/assets/nfts/`.
 
 ### 7.3 Redes e taxas
 
@@ -530,7 +528,7 @@ Também há comportamento **guiado por dados**, que independe do cenário:
 
 ---
 
-## 8. Rotas do app (proposta)
+## 8. Rotas da aplicação
 
 | Rota                | Tela                  | Acesso                               |
 | ------------------- | --------------------- | ------------------------------------ |
@@ -549,14 +547,19 @@ um aviso de "indisponível nesta demonstração".
 
 ---
 
-## 9. Decisões em aberto
+## 9. Decisões fechadas
 
-1. **Rótulos reais do filtro de Coleções** e o nome do 4º card (2.29 ETH): confirmar na captura de
-   tela da Home.
-2. **Overlay do pagamento:** o que ele mostra (conexão da carteira, revisão do pedido ou ambos).
-3. **Campos obrigatórios do checkout:** manter todos os asteriscos do design ou tratar
-   `Código de indicação` e `Nome ENS` como opcionais?
-4. **Preço da edição:** o preço é do NFT (igual em todas as edições) ou cada edição tem o seu?
-   Assumimos o primeiro.
-5. **Nomes das rotas:** `/` e `/nfts/$nftId` ou algo ligado ao breadcrumb "Início / Mercado"?
-6. **Ordenações adicionais** além de `Listados recentemente`, que o design não mostra.
+1. **Coleções.** Os rótulos do filtro são Arte digital, Fotografia, Música, Arte 3D, Colecionáveis,
+   Generativa, Jogos, Assinaturas e Utilidade. As contagens saem das fixtures, não dos números
+   desenhados no Figma.
+2. **Overlay do pagamento.** O grupo "Page Content (behind overlay)" não esconde um modal de
+   revisão. O conteúdo visível é o formulário. A conexão da carteira aparece nas duas fases do
+   botão: "Conectando a carteira…" e "Enviando pedido…".
+3. **Campos do checkout.** `collector { display_name, email }` e a observação entram no
+   `POST /orders`. Código de indicação fica vazio e sem asterisco. Nome ENS é opcional: o usuário
+   pode não ter ENS.
+4. **Preço.** É do NFT e vale para todas as edições. A quantidade é limitada pelo estoque da edição
+   escolhida e por `max_per_order` (10).
+5. **Rotas.** Início é `/` e o detalhe é `/nfts/:id`. "Mercado", no breadcrumb, não é uma rota.
+6. **Ordenação.** O padrão é `recent` ("Listados recentemente"). Também existem `price-asc`,
+   `price-desc` e `name`.
