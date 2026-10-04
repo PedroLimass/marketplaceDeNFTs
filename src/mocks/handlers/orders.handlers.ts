@@ -18,7 +18,6 @@ import { buildQuote, storeQuote } from '../lib/quotes'
 import { toNftSummaryDto } from '../lib/nftDto'
 import { requireUser } from '../lib/session'
 import { toWalletDto, walletsOf } from '../lib/wallets'
-import { publish } from '../realtime/bus'
 import { getScenario } from '../scenarios/current'
 
 export const IDEMPOTENCY_HEADER = 'Idempotency-Key'
@@ -271,7 +270,6 @@ export const ordersHandlers = [
     }
 
     scheduleOrderResolution(record)
-    publish({ kind: 'order', orderId: record.dto.id, userId: user.id })
 
     await delay(scenario.order.responseDelayMs)
     return orderResponse(record.dto, 202)

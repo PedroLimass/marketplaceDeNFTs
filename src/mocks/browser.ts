@@ -6,6 +6,7 @@ import { createMockControl } from './control'
 import { initMockDb } from './db/mockDb'
 import { handlers } from './handlers'
 import { schedulePendingOrders } from './lib/orders'
+import { socketHandlers, startSocketServer } from './realtime/socketServer'
 import { resolveInitialScenario, setScenario, SCENARIO_STORAGE_KEY } from './scenarios/current'
 
 /** Inicia o Service Worker do MSW e o banco do mock. Deve terminar antes do primeiro render. */
@@ -20,9 +21,10 @@ export async function startMocking(): Promise<void> {
 
   await initMockDb({ storage: window.localStorage })
 
+  startSocketServer()
   schedulePendingOrders()
 
-  await setupWorker(...handlers).start({
+  await setupWorker(...handlers, ...socketHandlers).start({
     serviceWorker: { url: `${import.meta.env.BASE_URL}mockServiceWorker.js` },
     onUnhandledRequest: 'bypass',
     quiet: !import.meta.env.DEV,
