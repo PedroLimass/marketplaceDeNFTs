@@ -1,12 +1,11 @@
-/**
- * Audita Início e Detalhe do NFT com Lighthouse (mobile e desktop) sobre o build de produção,
- * no cenário padrão dos mocks. Cada combinação roda RUNS vezes e vale a mediana.
- *
- *   pnpm build && pnpm lighthouse
- */
 import { spawn } from 'node:child_process'
+import { createRequire } from 'node:module'
 import { mkdir, writeFile } from 'node:fs/promises'
 import { setTimeout as sleep } from 'node:timers/promises'
+
+const require = createRequire(import.meta.url)
+const lighthouseVersion = require('lighthouse/package.json').version
+const playwrightVersion = require('@playwright/test/package.json').version
 
 import { chromium } from '@playwright/test'
 import lighthouse from 'lighthouse'
@@ -37,9 +36,7 @@ async function waitForServer() {
     try {
       const response = await fetch(BASE_URL)
       if (response.ok) return
-    } catch {
-      // servidor ainda subindo
-    }
+    } catch {}
     await sleep(500)
   }
   throw new Error(`Servidor de preview não respondeu em ${BASE_URL}`)
@@ -65,7 +62,6 @@ try {
       let lastJson = ''
 
       for (let index = 0; index < RUNS; index += 1) {
-        // Perfil novo a cada rodada: sem cache nem Service Worker de rodadas anteriores.
         browser = await chromium.launch({ args: [`--remote-debugging-port=${String(DEBUG_PORT)}`] })
         const result = await lighthouse(
           `${BASE_URL}${page.path}`,
@@ -119,6 +115,7 @@ try {
         page: page.name,
         profile: profile.name,
         runs: runs.length,
+        scores: runs.map((run) => run.scores),
         failingAudits: [...new Set(runs.flatMap((run) => run.failing))],
         medianScores: Object.fromEntries(
           CATEGORIES.map((id) => [id, median(runs.map((run) => run.scores[id]))]),
@@ -142,7 +139,24 @@ try {
     }
   }
 
-  await writeFile('lighthouse-report/summary.json', `${JSON.stringify(summary, null, 2)}\n`)
+  await writeFile(
+    'lighthouse-report/summary.json',
+    `${JSON.stringify(
+      {
+        generatedAt: new Date().toISOString(),
+        lighthouse: lighthouseVersion,
+        node: process.version,
+        chromium: `Playwright ${playwrightVersion}`,
+        url: BASE_URL,
+        scenario: 'default',
+        runsPerAudit: RUNS,
+        throttling: 'padrão do Lighthouse (mobile simulado; desktop sem throttling de CPU/rede)',
+        results: summary,
+      },
+      null,
+      2,
+    )}\n`,
+  )
 } finally {
   await browser?.close()
   preview.kill()

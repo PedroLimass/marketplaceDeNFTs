@@ -1,80 +1,168 @@
-[
-  {
-    "page": "inicio",
-    "profile": "mobile",
-    "runs": 1,
-    "failingAudits": [],
-    "medianScores": {
-      "performance": 71,
-      "accessibility": 100,
-      "best-practices": 100,
-      "seo": 100
+{
+  "generatedAt": "2026-10-04T18:30:17.984Z",
+  "lighthouse": "13.5.0",
+  "node": "v25.3.0",
+  "chromium": "Playwright 1.63.0",
+  "url": "http://127.0.0.1:4174",
+  "scenario": "default",
+  "runsPerAudit": 3,
+  "throttling": "padrão do Lighthouse (mobile simulado; desktop sem throttling de CPU/rede)",
+  "results": [
+    {
+      "page": "inicio",
+      "profile": "mobile",
+      "runs": 3,
+      "scores": [
+        {
+          "performance": 91,
+          "accessibility": 100,
+          "best-practices": 100,
+          "seo": 100
+        },
+        {
+          "performance": 92,
+          "accessibility": 100,
+          "best-practices": 100,
+          "seo": 100
+        },
+        {
+          "performance": 92,
+          "accessibility": 100,
+          "best-practices": 100,
+          "seo": 100
+        }
+      ],
+      "failingAudits": [],
+      "medianScores": {
+        "performance": 92,
+        "accessibility": 100,
+        "best-practices": 100,
+        "seo": 100
+      },
+      "medianMetrics": {
+        "fcp": 1113.564,
+        "lcp": 2894.128,
+        "tbt": 207.5,
+        "cls": 0,
+        "speedIndex": 1779.273
+      }
     },
-    "medianMetrics": {
-      "fcp": 3245.51,
-      "lcp": 3395.51,
-      "tbt": 546.061,
-      "cls": 0,
-      "speedIndex": 3245.51
-    }
-  },
-  {
-    "page": "detalhe",
-    "profile": "mobile",
-    "runs": 1,
-    "failingAudits": [
-      "accessibility: aria-prohibited-attr"
-    ],
-    "medianScores": {
-      "performance": 80,
-      "accessibility": 97,
-      "best-practices": 100,
-      "seo": 100
+    {
+      "page": "detalhe",
+      "profile": "mobile",
+      "runs": 3,
+      "scores": [
+        {
+          "performance": 92,
+          "accessibility": 100,
+          "best-practices": 100,
+          "seo": 100
+        },
+        {
+          "performance": 92,
+          "accessibility": 100,
+          "best-practices": 100,
+          "seo": 100
+        },
+        {
+          "performance": 92,
+          "accessibility": 100,
+          "best-practices": 100,
+          "seo": 100
+        }
+      ],
+      "failingAudits": [],
+      "medianScores": {
+        "performance": 92,
+        "accessibility": 100,
+        "best-practices": 100,
+        "seo": 100
+      },
+      "medianMetrics": {
+        "fcp": 1103.78,
+        "lcp": 2987.985,
+        "tbt": 169.5,
+        "cls": 0,
+        "speedIndex": 1394.509
+      }
     },
-    "medianMetrics": {
-      "fcp": 2758.808,
-      "lcp": 3233.76,
-      "tbt": 360,
-      "cls": 0,
-      "speedIndex": 2758.808
-    }
-  },
-  {
-    "page": "inicio",
-    "profile": "desktop",
-    "runs": 1,
-    "failingAudits": [],
-    "medianScores": {
-      "performance": 97,
-      "accessibility": 100,
-      "best-practices": 100,
-      "seo": 100
+    {
+      "page": "inicio",
+      "profile": "desktop",
+      "runs": 3,
+      "scores": [
+        {
+          "performance": 100,
+          "accessibility": 100,
+          "best-practices": 100,
+          "seo": 100
+        },
+        {
+          "performance": 100,
+          "accessibility": 100,
+          "best-practices": 100,
+          "seo": 100
+        },
+        {
+          "performance": 99,
+          "accessibility": 100,
+          "best-practices": 100,
+          "seo": 100
+        }
+      ],
+      "failingAudits": [],
+      "medianScores": {
+        "performance": 100,
+        "accessibility": 100,
+        "best-practices": 100,
+        "seo": 100
+      },
+      "medianMetrics": {
+        "fcp": 389.455,
+        "lcp": 805.619,
+        "tbt": 0,
+        "cls": 0,
+        "speedIndex": 570.626
+      }
     },
-    "medianMetrics": {
-      "fcp": 973.884,
-      "lcp": 1091.605,
-      "tbt": 23.861,
-      "cls": 0,
-      "speedIndex": 973.884
+    {
+      "page": "detalhe",
+      "profile": "desktop",
+      "runs": 3,
+      "scores": [
+        {
+          "performance": 100,
+          "accessibility": 100,
+          "best-practices": 100,
+          "seo": 100
+        },
+        {
+          "performance": 100,
+          "accessibility": 100,
+          "best-practices": 100,
+          "seo": 100
+        },
+        {
+          "performance": 100,
+          "accessibility": 100,
+          "best-practices": 100,
+          "seo": 100
+        }
+      ],
+      "failingAudits": [],
+      "medianScores": {
+        "performance": 100,
+        "accessibility": 100,
+        "best-practices": 100,
+        "seo": 100
+      },
+      "medianMetrics": {
+        "fcp": 471.268,
+        "lcp": 811.535,
+        "tbt": 0,
+        "cls": 0,
+        "speedIndex": 529.653
+      }
     }
-  },
-  {
-    "page": "detalhe",
-    "profile": "desktop",
-    "runs": 1,
-    "failingAudits": [],
-    "medianScores": {
-      "performance": 99,
-      "accessibility": 100,
-      "best-practices": 100,
-      "seo": 100
-    },
-    "medianMetrics": {
-      "fcp": 754.388,
-      "lcp": 878.485,
-      "tbt": 4,
-      "cls": 0,
-      "speedIndex": 754.388
-    }
-  }
-]
+  ]
+}
