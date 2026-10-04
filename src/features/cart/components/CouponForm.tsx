@@ -12,6 +12,8 @@ import { couponStore } from '../coupon/couponStore'
 interface CouponFormProps {
   appliedCode: string | undefined
   network: NetworkId
+
+  collapsedLabel?: string
 }
 
 function describeCouponError(error: unknown): string {
@@ -21,17 +23,14 @@ function describeCouponError(error: unknown): string {
   return 'Não foi possível validar o cupom. Tente novamente.'
 }
 
-/**
- * Valida o código com uma cotação antes de guardá-lo: um cupom inválido ou vencido mostra
- * o erro no campo e nunca chega a alterar os valores.
- */
-export function CouponForm({ appliedCode, network }: CouponFormProps) {
+export function CouponForm({ appliedCode, network, collapsedLabel }: CouponFormProps) {
   const queryClient = useQueryClient()
   const inputId = useId()
   const errorId = useId()
   const [code, setCode] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [checking, setChecking] = useState(false)
+  const [open, setOpen] = useState(appliedCode !== undefined || collapsedLabel === undefined)
 
   const handleSubmit = (event: SubmitEvent<HTMLFormElement>) => {
     event.preventDefault()
@@ -61,6 +60,20 @@ export function CouponForm({ appliedCode, network }: CouponFormProps) {
       .finally(() => {
         setChecking(false)
       })
+  }
+
+  if (!open && !appliedCode && collapsedLabel) {
+    return (
+      <button
+        type="button"
+        onClick={() => {
+          setOpen(true)
+        }}
+        className="w-full cursor-pointer text-center text-sm leading-4 text-foreground outline-none hover:text-text-accent focus-visible:ring-2 focus-visible:ring-primary"
+      >
+        {collapsedLabel}
+      </button>
+    )
   }
 
   if (appliedCode) {

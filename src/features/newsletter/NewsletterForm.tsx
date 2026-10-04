@@ -8,10 +8,6 @@ const emailSchema = z.email().max(254)
 
 type Feedback = { kind: 'error' | 'success'; message: string } | null
 
-/**
- * Inscrição na newsletter. Não há backend para isso: o e-mail só é validado e a confirmação
- * é local, sem guardar nada.
- */
 export function NewsletterForm() {
   const inputId = useId()
   const feedbackId = useId()

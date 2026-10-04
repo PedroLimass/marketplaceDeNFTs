@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test'
 
-import { addToCartFromDetail, login, open, waitForSocket } from './support/app'
+import { addToCartFromDetail, login, open, startCheckout, waitForSocket } from './support/app'
 
 test.describe('Tempo real (Socket.IO sobre MSW)', () => {
   test('o preço do detalhe muda sem recarregar quando o servidor emite nft.updated', async ({
@@ -36,6 +36,23 @@ test.describe('Tempo real (Socket.IO sobre MSW)', () => {
 
     await expect(page.getByRole('main').getByText('1.45 ETH').first()).toBeVisible()
     await expect(page.getByRole('main').getByText('999 ETH')).toHaveCount(0)
+  })
+
+  test('preço que muda no pagamento via socket impede confirmar até aceitar', async ({ page }) => {
+    await login(page)
+    await addToCartFromDetail(page)
+    await startCheckout(page)
+    await waitForSocket(page)
+    await expect(page.getByRole('button', { name: 'Confirmar compra' })).toBeEnabled()
+
+    await page.evaluate(() => {
+      window.__mockControl?.setNftPrice('emerald-ape-042', '1.45')
+    })
+
+    await expect(page.getByRole('button', { name: 'Aceitar novo preço' })).toBeVisible()
+    await expect(page.getByRole('button', { name: 'Confirmar compra' })).toBeDisabled()
+    await page.getByRole('button', { name: 'Aceitar novo preço' }).click()
+    await expect(page.getByRole('button', { name: 'Confirmar compra' })).toBeEnabled()
   })
 
   test('NFT que está no carrinho gera aviso e atualiza o carrinho', async ({ page }) => {

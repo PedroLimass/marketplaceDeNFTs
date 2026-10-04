@@ -1,10 +1,5 @@
 export const AVATAR_SIZE = 256
 
-/**
- * Reduz a imagem para um quadrado de 256 px (recorte central) antes do envio, o que mantém o
- * avatar leve no armazenamento do mock. Se o navegador não conseguir decodificar ou desenhar,
- * segue com o arquivo original: o servidor valida tipo e tamanho de qualquer forma.
- */
 export async function resizeAvatar(file: File): Promise<Blob> {
   if (typeof createImageBitmap !== 'function' || typeof document === 'undefined') return file
 

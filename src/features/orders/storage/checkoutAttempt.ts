@@ -7,9 +7,7 @@ export const CHECKOUT_ATTEMPT_KEY = 'checkout.attempt'
 const attemptSchema = z.object({
   userId: z.string(),
   key: z.string().min(1),
-  /** Descreve o que o usuário pediu (carrinho, carteira, dados). Mudou, é outra tentativa. */
   intent: z.string(),
-  /** Corpo exatamente como foi enviado: reenvios usam o mesmo, mesmo que a cotação mude. */
   body: createOrderRequestSchema,
   orderId: z.string().optional(),
 })
@@ -35,9 +33,7 @@ export function readAttempt(userId: string): CheckoutAttempt | null {
 export function saveAttempt(attempt: CheckoutAttempt): void {
   try {
     storage()?.setItem(CHECKOUT_ATTEMPT_KEY, JSON.stringify(attempt))
-  } catch {
-    // Sem armazenamento, a tentativa vale só nesta aba: a retomada após recarregar fica de fora.
-  }
+  } catch {}
 }
 
 export function clearAttempt(): void {

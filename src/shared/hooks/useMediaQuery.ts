@@ -1,9 +1,5 @@
 import { useSyncExternalStore } from 'react'
 
-/**
- * Lê uma media query de forma síncrona (sem piscar no primeiro render). Usado só para
- * conteúdo que muda de texto entre telas; o resto da responsividade é feito em CSS.
- */
 export function useMediaQuery(query: string): boolean {
   return useSyncExternalStore(
     (notify) => {
@@ -19,5 +15,4 @@ export function useMediaQuery(query: string): boolean {
 }
 
 export const DESKTOP_QUERY = '(min-width: 768px)'
-/** A partir daqui cabem tabelas largas ao lado de um painel lateral (Tailwind `lg`). */
 export const WIDE_QUERY = '(min-width: 1024px)'

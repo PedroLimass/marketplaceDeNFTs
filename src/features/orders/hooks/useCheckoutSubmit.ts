@@ -52,15 +52,9 @@ const bodyOf = ({ quote, wallet, collector, note }: CheckoutInput): CreateOrderR
   ...(note ? { note } : {}),
 })
 
-/** Erros em que o servidor pode ter criado o pedido sem a resposta chegar. */
 const isUnknownOutcome = (error: unknown): boolean =>
   isApiError(error) && ['timeout', 'network', 'transient'].includes(error.kind)
 
-/**
- * Cria o pedido com chave de idempotência persistida. A mesma tentativa (mesmo carrinho,
- * carteira e dados) reaproveita a chave e o corpo originais, então cliques repetidos,
- * timeouts e recarregamentos nunca geram um segundo pedido.
- */
 export function useCheckoutSubmit(onPhase?: (phase: CheckoutPhase) => void) {
   const queryClient = useQueryClient()
   const [phase, setPhase] = useState<CheckoutPhase>('idle')
@@ -83,7 +77,6 @@ export function useCheckoutSubmit(onPhase?: (phase: CheckoutPhase) => void) {
       }
 
       if (attempt && attempt.intent !== intent) {
-        // A tentativa anterior pode ter virado pedido sem o cliente saber: confere antes de criar outro.
         const [pending] = await fetchPendingOrders(new AbortController().signal)
         if (pending && !attempt.orderId) {
           saveAttempt({ ...attempt, orderId: pending.id })
@@ -111,7 +104,6 @@ export function useCheckoutSubmit(onPhase?: (phase: CheckoutPhase) => void) {
       } catch (error) {
         if (!isUnknownOutcome(error)) throw error
 
-        // O pedido pode já ter sido criado (e até confirmado) sem a resposta ter chegado.
         const [recent] = await fetchOrders(new AbortController().signal).catch(() => [])
         if (!recent) throw error
         saveAttempt({ ...current, orderId: recent.id })
@@ -122,8 +114,6 @@ export function useCheckoutSubmit(onPhase?: (phase: CheckoutPhase) => void) {
       queryClient.setQueryData(orderKeys.detail(order.id), order)
     },
     onError: (error) => {
-      // Falhas definitivas encerram a tentativa. `quote_stale` espera a confirmação do usuário
-      // (ver `acknowledgeStale`) e falhas de comunicação mantêm a chave para o reenvio.
       const definitive =
         isApiError(error) &&
         error.code !== 'quote_stale' &&

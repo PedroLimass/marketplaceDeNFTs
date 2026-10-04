@@ -36,11 +36,6 @@ interface SocialSignInProps {
   onSelect: (provider: SocialProvider) => void
 }
 
-/**
- * Login social não existe neste produto de demonstração. Os botões seguem o design,
- * mas se declaram indisponíveis (aria-disabled) e avisam ao serem acionados,
- * em vez de fingir uma autenticação.
- */
 export function SocialSignIn({ onSelect }: SocialSignInProps) {
   const buttonClass = 'w-full gap-3 text-[13px]'
 

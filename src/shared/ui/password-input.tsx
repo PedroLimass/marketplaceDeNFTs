@@ -3,7 +3,6 @@ import { useState, type ComponentProps } from 'react'
 import eyeHideIcon from '@/shared/assets/icons/eye-hide.svg'
 import { Input } from '@/shared/ui/input'
 
-/** Campo de senha com botão de mostrar/ocultar. O rótulo e o erro ficam por conta de `Field`. */
 export function PasswordInput(props: Omit<ComponentProps<typeof Input>, 'type'>) {
   const [visible, setVisible] = useState(false)
 

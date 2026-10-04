@@ -1,10 +1,3 @@
-/**
- * Aritmética de ETH com precisão exata.
- *
- * Valores trafegam como strings decimais ("0.1534") e são calculados como
- * `bigint` em wei (1 ETH = 10^18 wei). Nunca usamos `number` para dinheiro.
- */
-
 export const ETH_DECIMALS = 18
 const WEI_PER_ETH = 10n ** BigInt(ETH_DECIMALS)
 const ETH_PATTERN = /^(\d+)(?:\.(\d{1,18}))?$/
@@ -62,7 +55,6 @@ export function mulEthByInt(value: string, quantity: number): string {
   return weiToEth(parseEth(value) * BigInt(quantity))
 }
 
-/** Fração do valor em pontos-base (1% = 100), em inteiros e truncando abaixo de 1 wei. */
 export function percentOfEth(value: string, basisPoints: number): string {
   if (!Number.isSafeInteger(basisPoints) || basisPoints < 0 || basisPoints > 10_000) {
     throw new RangeError(`Pontos-base devem estar entre 0 e 10000: ${String(basisPoints)}`)

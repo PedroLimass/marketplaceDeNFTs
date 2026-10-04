@@ -1,6 +1,5 @@
 import { isApiError } from '@/infrastructure/http/errors'
 
-/** Mensagem para o usuário a partir de uma falha de carrinho. */
 export function describeCartError(error: unknown): string {
   if (isApiError(error)) {
     if (error.code === 'insufficient_availability') return error.message

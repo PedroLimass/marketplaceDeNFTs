@@ -3,10 +3,6 @@ import type { Nft } from '../types/catalog'
 import { NftCard } from './NftCard'
 import { NftCardSkeleton } from './NftCardSkeleton'
 
-/**
- * Duas colunas no celular, três a partir de 560 px. No desktop largo as colunas têm a largura
- * fixa de 258 px do design. Todas as linhas ficam alinhadas.
- */
 const gridClass =
   'grid grid-cols-2 gap-x-3.5 gap-y-6 pb-8 min-[560px]:grid-cols-3 md:gap-x-6 md:gap-y-[72px] md:pb-0 xl:grid-cols-[repeat(3,258px)] xl:justify-between'
 

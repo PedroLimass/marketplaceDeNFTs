@@ -14,10 +14,6 @@ interface CatalogPaginationProps {
 const baseClass =
   'flex size-[35px] items-center justify-center rounded-sm border border-border text-lg leading-4 text-foreground outline-none focus-visible:ring-2 focus-visible:ring-text-accent'
 
-/**
- * Links reais (`/?page=2`): abrem em nova aba, funcionam com o botão voltar e podem ser
- * compartilhados. A navegação em si fica a cargo do roteador.
- */
 export function CatalogPagination({ page, totalPages, onNavigate }: CatalogPaginationProps) {
   if (totalPages <= 1) return null
 

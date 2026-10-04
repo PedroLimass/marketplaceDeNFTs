@@ -13,7 +13,6 @@ interface MobileCatalogBarProps {
   onClear: () => void
 }
 
-/** Busca e botão de filtros do topo da tela no celular (no desktop vivem no cabeçalho e na lateral). */
 export function MobileCatalogBar({ filters, list, onChange, onClear }: MobileCatalogBarProps) {
   return (
     <div className="flex items-center gap-2 md:hidden">

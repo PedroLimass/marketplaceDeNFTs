@@ -7,7 +7,6 @@ import { describeCartError } from '../hooks/cartErrors'
 import { useRemoveCartItem, useUpdateCartItem } from '../hooks/useCart'
 import type { CartItem } from '../types/cart'
 
-/** Quantidade e remoção de uma linha. Os limites vêm da API (`maxQuantity`). */
 export function CartItemControls({ item }: { item: CartItem }) {
   const update = useUpdateCartItem()
   const remove = useRemoveCartItem()

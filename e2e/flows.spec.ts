@@ -90,6 +90,40 @@ test.describe('Carrinho', () => {
     await expect(page.getByRole('link', { name: /^Carrinho, 1 item/ }).first()).toBeAttached()
   })
 
+  test('altera a quantidade e remove o item', async ({ page }) => {
+    await open(page, NFT_PATH)
+    await page.getByRole('button', { name: 'Comprar' }).click()
+    const cart = page.getByRole('main')
+    await expect(cart.getByRole('link', { name: 'Emerald Ape #042' })).toBeVisible()
+
+    await cart.getByRole('button', { name: /Aumentar quantidade/ }).click()
+    await expect(cart.getByRole('group', { name: /Quantidade de/ })).toContainText('2')
+
+    await cart.getByRole('button', { name: /Remover Emerald Ape #042/ }).click()
+    await expect(page.getByRole('heading', { name: 'Seu carrinho está vazio' })).toBeVisible()
+  })
+
+  test('aplica cupom válido, remove e recusa o expirado', async ({ page }) => {
+    await open(page, NFT_PATH)
+    await page.getByRole('button', { name: 'Comprar' }).click()
+    await expect(
+      page.getByRole('main').getByRole('link', { name: 'Emerald Ape #042' }),
+    ).toBeVisible()
+
+    const input = page.getByLabel('Código promocional')
+    await input.fill('lancamento10')
+    await page.getByRole('button', { name: 'Aplicar' }).click()
+    await expect(page.getByText('LANCAMENTO10', { exact: true })).toBeVisible()
+
+    await page.getByRole('button', { name: /Remover cupom/ }).click()
+    await expect(page.getByText('Cupom removido.')).toBeVisible()
+
+    await input.fill('EXPIRADO')
+    await page.getByRole('button', { name: 'Aplicar' }).click()
+    await expect(page.getByRole('alert').filter({ hasText: 'Este cupom expirou.' })).toBeVisible()
+    await expect(page.getByRole('link', { name: 'Emerald Ape #042' }).first()).toBeVisible()
+  })
+
   test('cupom inválido mostra o erro sem esvaziar o carrinho', async ({ page }) => {
     await open(page, NFT_PATH, 'invalid-coupon')
     await page.getByRole('button', { name: 'Comprar' }).click()
@@ -140,6 +174,39 @@ test.describe('Conta', () => {
     await expect(page.getByRole('button', { name: 'Sair' })).toBeVisible()
   })
 
+  test('perfil: valida senha, troca a senha e o avatar', async ({ page }) => {
+    await login(page, '/profile')
+
+    await page.getByRole('textbox', { name: 'Nova senha', exact: true }).fill('Nova@2027x')
+    await page.getByRole('button', { name: 'Salvar' }).click()
+    await expect(page.getByText('Informe a senha atual.')).toBeVisible()
+
+    await page.getByLabel('Senha atual').fill('Kurio@2026')
+    await page.getByRole('textbox', { name: 'Nova senha', exact: true }).fill('Nova@2027x')
+    await page.getByLabel('Confirmar nova senha').fill('Nova@2027x')
+    await page.getByRole('button', { name: 'Salvar' }).click()
+    await expect(page.getByText('Senha alterada.')).toBeVisible()
+
+    const png = Buffer.from(
+      'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==',
+      'base64',
+    )
+    await page.getByLabel('Arquivo do avatar').setInputFiles({
+      name: 'nota.gif',
+      mimeType: 'image/gif',
+      buffer: png,
+    })
+    await expect(page.getByText('Use uma imagem JPG, PNG ou WebP.')).toBeVisible()
+
+    await page.getByLabel('Arquivo do avatar').setInputFiles({
+      name: 'avatar.png',
+      mimeType: 'image/png',
+      buffer: png,
+    })
+    await expect(page.getByText('Avatar atualizado.')).toBeVisible()
+    await expect(page.getByRole('img', { name: 'Seu avatar' })).toBeVisible()
+  })
+
   test('perfil: salva o nome e o cabeçalho reflete a mudança', async ({ page }) => {
     await login(page, '/profile')
     const name = page.getByLabel(/Nome de exibição/)
@@ -153,6 +220,10 @@ test.describe('Conta', () => {
   test('carteiras: edita o apelido da carteira principal', async ({ page }) => {
     await login(page, '/profile/wallets')
     const form = page.getByRole('form', { name: 'Carteira principal' })
+    await form.getByLabel(/Apelido da carteira/).fill('')
+    await form.getByRole('button', { name: 'Salvar carteira' }).click()
+    await expect(form.getByText('Informe um apelido para a carteira.')).toBeVisible()
+
     await form.getByLabel(/Apelido da carteira/).fill('Cofre frio')
     await form.getByRole('button', { name: 'Salvar carteira' }).click()
     await expect(page.getByText('Carteira principal salva.')).toBeVisible()
@@ -238,6 +309,49 @@ test.describe('Compra', () => {
     await expect(page).toHaveURL(/\/orders\/ord_/)
   })
 
+  test('edição esgotada na confirmação não cria pedido', async ({ page }) => {
+    await buyUntilCheckout(page, 'checkout-sold-out')
+    await confirmPurchase(page)
+
+    await expect(page.getByText('Alguns itens não estão mais disponíveis')).toBeVisible()
+    await expect(page).toHaveURL(/\/checkout$/)
+  })
+
+  test('cliques repetidos não criam um segundo pedido', async ({ page }) => {
+    await buyUntilCheckout(page)
+    const keys: string[] = []
+    page.on('request', (request) => {
+      if (request.method() === 'POST' && new URL(request.url()).pathname.endsWith('/orders')) {
+        keys.push(request.headers()['idempotency-key'] ?? '')
+      }
+    })
+
+    const button = page.getByRole('button', { name: 'Confirmar compra' })
+    await expect(button).toBeEnabled()
+    await button.evaluate((element: HTMLButtonElement) => {
+      element.click()
+      element.click()
+      element.click()
+    })
+
+    await expect(page).toHaveURL(/\/orders\/ord_/)
+    expect(new Set(keys.filter(Boolean)).size).toBeLessThanOrEqual(1)
+  })
+
+  test('desconectar a carteira bloqueia a compra até conectar de novo', async ({ page }) => {
+    await buyUntilCheckout(page)
+    const summary = page.getByRole('complementary', { name: 'Seus NFTs' })
+
+    await summary.getByRole('button', { name: 'Desconectar' }).click()
+    await expect(summary.getByRole('status')).toHaveText('Carteira desconectada')
+    await expect(summary.getByRole('button', { name: 'Confirmar compra' })).toBeDisabled()
+    await expect(summary.getByText('Conecte a carteira para continuar.')).toBeVisible()
+
+    await summary.getByRole('button', { name: 'Conectar' }).click()
+    await expect(summary.getByRole('status')).toHaveText('Carteira conectada')
+    await expect(summary.getByRole('button', { name: 'Confirmar compra' })).toBeEnabled()
+  })
+
   test('carteira que recusa a conexão não cria pedido', async ({ page }) => {
     await buyUntilCheckout(page, 'wallet-refused')
     await confirmPurchase(page)
@@ -309,9 +423,11 @@ test.describe('Favoritos e sessão entre usuários', () => {
       window.__mockControl?.applyScenario('server-error')
     })
 
-    await page.getByRole('button', { name: 'Favoritar', exact: true }).click()
+    const favorite = page.getByRole('button', { name: /^Favoritar/ })
+    await favorite.click()
     await expect(page.getByText('Não foi possível adicionar aos favoritos')).toBeVisible()
-    await expect(page.getByRole('button', { name: 'Favoritar', exact: true })).toBeVisible()
+    await expect(favorite).toBeVisible()
+    await expect(favorite).toHaveAttribute('aria-pressed', 'false')
   })
 
   test('trocar de usuário isola o carrinho', async ({ page }) => {
@@ -334,7 +450,6 @@ test.describe('Pedido com timeout e carregamento lento', () => {
     await buyUntilCheckout(page, 'order-timeout')
     await confirmPurchase(page)
 
-    // O POST demora mais que o timeout, mas o pedido já existe: o cliente recupera pelo GET.
     await expect(page).toHaveURL(/\/orders\/ord_/, { timeout: 25_000 })
     await expect(
       page.getByRole('heading', {
@@ -380,7 +495,6 @@ test.describe('Acessibilidade básica', () => {
           const hasRing = /\) 0px 0px 0px [1-9]\d*px/.test(style.boxShadow)
           return hasOutline || hasRing
         }
-        // Cards e campos compostos mostram o foco no contêiner (article / focus-within).
         let target: Element | null = el
         for (let depth = 0; depth < 4 && target; depth += 1) {
           if (visible(target)) return 'ok'

@@ -18,8 +18,6 @@ import type { RouterContext } from './context'
 import { redirectIfAuthenticated, requireAuth } from './guards'
 
 export const rootRoute = createRootRouteWithContext<RouterContext>()({
-  // A sessão é resolvida antes da primeira tela para o cabeçalho não piscar como visitante.
-  // Uma falha aqui não derruba o app: o cabeçalho tenta de novo pela própria consulta.
   beforeLoad: async ({ context }) => {
     await ensureSession(context.queryClient).catch(() => null)
   },
@@ -29,10 +27,6 @@ export const rootRoute = createRootRouteWithContext<RouterContext>()({
 
 const noop = () => undefined
 
-/**
- * Início e Detalhe (as telas de entrada) ficam no pacote principal; o resto carrega sob
- * demanda para o primeiro acesso não pagar pelo código de pagamento, perfil e carteiras.
- */
 function lazyPage<Props extends object, Name extends string>(
   importer: () => Promise<Record<Name, ComponentType<Props>>>,
   name: Name,
@@ -51,8 +45,6 @@ const homeRoute = createRoute({
   path: '/',
   validateSearch: validateCatalogSearch,
   loaderDeps: ({ search }) => ({ search }),
-  // Dispara as consultas sem aguardar: a tela abre na hora com skeletons em vez de ficar
-  // presa na navegação, e a primeira carga não espera a árvore de componentes montar.
   loader: ({ context, deps }) => {
     void context.queryClient.query(nftListQueryOptions(searchToFilters(deps.search))).catch(noop)
     void context.queryClient.query(featuredNftsQueryOptions()).catch(noop)
@@ -126,11 +118,6 @@ const walletsRoute = createRoute({
   ),
 })
 
-/**
- * O roteador mescla o resultado desta função sobre a busca bruta da URL. Por isso um
- * destino inválido precisa voltar como `redirect: undefined`, e não simplesmente sumir:
- * omitir a chave deixaria o valor original (e inseguro) passar adiante.
- */
 const authSearch = (search: Record<string, unknown>): { redirect?: string | undefined } => ({
   redirect: safeRedirect(search.redirect),
 })

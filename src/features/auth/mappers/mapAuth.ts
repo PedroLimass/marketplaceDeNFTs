@@ -20,7 +20,6 @@ export function mapAuthResponse(dto: AuthResponse): AuthResult {
   }
 }
 
-/** Visitante (sem sessão) vira `null`, em vez de um objeto parcial. */
 export function mapSessionResponse(dto: SessionResponse): Session | null {
   if (!dto.user || !dto.expires_at) return null
 

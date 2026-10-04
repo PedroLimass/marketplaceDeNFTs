@@ -153,7 +153,6 @@ export function ProfileForm({ profile }: { profile: Profile }) {
           new_password: values.newPassword,
         })
       } catch (error) {
-        // Os dados do perfil já foram salvos; só a senha falhou e o formulário reflete isso.
         reset({ ...toDefaults(saved), ...emptyPasswords }, { keepErrors: false })
         if (isApiError(error) && error.code === 'invalid_current_password') {
           setError('currentPassword', { type: 'server', message: 'A senha atual está incorreta.' })

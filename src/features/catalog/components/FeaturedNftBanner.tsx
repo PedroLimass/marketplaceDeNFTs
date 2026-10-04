@@ -2,7 +2,6 @@ import { Skeleton } from '@/shared/ui/skeleton'
 
 import { useFeaturedNfts } from '../hooks/useCatalog'
 
-/** O destaque é complementar: se falhar, some em silêncio em vez de poluir a tela com erro. */
 export function FeaturedNftBanner() {
   const { data, isPending } = useFeaturedNfts()
 

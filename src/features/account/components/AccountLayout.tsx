@@ -25,7 +25,6 @@ const availableItems: readonly AvailableItem[] = [
   { label: 'Carteiras', to: '/profile/wallets', icon: Wallet },
 ]
 
-/** Itens do menu do Figma que ficam fora do escopo: aparecem, mas sem fingir que funcionam. */
 const unavailableItems: readonly { label: string; icon: LucideIcon }[] = [
   { label: 'Atividade', icon: ShoppingBag },
   { label: 'Lista de observação', icon: Heart },
@@ -106,10 +105,6 @@ function DesktopMenu() {
   )
 }
 
-/**
- * Abaixo de 1024 px o menu lateral vira abas no topo; os itens indisponíveis ficam de fora.
- * O "Sair" já está no cabeçalho, então não se repete aqui.
- */
 function CompactMenu() {
   return (
     <nav aria-label="Conta" className="lg:hidden">

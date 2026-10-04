@@ -16,7 +16,6 @@ export interface Nft {
   tokenId: string
   name: string
   priceEth: string
-  /** Preço antes da oferta, mostrado ao lado do atual; `null` quando não há promoção. */
   previousPriceEth: string | null
   imageUrl: string
   thumbnailUrl: string
@@ -72,7 +71,6 @@ export interface FeaturedNfts {
   trending: Nft[]
 }
 
-/** Estado do catálogo que vive na URL: é a fonte de verdade de filtros, aba, ordem e página. */
 export interface CatalogFilters {
   q: string
   categories: string[]

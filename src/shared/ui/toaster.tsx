@@ -9,10 +9,6 @@ const kindClass: Record<ToastKind, string> = {
   info: 'border-border-soft',
 }
 
-/**
- * Região de avisos. Erros usam `role="alert"` (anunciado na hora); os demais, `status`
- * (anunciado quando o leitor de tela estiver livre).
- */
 export function Toaster() {
   const toasts = useToasts()
 

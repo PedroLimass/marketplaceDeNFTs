@@ -25,7 +25,6 @@ export const registerRequestSchema = z.object({
   password: passwordSchema,
 })
 
-/** Formulário de cadastro: a confirmação só existe no cliente e nunca vai para a API. */
 export const registerFormSchema = registerRequestSchema
   .extend({ confirmPassword: z.string().min(1, 'Confirme a senha.') })
   .refine((values) => values.password === values.confirmPassword, {

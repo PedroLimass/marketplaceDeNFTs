@@ -6,7 +6,6 @@ import twitterIcon from '../assets/share-twitter.svg'
 const linkClass =
   'flex size-8 items-center justify-center rounded-sm outline-none focus-visible:ring-2 focus-visible:ring-primary'
 
-/** Links de compartilhamento reais, abertos em outra aba. */
 export function ShareLinks({ title, url }: { title: string; url: string }) {
   const encodedUrl = encodeURIComponent(url)
   const encodedText = encodeURIComponent(`Veja ${title} na Kurio`)

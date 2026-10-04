@@ -30,7 +30,6 @@ export function useLogout() {
 
   return useMutation({
     mutationFn: logout,
-    // Sair precisa funcionar mesmo offline ou com o token já vencido.
     onSettled: () => {
       endSession(queryClient)
     },

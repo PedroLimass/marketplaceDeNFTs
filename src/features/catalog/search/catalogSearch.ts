@@ -9,10 +9,6 @@ import {
 } from '../schemas/catalog.schemas'
 import type { CatalogFilters } from '../types/catalog'
 
-/**
- * Forma do estado do catálogo na URL. Valores padrão ficam de fora (`undefined`), então
- * `/` e `/?page=1` são a mesma tela e a URL fica curta e compartilhável.
- */
 export interface CatalogSearch {
   q?: string | undefined
   category?: string[] | undefined
@@ -46,15 +42,10 @@ function asText(value: unknown): string | undefined {
   return typeof value === 'string' ? value : undefined
 }
 
-/** Ordena e remove duplicatas, para que a mesma seleção sempre gere a mesma chave de cache. */
 function uniqueSorted<T extends string>(values: T[]): T[] {
   return [...new Set(values)].sort()
 }
 
-/**
- * Lê a busca bruta da URL sem nunca lançar: qualquer valor inválido (digitado à mão ou de um
- * link antigo) é descartado e a tela abre com o padrão.
- */
 export function validateCatalogSearch(raw: Record<string, unknown>): CatalogSearch {
   const q = asText(raw.q)?.trim().slice(0, MAX_SEARCH_LENGTH)
 
@@ -69,7 +60,6 @@ export function validateCatalogSearch(raw: Record<string, unknown>): CatalogSear
 
   const listing = asText(raw.listing)
   const sort = asText(raw.sort)
-  // Aceita número porque a busca já validada pelo roteador volta a passar por aqui.
   const page = typeof raw.page === 'number' ? raw.page : Number(asText(raw.page))
 
   return {
@@ -110,7 +100,6 @@ export function filtersToSearch(filters: CatalogFilters): CatalogSearch {
   })
 }
 
-/** Filtros que o usuário pode limpar (aba, ordem e página não contam). */
 export function countActiveFilters(filters: CatalogFilters): number {
   return (
     (filters.q ? 1 : 0) +

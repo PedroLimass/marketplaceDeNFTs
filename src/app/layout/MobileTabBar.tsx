@@ -50,7 +50,6 @@ function TabLink({
   )
 }
 
-/** Foca o campo de busca do Início (ele só existe nessa tela, na marcação mobile). */
 function focusCatalogSearch(): void {
   requestAnimationFrame(() => {
     const field = document.querySelector<HTMLInputElement>('main input[type="search"]')
@@ -59,10 +58,6 @@ function focusCatalogSearch(): void {
   })
 }
 
-/**
- * Barra de abas inferior do mobile (Figma "Início"), com o botão central de busca. Fica de fora
- * do pagamento e do recibo, que são fluxos com uma única ação principal.
- */
 export function MobileTabBar() {
   const pathname = useRouterState({ select: (state) => state.location.pathname })
   const navigate = useNavigate()

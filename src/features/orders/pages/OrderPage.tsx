@@ -25,27 +25,58 @@ export function OrderPage({ orderId }: { orderId: string }) {
     }
   }, [])
 
-  // Com o resultado final em mãos, a tentativa de compra termina e uma nova usa outra chave.
   useEffect(() => {
     if (!userId || !status || status === 'pending') return
     if (readAttempt(userId)?.orderId === orderId) clearAttempt()
   }, [userId, status, orderId])
 
-  let body: React.ReactNode
-  if (order.isPending) body = <OrderSkeleton />
-  else if (order.isError) {
-    body = (
-      <OrderLoadError
-        error={order.error}
-        onRetry={() => {
-          void order.refetch()
-        }}
-      />
+  if (order.isPending) {
+    return (
+      <PageChrome>
+        <OrderSkeleton />
+      </PageChrome>
     )
-  } else if (order.data.status === 'confirmed') body = <OrderReceipt order={order.data} />
-  else if (order.data.status === 'rejected') body = <OrderRejected order={order.data} />
-  else body = <OrderPending order={order.data} />
+  }
 
+  if (order.isError) {
+    return (
+      <PageChrome>
+        <OrderLoadError
+          error={order.error}
+          onRetry={() => {
+            void order.refetch()
+          }}
+        />
+      </PageChrome>
+    )
+  }
+
+  if (order.data.status === 'confirmed') {
+    return (
+      <div className="fixed inset-0 z-50 overflow-y-auto bg-ink">
+        <div className="flex min-h-dvh items-start justify-center px-4 py-10 md:pt-[166px] md:pb-24">
+          <OrderReceipt order={order.data} />
+        </div>
+      </div>
+    )
+  }
+
+  if (order.data.status === 'rejected') {
+    return (
+      <PageChrome>
+        <OrderRejected order={order.data} />
+      </PageChrome>
+    )
+  }
+
+  return (
+    <PageChrome>
+      <OrderPending order={order.data} />
+    </PageChrome>
+  )
+}
+
+function PageChrome({ children }: { children: React.ReactNode }) {
   return (
     <div className="mx-auto flex w-full max-w-[1200px] flex-col gap-7 px-4 pt-8 pb-24 md:px-8 xl:px-0">
       <nav aria-label="Trilha de navegação">
@@ -64,7 +95,7 @@ export function OrderPage({ orderId }: { orderId: string }) {
           </li>
         </ol>
       </nav>
-      {body}
+      {children}
     </div>
   )
 }

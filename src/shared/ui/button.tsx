@@ -5,11 +5,6 @@ import { Slot } from 'radix-ui'
 
 import { cn } from '@/shared/lib/utils'
 
-/**
- * Único ponto de definição dos botões do produto. Os tamanhos seguem a altura dos botões do
- * Figma (35, 40 e 45 px) arredondada para a escala 36 / 40 / 48, e no celular o alvo de toque
- * nunca fica abaixo de 40 px.
- */
 const buttonVariants = cva(
   [
     'inline-flex shrink-0 cursor-pointer items-center justify-center gap-2 rounded-[6px] font-bold whitespace-nowrap select-none',
@@ -47,7 +42,6 @@ const buttonVariants = cva(
 type ButtonProps = React.ComponentProps<'button'> &
   VariantProps<typeof buttonVariants> & {
     asChild?: boolean
-    /** Desabilita o botão, marca `aria-busy` e mostra um indicador de carregamento. */
     loading?: boolean
   }
 

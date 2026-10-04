@@ -8,7 +8,6 @@ const badgeLabels = { rare: 'RARO', limited: 'LIMITADO' } as const
 
 interface NftCardProps {
   nft: Nft
-  /** Cards da primeira fileira carregam já; os demais esperam a rolagem. */
   priority?: boolean
 }
 
@@ -26,7 +25,6 @@ export function NftCard({ nft, priority = false }: NftCardProps) {
           className={`aspect-square w-full rounded-2xl object-cover motion-safe:transition-transform motion-safe:duration-300 motion-safe:group-hover:scale-[1.02] md:rounded-[15px] ${nft.status === 'sold_out' ? 'opacity-50' : ''}`}
         />
         {nft.badge ? (
-          // No desktop o design não mostra selo nos cards; só o mobile mostra o "RARO".
           <span className="absolute top-4 left-0 bg-primary px-2 py-2 text-[13px] leading-4 font-medium text-ink md:hidden">
             {badgeLabels[nft.badge]}
           </span>
@@ -40,7 +38,6 @@ export function NftCard({ nft, priority = false }: NftCardProps) {
 
       <div className="flex flex-col pl-2 md:gap-3 md:pl-0">
         <h3 className="text-[15px] leading-[1.2] text-foreground md:text-base md:leading-4">
-          {/* O link cobre o card inteiro (after:absolute) para o alvo de clique ser o card todo. */}
           <Link
             to="/nfts/$nftId"
             params={{ nftId: nft.id }}

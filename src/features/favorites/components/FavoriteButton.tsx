@@ -10,7 +10,6 @@ import { useFavoriteIds, useToggleFavorite } from '../hooks/useFavorites'
 interface FavoriteButtonProps {
   nftId: string
   nftName: string
-  /** `text` é o botão "Favoritar" do desktop; `icon` é o coração circular do mobile. */
   variant?: 'text' | 'icon'
   className?: string
 }

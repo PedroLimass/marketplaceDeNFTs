@@ -17,11 +17,6 @@ function IssueRow({ children, action }: { children: React.ReactNode; action: Rea
   )
 }
 
-/**
- * Mudanças de preço e disponibilidade encontradas no carrinho. É uma região `role="status"`,
- * então leitores de tela anunciam quando uma alteração (inclusive em tempo real) aparece.
- * Enquanto houver pendências, o pagamento fica bloqueado (ver `CartSummary`).
- */
 export function CartIssues({ items }: { items: CartItem[] }) {
   const update = useUpdateCartItem()
   const remove = useRemoveCartItem()

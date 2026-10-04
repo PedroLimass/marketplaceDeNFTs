@@ -1,9 +1,5 @@
 export type PageItem = number | 'ellipsis-start' | 'ellipsis-end'
 
-/**
- * Páginas a exibir: primeira, última e a vizinhança da atual, com reticências nos buracos.
- * Até 7 páginas aparecem todas (o catálogo do design tem 4).
- */
 export function getPageItems(page: number, totalPages: number, siblings = 1): PageItem[] {
   if (totalPages <= 0) return []
 

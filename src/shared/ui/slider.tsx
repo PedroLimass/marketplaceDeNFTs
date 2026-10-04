@@ -5,7 +5,6 @@ import { cn } from '@/shared/lib/utils'
 
 interface RangeSliderProps extends Omit<ComponentProps<typeof SliderPrimitive.Root>, 'value'> {
   value: number[]
-  /** Um rótulo acessível por alça (ex.: "Preço mínimo" e "Preço máximo"). */
   thumbLabels: string[]
 }
 

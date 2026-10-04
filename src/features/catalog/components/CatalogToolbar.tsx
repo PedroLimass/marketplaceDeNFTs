@@ -25,7 +25,6 @@ interface CatalogToolbarProps {
 const tabClass =
   'snap-start shrink-0 relative cursor-pointer pb-1 text-[13px] leading-4 whitespace-nowrap text-foreground outline-none after:absolute after:inset-x-0 after:bottom-0 after:hidden after:h-0.5 after:bg-primary after:content-[""] focus-visible:ring-2 focus-visible:ring-primary data-[state=active]:font-bold data-[state=active]:text-text-accent data-[state=active]:after:block md:pb-[7px] md:text-[15px] md:font-medium md:data-[state=active]:font-medium'
 
-/** Abas e ordenação. Precisa estar dentro de `Tabs.Root` (ver `CatalogSection`). */
 export function CatalogToolbar({ sort, onSortChange }: CatalogToolbarProps) {
   return (
     <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-4">

@@ -1,8 +1,8 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useQueryClient } from '@tanstack/react-query'
 import { Link, useNavigate } from '@tanstack/react-router'
-import { ShoppingCart, Wallet as WalletIcon } from 'lucide-react'
-import { useEffect, useId, useState } from 'react'
+import { ArrowLeft, ShoppingCart, Wallet as WalletIcon } from 'lucide-react'
+import { useEffect, useId, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
@@ -16,14 +16,13 @@ import type { CartItem, Quote } from '@/features/cart/types/cart'
 import { useWallets } from '@/features/wallets/hooks/useWallets'
 import type { Wallet } from '@/features/wallets/types/wallet'
 import { Button, buttonVariants } from '@/shared/ui/button'
-import { Field } from '@/shared/ui/field'
-import { Input } from '@/shared/ui/input'
 import { Skeleton } from '@/shared/ui/skeleton'
 
 import { fetchPendingOrders, staleQuoteOf } from '../api/ordersApi'
+import { CheckoutCollectorForm } from '../components/CheckoutCollectorForm'
+import { CheckoutConnectedWallets } from '../components/CheckoutConnectedWallets'
 import { CheckoutNotices, type StaleChange } from '../components/CheckoutNotices'
 import { CheckoutSummary } from '../components/CheckoutSummary'
-import { WalletPicker } from '../components/WalletPicker'
 import { useCheckoutSubmit } from '../hooks/useCheckoutSubmit'
 import { collectorSchema } from '../schemas/order.schemas'
 import { clearAttempt, readAttempt, saveAttempt } from '../storage/checkoutAttempt'
@@ -71,6 +70,7 @@ function CheckoutContent({ user, items, wallets, primary }: CheckoutContentProps
   const submit = useCheckoutSubmit()
 
   const wallet = wallets.find((candidate) => candidate.id === walletId) ?? primary
+  const busy = useRef(false)
 
   const {
     register,
@@ -82,7 +82,8 @@ function CheckoutContent({ user, items, wallets, primary }: CheckoutContentProps
   })
 
   const onSubmit = (values: FormOutput) => {
-    if (submit.isPending || !quote) return
+    if (busy.current || submit.isPending || !quote) return
+    busy.current = true
 
     submit.mutate(
       {
@@ -100,6 +101,9 @@ function CheckoutContent({ user, items, wallets, primary }: CheckoutContentProps
           const next = staleQuoteOf(error)
           if (next) setStale({ from: quote.totalEth, to: next.totalEth })
         },
+        onSettled: () => {
+          busy.current = false
+        },
       },
     )
   }
@@ -111,94 +115,71 @@ function CheckoutContent({ user, items, wallets, primary }: CheckoutContentProps
     void queryClient.invalidateQueries({ queryKey: cartKeys.all })
   }
 
+  const selectWallet = (id: string) => {
+    setWalletId(id)
+    submit.reset()
+  }
+
   return (
-    <div className="grid gap-12 lg:grid-cols-[minmax(0,1fr)_332px] lg:gap-[86px]">
-      <div className="flex min-w-0 flex-col gap-8">
-        <CartIssues items={items} />
+    <div className="flex flex-col gap-8">
+      <div className="flex items-center gap-6 md:hidden">
+        <Button asChild variant="outline" size="icon" className="size-[35px] rounded-full">
+          <Link to="/cart" aria-label="Voltar ao carrinho">
+            <ArrowLeft />
+          </Link>
+        </Button>
+        <p className="text-[15px] leading-4 font-bold text-foreground">Pagamento com carteira</p>
+      </div>
 
-        <form
-          id={formId}
-          noValidate
-          onSubmit={(event) => {
-            void handleSubmit(onSubmit)(event)
-          }}
-          className="flex flex-col gap-10"
-        >
-          <section aria-labelledby="colecionador-titulo" className="flex flex-col gap-6">
-            <h2
-              id="colecionador-titulo"
-              className="text-base leading-4 font-bold text-text-primary"
-            >
-              Perfil do colecionador
-            </h2>
-            <div className="grid gap-x-7 gap-y-6 md:grid-cols-2">
-              <Field label="Nome de exibição" required error={errors.display_name?.message}>
-                {(control) => (
-                  <Input
-                    {...control}
-                    autoComplete="name"
-                    disabled={submit.isPending}
-                    {...register('display_name')}
-                  />
-                )}
-              </Field>
-              <Field label="E-mail" required error={errors.email?.message}>
-                {(control) => (
-                  <Input
-                    {...control}
-                    type="email"
-                    autoComplete="email"
-                    disabled={submit.isPending}
-                    {...register('email')}
-                  />
-                )}
-              </Field>
-              <Field
-                label="Observação do colecionador (opcional)"
-                error={errors.note?.message}
-                className="md:col-span-2"
-              >
-                {(control) => (
-                  <textarea
-                    {...control}
-                    rows={3}
-                    maxLength={280}
-                    disabled={submit.isPending}
-                    className="w-full resize-y rounded-[10px] border border-border bg-transparent px-4 py-3 text-base text-foreground outline-none placeholder:text-brand-secondary focus-visible:border-primary aria-invalid:border-destructive md:rounded-[5px] md:text-sm"
-                    {...register('note')}
-                  />
-                )}
-              </Field>
-            </div>
-          </section>
+      <CartIssues items={items} />
 
-          <WalletPicker
+      <form
+        id={formId}
+        noValidate
+        onSubmit={(event) => {
+          void handleSubmit(onSubmit)(event)
+        }}
+        className="flex flex-col gap-8 xl:flex-row xl:items-start xl:gap-8"
+      >
+        <div className="flex min-w-0 flex-1 flex-col gap-8">
+          <CheckoutConnectedWallets
             wallets={wallets}
             value={wallet.id}
             disabled={submit.isPending}
-            onChange={(id) => {
-              setWalletId(id)
-              submit.reset()
-            }}
+            onChange={selectWallet}
           />
-        </form>
+          <CheckoutCollectorForm
+            user={user}
+            wallet={wallet}
+            wallets={wallets}
+            disabled={submit.isPending}
+            register={register}
+            errors={errors}
+            onSelectWallet={selectWallet}
+          />
+          <CheckoutNotices
+            error={submit.error}
+            stale={stale}
+            onAcknowledgeStale={acknowledgeStale}
+          />
+        </div>
 
-        <CheckoutNotices error={submit.error} stale={stale} onAcknowledgeStale={acknowledgeStale} />
-      </div>
-
-      <CheckoutSummary
-        items={items}
-        network={wallet.network}
-        phase={submit.phase}
-        submitting={submit.isPending}
-        formId={formId}
-        onQuote={setQuote}
-      />
+        <CheckoutSummary
+          items={items}
+          wallets={wallets}
+          walletId={wallet.id}
+          network={wallet.network}
+          phase={submit.phase}
+          submitting={submit.isPending}
+          formId={formId}
+          onSelectWallet={selectWallet}
+          onQuote={setQuote}
+        />
+      </form>
     </div>
   )
 }
 
-/** Retoma uma compra em andamento (por exemplo, depois de recarregar a página no meio dela). */
 function useResumePendingOrder(userId: string | undefined) {
   const navigate = useNavigate()
 
@@ -308,24 +289,32 @@ export function CheckoutPage() {
 
   return (
     <div className="mx-auto flex w-full max-w-[1200px] flex-col gap-7 px-4 pt-8 pb-24 md:px-8 xl:px-0">
-      <nav aria-label="Trilha de navegação">
-        <ol className="flex flex-wrap items-center gap-2 text-sm text-text-secondary">
+      <nav aria-label="Trilha de navegação" className="hidden md:block">
+        <ol className="flex flex-wrap items-center gap-2 text-[15px] leading-4 font-bold text-foreground">
           <li>
             <Link
-              to="/cart"
-              className="rounded-sm outline-none hover:text-foreground focus-visible:ring-2 focus-visible:ring-primary"
+              to="/"
+              className="rounded-sm outline-none hover:text-text-accent focus-visible:ring-2 focus-visible:ring-primary"
             >
-              Carrinho
+              Início
             </Link>
           </li>
           <li aria-hidden="true">/</li>
-          <li aria-current="page" className="text-foreground">
-            Pagamento
+          <li>
+            <Link
+              to="/"
+              hash="catalogo"
+              className="rounded-sm outline-none hover:text-text-accent focus-visible:ring-2 focus-visible:ring-primary"
+            >
+              Mercado
+            </Link>
           </li>
+          <li aria-hidden="true">/</li>
+          <li aria-current="page">Pagamento</li>
         </ol>
       </nav>
 
-      <h1 className="text-xl font-bold text-text-primary">Pagamento</h1>
+      <h1 className="text-[17px] leading-4 font-bold text-text-primary">Pagamento</h1>
       {body}
     </div>
   )

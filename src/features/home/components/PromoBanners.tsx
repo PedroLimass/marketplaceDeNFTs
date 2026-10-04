@@ -66,7 +66,6 @@ function PromoCard({ promo }: { promo: Promo }) {
             <p className="text-sm leading-6 text-pretty text-text-secondary">{promo.description}</p>
           </div>
 
-          {/* O link cobre o card inteiro (after:absolute) para o alvo de clique ser o banner todo. */}
           <Link
             to="/"
             search={promo.listing ? { listing: promo.listing } : {}}
@@ -101,11 +100,6 @@ function PromoCard({ promo }: { promo: Promo }) {
   )
 }
 
-/**
- * Dois destaques lado a lado a partir de `lg`. O layout interno de cada banner depende da largura
- * do próprio card (consulta de contêiner): com ~576 px ou mais é o do Figma (imagem à esquerda,
- * texto à direita); mais estreito, a imagem vai para cima e o texto para baixo.
- */
 export function PromoBanners() {
   return (
     <section

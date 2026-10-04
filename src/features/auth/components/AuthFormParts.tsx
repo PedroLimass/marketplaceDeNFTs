@@ -2,7 +2,6 @@ import type { ReactNode } from 'react'
 
 import { Button } from '@/shared/ui/button'
 
-/** Mensagens do formulário como um todo. Erros são anunciados na hora; avisos, com calma. */
 export function FormMessage({ tone, children }: { tone: 'error' | 'info'; children: ReactNode }) {
   if (!children) return null
 

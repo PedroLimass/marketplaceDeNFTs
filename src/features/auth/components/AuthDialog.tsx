@@ -11,7 +11,6 @@ export type AuthMode = 'login' | 'signup'
 
 interface AuthDialogProps {
   mode: AuthMode
-  /** Destino após autenticar; é repassado entre Entrar e Criar conta. */
   redirect: string | undefined
   onClose: () => void
   onAuthenticated: () => void
@@ -30,10 +29,6 @@ const copy = {
   },
 } as const
 
-/**
- * Desktop: modal sobre a página (frames "Sign In / Sign Up Modal").
- * Mobile: tela cheia, sem cabeçalho do site (frames "Mobile / Login").
- */
 export function AuthDialog({ mode, redirect, onClose, onAuthenticated }: AuthDialogProps) {
   const text = copy[mode]
   const search = redirect ? { redirect } : {}

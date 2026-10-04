@@ -29,8 +29,6 @@ export function ProfilePage() {
     )
   }
 
-  // A chave recria o formulário quando o servidor devolve dados diferentes dos exibidos. O avatar
-  // fica de fora: ele é salvo à parte e não pode descartar o que a pessoa está digitando.
   const formKey = JSON.stringify({ ...profile.data, avatarUrl: null })
   return <ProfileForm key={formKey} profile={profile.data} />
 }

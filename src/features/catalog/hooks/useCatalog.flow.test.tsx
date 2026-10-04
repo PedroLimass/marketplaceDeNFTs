@@ -95,7 +95,6 @@ describe('useNftList', () => {
       ({ filters }: { filters: CatalogFilters }) => useNftList(filters),
       { wrapper, initialProps: { filters: withFilters({ q: 'ape' }) } },
     )
-    // A 1ª requisição é a lenta (1,2 s); a 2ª, disparada logo em seguida, é a rápida (100 ms).
     await waitFor(() => {
       expect(result.current.isFetching).toBe(true)
     })

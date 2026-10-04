@@ -27,13 +27,11 @@ export function useBuyActions(nft: NftDetail, selection: PurchaseSelection) {
 
   return {
     pending: addToCart.isPending,
-    /** Adiciona ao carrinho e segue para ele. */
     buyNow: () => {
       run(() => {
         void navigate({ to: '/cart' })
       })
     },
-    /** Adiciona ao carrinho e fica na página. */
     addOnly: () => {
       run(() => {
         toast.success(`${nft.name} foi adicionado ao carrinho.`)

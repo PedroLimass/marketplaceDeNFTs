@@ -15,11 +15,9 @@ interface FieldProps {
   error?: string | undefined
   hint?: string
   className?: string
-  /** Recebe os atributos que ligam o controle ao rótulo, ao erro e à dica. */
   children: (control: FieldControlProps) => ReactNode
 }
 
-/** Rótulo visível + controle + erro, para formulários de conta. */
 export function Field({ label, required, error, hint, className, children }: FieldProps) {
   const id = useId()
   const errorId = `${id}-error`

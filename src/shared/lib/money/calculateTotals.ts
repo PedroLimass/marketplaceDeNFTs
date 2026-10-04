@@ -7,9 +7,7 @@ export interface TotalsLine {
 
 export interface TotalsInput {
   lines: readonly TotalsLine[]
-  /** Desconto informado pela cotação da API. */
   discountEth?: string | undefined
-  /** Taxa de rede informada pela cotação da API. */
   networkFeeEth?: string | undefined
 }
 
@@ -20,10 +18,6 @@ export interface Totals {
   totalEth: string
 }
 
-/**
- * Compõe o resumo exibido ao usuário: subtotal - desconto + taxa de rede.
- * O desconto nunca excede o subtotal, evitando totais negativos.
- */
 export function calculateTotals({
   lines,
   discountEth = '0',

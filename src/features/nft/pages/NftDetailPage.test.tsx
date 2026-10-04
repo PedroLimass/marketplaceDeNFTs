@@ -8,6 +8,7 @@ import { initMockDb, resetMockDb } from '@/mocks/db/mockDb'
 import { handlers } from '@/mocks/handlers'
 import { setScenario } from '@/mocks/scenarios/current'
 import { toast } from '@/shared/lib/toast'
+import { stubMatchMedia } from '@/test/matchMedia'
 import { renderAppAt } from '@/test/renderApp'
 
 const server = setupServer(...handlers)
@@ -117,6 +118,44 @@ describe('Detalhes do NFT', () => {
         'aria-pressed',
         'false',
       )
+    })
+  })
+
+  it('mostra o layout mobile, adiciona ao carrinho e amplia a galeria', async () => {
+    stubMatchMedia(false)
+    const { user } = await renderAppAt('/nfts/emerald-ape-042')
+
+    expect(await screen.findByRole('heading', { level: 1, name: 'Emerald Ape #042' })).toBeVisible()
+    expect(screen.getByRole('button', { name: 'Comprar NFT' })).toBeVisible()
+    expect(screen.getByRole('button', { name: 'Adicionar ao carrinho' })).toBeVisible()
+    expect(screen.getByRole('link', { name: 'Voltar ao início' })).toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: 'Adicionar ao carrinho' }))
+    expect(await screen.findByText('Emerald Ape #042 foi adicionado ao carrinho.')).toBeVisible()
+
+    const nextImage = screen.queryByRole('button', { name: /Ver imagem 2/ })
+    if (nextImage) await user.click(nextImage)
+    await user.click(screen.getByRole('button', { name: /Ampliar imagem/ }))
+    expect(await screen.findByRole('dialog')).toBeInTheDocument()
+  })
+
+  it('mostra o erro de carga e tenta de novo', async () => {
+    setScenario('server-error')
+    const { user } = await renderAppAt('/nfts/emerald-ape-042')
+
+    expect(await screen.findByRole('heading', { name: /Não foi possível carregar/ })).toBeVisible()
+    setScenario('default')
+    await user.click(screen.getByRole('button', { name: 'Tentar novamente' }))
+    expect(await screen.findByRole('heading', { level: 1, name: 'Emerald Ape #042' })).toBeVisible()
+  })
+
+  it('leva o visitante ao login ao favoritar', async () => {
+    const { user, router } = await renderAppAt('/nfts/emerald-ape-042')
+    await screen.findByRole('heading', { level: 1, name: 'Emerald Ape #042' })
+
+    await user.click(screen.getByRole('button', { name: /favorit/i }))
+    await waitFor(() => {
+      expect(router.state.location.pathname).toBe('/login')
     })
   })
 })

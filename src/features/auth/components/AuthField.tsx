@@ -4,7 +4,6 @@ import eyeHideIcon from '@/shared/assets/icons/eye-hide.svg'
 import { Input } from '@/shared/ui/input'
 
 interface AuthFieldProps extends Omit<ComponentProps<typeof Input>, 'id'> {
-  /** O design usa só placeholder; o rótulo existe para leitores de tela. */
   label: string
   error?: string | undefined
 }

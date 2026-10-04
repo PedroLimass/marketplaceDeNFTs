@@ -21,7 +21,6 @@ export type Scenario =
 
 export const NOVA = { email: 'nova@kurio.test', password: 'Kurio@2026' }
 
-/** Abre a página com o cenário do mock escolhido pela URL e espera os mocks ficarem prontos. */
 export async function open(page: Page, path = '/', scenario: Scenario = 'default') {
   const separator = path.includes('?') ? '&' : '?'
   await page.goto(`${path}${separator}scenario=${scenario}`)
@@ -37,7 +36,6 @@ export async function login(page: Page, redirect = '/', credentials = NOVA) {
   await expect(page).not.toHaveURL(/\/login/)
 }
 
-/** Espera o socket do app conectar ao servidor Socket.IO do mock. */
 export async function waitForSocket(page: Page) {
   await page.waitForFunction(() => (window.__mockControl?.connectedSockets() ?? 0) > 0)
 }

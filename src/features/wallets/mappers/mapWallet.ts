@@ -11,5 +11,6 @@ export function mapWallet(dto: WalletDto): Wallet {
     nickname: dto.nickname,
     ensName: dto.ens_name,
     sameAsPrimary: dto.same_as_primary,
+    connected: dto.connected,
   }
 }

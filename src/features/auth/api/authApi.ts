@@ -19,7 +19,6 @@ export async function register(input: RegisterRequest): Promise<AuthResult> {
   return mapAuthResponse(authResponseSchema.parse(data))
 }
 
-/** Devolve `null` para visitante. Token vencido rejeita com `session_expired`. */
 export async function fetchSession(signal: AbortSignal): Promise<Session | null> {
   const { data } = await http.get<unknown>('/auth/session', { signal })
   return mapSessionResponse(sessionResponseSchema.parse(data))

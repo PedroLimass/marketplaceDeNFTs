@@ -17,11 +17,6 @@ interface CatalogSearchFieldProps {
   className?: string
 }
 
-/**
- * Campo de busca do catálogo. Funciona de qualquer rota: ao digitar (com atraso) ou enviar,
- * leva para o Início com `?q=`. Já no Início, substitui a entrada do histórico em vez de
- * empilhar uma por tecla.
- */
 export function CatalogSearchField({
   variant,
   focusOnMount = false,
@@ -34,7 +29,6 @@ export function CatalogSearchField({
   const rawSearch = useSearch({ strict: false })
   const urlQuery = validateCatalogSearch(rawSearch).q ?? ''
 
-  // Reflete mudanças vindas de fora (ex.: "Limpar filtros") sem atropelar quem está digitando.
   const [text, setText] = useState(urlQuery)
   const [seenQuery, setSeenQuery] = useState(urlQuery)
   if (urlQuery !== seenQuery) {
@@ -54,7 +48,6 @@ export function CatalogSearchField({
   }
 
   useEffect(() => {
-    // Só a busca digitada em um campo do Início é automática; fora dele, só ao enviar.
     if (!onHome) return
     const timer = setTimeout(() => {
       commit(text)
@@ -62,7 +55,6 @@ export function CatalogSearchField({
     return () => {
       clearTimeout(timer)
     }
-    // `commit` depende de `urlQuery`/`onHome`, que já fazem o efeito reagendar.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [text, onHome, urlQuery])
 

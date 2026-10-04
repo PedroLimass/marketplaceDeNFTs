@@ -1,14 +1,15 @@
 import { QueryClient } from '@tanstack/react-query'
-import { beforeEach, describe, expect, it } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { cartKeys } from '@/features/cart/api/cartKeys'
 import type { CartItem } from '@/features/cart/types/cart'
 import { catalogKeys } from '@/features/catalog/api/catalogKeys'
 import type { NftDetail } from '@/features/catalog/types/catalog'
+import type { RealtimeClient } from '@/infrastructure/realtime/realtimeClient'
 import type { RealtimeEnvelope } from '@/infrastructure/realtime/envelope'
 import { toast } from '@/shared/lib/toast'
 
-import { applyNftUpdate } from './nftRealtime'
+import { applyNftUpdate, registerNftRealtime } from './nftRealtime'
 
 const detail = {
   id: 'emerald-ape-042',
@@ -93,5 +94,13 @@ describe('applyNftUpdate', () => {
     applyNftUpdate(queryClient, event())
 
     expect(queryClient.getQueryState(cartKeys.items())?.isInvalidated).toBe(false)
+  })
+
+  it('registra o handler no cliente de tempo real', () => {
+    const subscribe = vi.fn(() => vi.fn())
+    const stop = registerNftRealtime({ subscribe } as unknown as RealtimeClient, queryClient)
+
+    expect(subscribe).toHaveBeenCalledWith('nft.updated', expect.any(Function))
+    stop()
   })
 })

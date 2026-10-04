@@ -3,10 +3,6 @@ import type { ComponentProps } from 'react'
 
 import { cn } from '@/shared/lib/utils'
 
-/**
- * `<select>` nativo com a aparência dos campos de texto. Em celulares abre o seletor do
- * sistema, que é mais confiável do que um menu desenhado à mão.
- */
 export function Select({ className, children, ...props }: ComponentProps<'select'>) {
   return (
     <div className="relative">

@@ -5,7 +5,6 @@
 
 @custom-variant dark (&:is(.dark *));
 
-/* Tokens do Figma (variáveis "Color/*"). O produto tem um único tema, escuro. */
 :root {
   --ink: #140d0a;
   --foreground: #f5f1eb;
@@ -98,7 +97,6 @@
   }
 }
 
-/* Placeholder de carregamento (brilho que percorre o bloco). */
 @keyframes shimmer {
   to {
     background-position: -200% 0;

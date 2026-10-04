@@ -1,7 +1,6 @@
 import { NftCardSkeleton } from '@/features/catalog/components/NftCardSkeleton'
 import { Skeleton } from '@/shared/ui/skeleton'
 
-/** Mesmas proporções do conteúdo final, para a página não se mexer quando os dados chegam. */
 export function NftDetailSkeleton() {
   return (
     <div

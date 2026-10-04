@@ -40,7 +40,6 @@ export function useCart() {
   }
 }
 
-/** Total de unidades no carrinho, usado no selo do cabeçalho. */
 export function useCartCount(): number {
   const { items } = useCart()
   return items.reduce((total, item) => total + item.quantity, 0)
@@ -50,17 +49,11 @@ export function useQuote(couponCode: string | undefined, network: NetworkId) {
   return useQuery({
     queryKey: cartKeys.quote(couponCode, network),
     queryFn: ({ signal }) => createQuote({ couponCode, network }, signal),
-    // Mantém os valores anteriores na tela (esmaecidos) enquanto a nova cotação chega.
     placeholderData: keepPreviousData,
-    // Um cupom recusado é uma resposta definitiva, não algo que melhora ao repetir.
     retry: (count, error) => !(isApiError(error) && error.kind === 'validation') && count < 2,
   })
 }
 
-/**
- * Toda mutação devolve o carrinho inteiro, que vira a fonte da tela. A cotação depende
- * dos itens, então é invalidada junto.
- */
 function useCartMutationOptions() {
   const queryClient = useQueryClient()
 

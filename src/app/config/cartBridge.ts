@@ -5,11 +5,6 @@ import { mergeGuestCart } from '@/features/cart/api/cartApi'
 import { cartKeys } from '@/features/cart/api/cartKeys'
 import { toast } from '@/shared/lib/toast'
 
-/**
- * Ao autenticar, os itens do visitante passam para o carrinho do usuário. A união é feita
- * no servidor (idempotente) e o resultado vira o carrinho exibido; se a disponibilidade
- * limitou alguma quantidade, o usuário é avisado.
- */
 export function connectCartToSession(queryClient: QueryClient): () => void {
   return onSessionStarted(() => {
     void mergeGuestCart()

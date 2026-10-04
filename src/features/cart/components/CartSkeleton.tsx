@@ -1,6 +1,5 @@
 import { Skeleton } from '@/shared/ui/skeleton'
 
-/** Reserva o espaço da tabela e do resumo para a página não se deslocar quando os dados chegam. */
 export function CartSkeleton() {
   return (
     <div

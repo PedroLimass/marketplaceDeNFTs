@@ -192,7 +192,6 @@ function MobileDetail({ nft }: { nft: NftDetail }) {
   )
 }
 
-/** O estado de edição/quantidade nasce no `key` do NFT, então trocar de NFT o reinicia. */
 export function NftDetailView({ nft }: { nft: NftDetail }) {
   const isDesktop = useMediaQuery(DESKTOP_QUERY)
 

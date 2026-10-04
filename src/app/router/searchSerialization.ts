@@ -1,11 +1,3 @@
-/**
- * Serialização da query string do roteador.
- *
- * O padrão do TanStack Router tenta `JSON.parse` em cada valor, o que transforma `min=1.50`
- * no número `1.5` (perde a formatação de um valor em ETH) e `q=42` em número. Aqui os valores
- * ficam sempre como texto e uma chave repetida vira lista (`category=a&category=b`), o mesmo
- * formato usado pela API. A validação de cada rota converte para o tipo certo.
- */
 export type RawSearch = Record<string, string | string[]>
 
 export function parseSearch(search: string): RawSearch {

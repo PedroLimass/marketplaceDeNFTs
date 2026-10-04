@@ -1,6 +1,5 @@
 import { formatEth, parseEth, weiToEth } from '@/shared/lib/money'
 
-/** O slider trabalha em centésimos de ETH (inteiros), a menor unidade das fixtures (0.01). */
 const WEI_PER_CENTI = 10n ** 16n
 
 export function ethToCenti(eth: string): number {
@@ -14,7 +13,6 @@ export function centiToEth(centi: number): string {
   })
 }
 
-/** "Preço: 0,02 - 12,30 ETH": o design usa vírgula decimal neste rótulo e ponto nos cards. */
 export function formatPriceRangeLabel(minEth: string, maxEth: string): string {
   const comma = (value: string) =>
     formatEth(value, { minFractionDigits: 2, withSymbol: false }).replace('.', ',')
@@ -27,7 +25,6 @@ export interface PriceSelection {
   max: string | undefined
 }
 
-/** Seleção igual ao intervalo inteiro equivale a "sem filtro de preço" e some da URL. */
 export function toPriceSelection(
   [low = 0, high = 0]: number[],
   bounds: { minEth: string; maxEth: string },

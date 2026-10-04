@@ -9,10 +9,6 @@ interface EditionSelectorProps {
   onChange: (editionId: string) => void
 }
 
-/**
- * Edições do NFT (lotes `1/1`, `1/10`, `1/50`). Edição esgotada continua visível, mas
- * não pode ser escolhida. O selo ao lado mostra o estado da edição selecionada.
- */
 export function EditionSelector({ editions, value, onChange }: EditionSelectorProps) {
   const selected = editions.find((edition) => edition.id === value)
 

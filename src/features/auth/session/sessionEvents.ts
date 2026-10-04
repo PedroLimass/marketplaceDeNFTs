@@ -6,10 +6,6 @@ type SessionStartedListener = (queryClient: QueryClient, result: AuthResult) => 
 
 const listeners = new Set<SessionStartedListener>()
 
-/**
- * Permite que outras features reajam a um login/cadastro (ex.: unir o carrinho do
- * visitante) sem que `auth` precise conhecê-las. Devolve a função que cancela o registro.
- */
 export function onSessionStarted(listener: SessionStartedListener): () => void {
   listeners.add(listener)
   return () => {
@@ -25,7 +21,6 @@ export function notifySessionStarted(queryClient: QueryClient, result: AuthResul
 
 const expiredListeners = new Set<() => void>()
 
-/** Avisa a interface de que o servidor encerrou a sessão (token vencido ou revogado). */
 export function onSessionExpired(listener: () => void): () => void {
   expiredListeners.add(listener)
   return () => {

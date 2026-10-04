@@ -42,7 +42,6 @@ function push(kind: ToastKind, text: string): number {
   return id
 }
 
-/** Avisos curtos e acessíveis (ver `Toaster`). Fora do React, funciona em qualquer camada. */
 export const toast = {
   success: (text: string) => push('success', text),
   error: (text: string) => push('error', text),

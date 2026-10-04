@@ -39,11 +39,15 @@ describe('rotas de autenticação', () => {
   })
 
   it('abre o login como modal sobre o Início', async () => {
-    await renderAppAt('/login')
+    const { user, router } = await renderAppAt('/login')
 
     expect(await screen.findByRole('dialog')).toBeInTheDocument()
-    // O Radix marca o conteúdo atrás do modal como oculto para leitores de tela.
     expect(screen.getByRole('heading', { level: 1, hidden: true })).toHaveTextContent('SEJA DONO')
+
+    await user.click(screen.getByRole('button', { name: 'Fechar' }))
+    await waitFor(() => {
+      expect(router.state.location.pathname).toBe('/')
+    })
   })
 
   it('entra com credenciais válidas e volta ao Início já autenticado', async () => {

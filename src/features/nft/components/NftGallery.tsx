@@ -12,7 +12,6 @@ interface GalleryImage {
 interface NftGalleryProps {
   images: GalleryImage[]
   name: string
-  /** `rail` é a coluna de miniaturas do desktop; `dots` são os indicadores do mobile. */
   navigation: 'rail' | 'dots'
   className?: string
 }

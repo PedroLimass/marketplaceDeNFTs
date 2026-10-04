@@ -22,7 +22,6 @@ const copy = {
   },
 } as const
 
-/** O texto do banner é mais curto no celular (como no design); o resto é só CSS responsivo. */
 export function HeroBanner() {
   const isDesktop = useMediaQuery(DESKTOP_QUERY)
   const text = isDesktop ? copy.desktop : copy.mobile

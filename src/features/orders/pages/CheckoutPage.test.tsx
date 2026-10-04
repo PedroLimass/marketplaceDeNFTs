@@ -20,7 +20,6 @@ const server = setupServer(...handlers)
 
 type App = Awaited<ReturnType<typeof renderAppAt>>
 
-/** Entra, coloca o Emerald Ape no carrinho e abre o pagamento. */
 async function openCheckout(scenario: MockScenarioId = 'default'): Promise<App> {
   setScenario(scenario)
   const app = await renderAppAt('/login?redirect=%2Fnfts%2Femerald-ape-042')
@@ -89,12 +88,13 @@ describe('Pagamento e confirmação', { timeout: 20_000 }, () => {
     expect(main.getByLabelText(/E-mail/)).toHaveValue('nova@kurio.test')
     expect(screen.getByRole('radio', { name: /MetaMask/ })).toBeChecked()
     expect(screen.getByRole('radio', { name: /WalletConnect/ })).not.toBeChecked()
-    expect(screen.getByText('(x 1) · Edição 1/50')).toBeInTheDocument()
+    expect(screen.getByText('(x 1)')).toBeInTheDocument()
+    expect(screen.getByText('ID do token: #0042')).toBeInTheDocument()
   })
 
   it('troca a rede e a taxa ao escolher a carteira da Polygon', async () => {
     const app = await openCheckout()
-    const summary = await screen.findByRole('complementary', { name: 'Resumo da compra' })
+    const summary = await screen.findByRole('complementary', { name: 'Seus NFTs' })
     await waitFor(() => {
       expect(within(summary).getByText('0.016 ETH')).toBeInTheDocument()
     })
@@ -163,7 +163,7 @@ describe('Pagamento e confirmação', { timeout: 20_000 }, () => {
 
     await app.user.click(screen.getByRole('link', { name: 'Tentar novamente' }))
     expect(await screen.findByRole('heading', { level: 1, name: 'Pagamento' })).toBeVisible()
-    expect(screen.getByText('(x 1) · Edição 1/50')).toBeInTheDocument()
+    expect(screen.getByText('(x 1)')).toBeInTheDocument()
   })
 
   it('reenvia a mesma Idempotency-Key depois de uma falha de comunicação', async () => {

@@ -1,11 +1,12 @@
 import { QueryClient } from '@tanstack/react-query'
-import { beforeEach, describe, expect, it } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 
+import type { RealtimeClient } from '@/infrastructure/realtime/realtimeClient'
 import type { RealtimeEnvelope } from '@/infrastructure/realtime/envelope'
 
 import { orderKeys } from '../api/ordersApi'
 import type { Order } from '../types/order'
-import { applyOrderUpdate } from './orderRealtime'
+import { applyOrderUpdate, registerOrderRealtime } from './orderRealtime'
 
 const pending = {
   id: 'ord_1',
@@ -63,5 +64,16 @@ describe('applyOrderUpdate', () => {
     applyOrderUpdate(other, event(confirmed, 2))
 
     expect(other.getQueryData(orderKeys.detail('ord_1'))).toBeUndefined()
+  })
+
+  it('registra o handler no cliente de tempo real', () => {
+    const subscribe = vi.fn((_type: string, _handler: (event: RealtimeEnvelope) => void) => vi.fn())
+    const stop = registerOrderRealtime({ subscribe } as unknown as RealtimeClient, queryClient)
+
+    expect(subscribe).toHaveBeenCalledWith('order.updated', expect.any(Function))
+    const handler = subscribe.mock.calls[0]?.[1]
+    handler?.(event(confirmed, 2))
+    expect(queryClient.getQueryData<Order>(orderKeys.detail('ord_1'))?.status).toBe('confirmed')
+    stop()
   })
 })

@@ -52,7 +52,6 @@ const roleLabels: Record<WalletRole, string> = {
 
 interface WalletFormProps {
   walletRole: WalletRole
-  /** Valores iniciais: a carteira já salva ou, ao personalizar a secundária, os da principal. */
   initial?: Wallet | undefined
   onCancel?: () => void
   onSaved?: () => void

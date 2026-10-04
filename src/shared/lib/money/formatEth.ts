@@ -1,14 +1,8 @@
 import { ETH_DECIMALS, parseEth, weiToEth } from './decimal'
 
 export interface FormatEthOptions {
-  /** Casas mínimas exibidas; completa com zeros à direita. Padrão: 2. */
   minFractionDigits?: number | undefined
-  /**
-   * Casas máximas exibidas. Acima disso o valor é arredondado (meio para cima).
-   * Padrão: 18, ou seja, nenhuma perda de precisão.
-   */
   maxFractionDigits?: number | undefined
-  /** Anexa o sufixo "ETH". Padrão: true. */
   withSymbol?: boolean | undefined
 }
 

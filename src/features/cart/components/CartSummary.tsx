@@ -38,7 +38,6 @@ export function CartSummary({ items }: { items: CartItem[] }) {
   const quote = useQuote(appliedCode, 'ethereum')
   const hasIssues = items.some((item) => item.issues.length > 0)
 
-  // Um cupom que deixou de valer (ex.: expirou) é descartado em vez de travar o resumo.
   const couponRejected =
     appliedCode !== undefined &&
     quote.isError &&

@@ -28,7 +28,6 @@ interface CheckoutNoticesProps {
   onAcknowledgeStale: () => void
 }
 
-/** Explica a falha da última tentativa de compra e o que o usuário pode fazer a respeito. */
 export function CheckoutNotices({ error, stale, onAcknowledgeStale }: CheckoutNoticesProps) {
   if (stale) {
     return (

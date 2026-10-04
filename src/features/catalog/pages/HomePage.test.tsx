@@ -8,6 +8,7 @@ import { authHandlers } from '@/mocks/handlers/auth.handlers'
 import { catalogHandlers } from '@/mocks/handlers/catalog.handlers'
 import { scenarioHandler } from '@/mocks/handlers/scenario.handler'
 import { setScenario } from '@/mocks/scenarios/current'
+import { stubMatchMedia } from '@/test/matchMedia'
 import { renderAppAt } from '@/test/renderApp'
 
 const server = setupServer(scenarioHandler, ...authHandlers, ...catalogHandlers)
@@ -150,6 +151,46 @@ describe('Início', () => {
 
     expect(await screen.findByText('Nenhum NFT encontrado')).toBeInTheDocument()
     expect(screen.queryByRole('button', { name: 'Limpar filtros' })).not.toBeInTheDocument()
+  })
+
+  it('ordena pelo menu do desktop', async () => {
+    const { user, router } = await renderAppAt('/')
+    await screen.findByRole('heading', { name: 'Emerald Ape #042' })
+
+    await user.click(screen.getByRole('button', { name: /Ordenar por/ }))
+    await user.click(await screen.findByRole('menuitemradio', { name: 'Menor preço' }))
+    await waitFor(() => {
+      expect(router.state.location.search).toMatchObject({ sort: 'price-asc' })
+    })
+  })
+
+  it('filtra por rede e aplica a faixa de preço', async () => {
+    const { user, router } = await renderAppAt('/')
+    await screen.findByRole('heading', { name: 'Emerald Ape #042' })
+
+    await user.click(await screen.findByRole('button', { name: /^Ethereum/ }))
+    await waitFor(() => {
+      expect(router.state.location.search).toMatchObject({ network: 'ethereum' })
+    })
+
+    await user.click(screen.getByRole('button', { name: 'Aplicar' }))
+    await waitFor(() => {
+      expect(screen.getByText(/NFTs encontrados/)).toBeInTheDocument()
+    })
+  })
+
+  it('abre a folha de filtros no mobile e troca a ordem', async () => {
+    stubMatchMedia(false)
+    const { user, router } = await renderAppAt('/')
+    await screen.findByRole('heading', { name: 'Emerald Ape #042' })
+
+    await user.click(screen.getByRole('button', { name: 'Filtros' }))
+    const sheet = await screen.findByRole('dialog', { name: 'Filtros' })
+    expect(sheet).toBeVisible()
+    await user.click(within(sheet).getByRole('radio', { name: /Menor preço/ }))
+    await waitFor(() => {
+      expect(router.state.location.search).toMatchObject({ sort: 'price-asc' })
+    })
   })
 
   it('mostra o erro e se recupera ao tentar novamente', async () => {

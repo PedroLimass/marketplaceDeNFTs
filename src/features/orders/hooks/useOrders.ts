@@ -12,8 +12,6 @@ export const orderQueryOptions = (orderId: string) =>
   queryOptions({
     queryKey: orderKeys.detail(orderId),
     queryFn: ({ signal }) => fetchOrder(orderId, signal),
-    // Rede de segurança: o tempo real entrega a mudança na hora, e a consulta periódica
-    // cobre o caso de o socket estar fora do ar. Para sozinha no estado final.
     refetchInterval: (query) => {
       const order = query.state.data
       if (order && isTerminal(order)) return false

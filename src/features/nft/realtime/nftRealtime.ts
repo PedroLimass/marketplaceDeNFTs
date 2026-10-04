@@ -44,10 +44,6 @@ function patchNft(
   }
 }
 
-/**
- * Percorre qualquer dado de catálogo em cache (lista, destaques, detalhe) e atualiza o NFT.
- * Só aplica se a versão do evento for maior que a que já está em cache: o estado nunca regride.
- */
 function mapCatalogValue(
   value: unknown,
   nftId: string,
@@ -83,7 +79,6 @@ export function applyNftUpdate(queryClient: QueryClient, event: RealtimeEnvelope
     mapCatalogValue(current, nftId, parsed.data, event.version),
   )
 
-  // O carrinho e a cotação dependem de preço e estoque: o total sempre vem da API.
   const cart = queryClient.getQueryData<CartItem[]>(cartKeys.items())
   const affected = cart?.find((item) => item.nft.id === nftId && event.version > item.nft.version)
   if (affected) {

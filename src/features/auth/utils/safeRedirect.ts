@@ -6,10 +6,6 @@ function hasControlCharacter(value: string): boolean {
   return false
 }
 
-/**
- * O parâmetro `redirect` vem da URL e, portanto, de quem a montou. Só aceitamos
- * caminhos internos: nada de outro domínio, `//host` ou esquemas como `javascript:`.
- */
 export function safeRedirect(value: unknown): string | undefined {
   if (typeof value !== 'string') return undefined
   if (!value.startsWith('/') || value.startsWith('//') || value.includes('\\')) return undefined

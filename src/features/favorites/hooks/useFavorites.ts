@@ -14,7 +14,6 @@ const favoriteIdsQueryOptions = () =>
     queryFn: ({ signal }) => fetchFavoriteIds(signal),
   })
 
-/** Ids favoritados do usuário autenticado. Visitante: lista vazia, sem requisição. */
 export function useFavoriteIds() {
   const { data: session } = useSession()
   const query = useQuery({ ...favoriteIdsQueryOptions(), enabled: Boolean(session) })
@@ -27,10 +26,6 @@ interface ToggleVariables {
   favorite: boolean
 }
 
-/**
- * Atualização otimista: o coração muda na hora e volta ao estado anterior se a API falhar.
- * O `onSettled` reconcilia com o servidor, que é a fonte de verdade.
- */
 export function useToggleFavorite() {
   const queryClient = useQueryClient()
   const key = favoritesKeys.ids()

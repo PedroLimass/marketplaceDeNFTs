@@ -6,12 +6,6 @@ import { tokenStorage } from '../storage/tokenStorage'
 import { notifySessionStarted } from './sessionEvents'
 import type { AuthResult, Session, User } from '../types/auth'
 
-/**
- * Dados em cache (carrinho, favoritos, pedidos) pertencem a quem os pediu.
- * Ao trocar de identidade, tudo é descartado, menos a própria sessão: ela pode
- * estar em andamento (ex.: o servidor respondeu `session_expired` à consulta dela)
- * e removê-la deixaria quem a observa esperando para sempre.
- */
 function dropUserScopedQueries(queryClient: QueryClient): void {
   queryClient.removeQueries({ predicate: (query) => query.queryKey[0] !== authKeys.all[0] })
 }
@@ -29,7 +23,6 @@ export function endSession(queryClient: QueryClient): void {
   queryClient.setQueryData(sessionQueryOptions.queryKey, null)
 }
 
-/** Reflete no cabeçalho (e em quem lê a sessão) uma alteração feita no perfil. */
 export function patchSessionUser(queryClient: QueryClient, changes: Partial<User>): void {
   queryClient.setQueryData<Session | null>(sessionQueryOptions.queryKey, (current) =>
     current ? { ...current, user: { ...current.user, ...changes } } : current,

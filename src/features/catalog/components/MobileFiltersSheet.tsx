@@ -21,7 +21,6 @@ interface MobileFiltersSheetProps {
   onClear: () => void
 }
 
-/** No celular os filtros e a ordenação ficam numa folha que sobe de baixo (o design só traz o botão). */
 export function MobileFiltersSheet({
   filters,
   facets,

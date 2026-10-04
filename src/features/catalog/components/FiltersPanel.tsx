@@ -18,7 +18,6 @@ import {
 
 interface FiltersPanelProps {
   filters: CatalogFilters
-  /** `undefined` enquanto a primeira resposta não chega (ou se ela falhou). */
   facets: CatalogFacets | undefined
   failed: boolean
   onChange: (patch: FiltersPatch) => void
@@ -95,7 +94,6 @@ function PriceFilter({
   )
   const [low = 0, high = 0] = draft
 
-  // Sem intervalo (catálogo vazio ou todos com o mesmo preço) não há o que ajustar.
   if (ethToCenti(bounds.maxEth) <= ethToCenti(bounds.minEth)) {
     return (
       <p className="px-3 text-sm text-text-secondary">
@@ -161,7 +159,6 @@ export function FiltersPanel({ filters, facets, failed, onChange, className }: F
         </h3>
         {facets ? (
           <PriceFilter
-            // Recria o rascunho quando o filtro aplicado (ou o intervalo) muda por fora.
             key={`${filters.minPrice ?? ''}|${filters.maxPrice ?? ''}|${facets.priceRange.minEth}|${facets.priceRange.maxEth}`}
             bounds={facets.priceRange}
             minPrice={filters.minPrice}

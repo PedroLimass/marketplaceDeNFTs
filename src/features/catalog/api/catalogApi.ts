@@ -9,7 +9,6 @@ import {
 } from '../schemas/catalog.schemas'
 import type { CatalogFilters, FeaturedNfts, Nft, NftDetail, NftPage } from '../types/catalog'
 
-/** Valores `undefined` são omitidos pelo Axios, e listas viram chaves repetidas. */
 function toParams(filters: CatalogFilters) {
   return {
     q: filters.q || undefined,
@@ -41,7 +40,6 @@ export async function fetchNftDetail(nftId: string, signal: AbortSignal): Promis
 
 export const RELATED_NFTS_LIMIT = 5
 
-/** Outros NFTs da mesma coleção, para a seção "Mais desta coleção". */
 export async function fetchRelatedNfts(
   collectionId: string,
   excludeId: string,

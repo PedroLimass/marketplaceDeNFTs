@@ -112,6 +112,47 @@ describe('Carrinho', () => {
     })
   })
 
+  it('avisa quando a edição esgota e permite remover', async () => {
+    const { user, queryClient } = await renderAppAt('/nfts/emerald-ape-042')
+    await addEmeraldApe(user)
+
+    mutateDb((draft) => {
+      const nft = draft.nfts.find((candidate) => candidate.id === 'emerald-ape-042')
+      if (!nft) return
+      nft.version += 1
+      for (const edition of nft.editions) edition.available = 0
+    })
+    await queryClient.invalidateQueries({ queryKey: ['cart'] })
+
+    await screen.findByText(/esgotou/)
+    await user.click(screen.getByRole('button', { name: 'Remover do carrinho' }))
+    expect(await screen.findByRole('heading', { name: 'Seu carrinho está vazio' })).toBeVisible()
+  })
+
+  it('ajusta a quantidade quando o estoque fica menor que o carrinho', async () => {
+    const { user, queryClient } = await renderAppAt('/nfts/emerald-ape-042')
+    const table = await addEmeraldApe(user)
+    await user.click(within(table).getByRole('button', { name: /Aumentar quantidade/ }))
+    await waitFor(() => {
+      expect(within(table).getByRole('group', { name: /Quantidade de/ })).toHaveTextContent('2')
+    })
+
+    mutateDb((draft) => {
+      const nft = draft.nfts.find((candidate) => candidate.id === 'emerald-ape-042')
+      if (!nft) return
+      nft.version += 1
+      const edition = nft.editions.find((candidate) => candidate.id === '1/50')
+      if (edition) edition.available = 1
+    })
+    await queryClient.invalidateQueries({ queryKey: ['cart'] })
+
+    await screen.findByText(/Só restam 1 unidade/)
+    await user.click(screen.getByRole('button', { name: 'Ajustar para 1' }))
+    await waitFor(() => {
+      expect(screen.queryByText(/Só restam 1 unidade/)).not.toBeInTheDocument()
+    })
+  })
+
   it('mantém o carrinho do visitante ao entrar na conta', async () => {
     const { user, router } = await renderAppAt('/nfts/emerald-ape-042')
     await addEmeraldApe(user)

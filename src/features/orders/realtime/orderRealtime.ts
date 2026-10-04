@@ -23,11 +23,9 @@ export function applyOrderUpdate(queryClient: QueryClient, event: RealtimeEnvelo
   const cached = queryClient.getQueryData<Order>(key)
 
   if (!cached) {
-    // Pedido que esta aba ainda não conhece: busca o retrato completo no REST.
     void queryClient.invalidateQueries({ queryKey: orderKeys.all })
     return
   }
-  // Estado final não muda mais, e versão antiga nunca sobrescreve a mais nova.
   if (isTerminal(cached) || event.version <= cached.version) return
 
   const { data } = parsed
@@ -43,7 +41,6 @@ export function applyOrderUpdate(queryClient: QueryClient, event: RealtimeEnvelo
   })
 
   void queryClient.invalidateQueries({ queryKey: orderKeys.pending() })
-  // A compra confirmada tira itens do carrinho, e a recusada devolve o estoque.
   void queryClient.invalidateQueries({ queryKey: cartKeys.all })
 }
 

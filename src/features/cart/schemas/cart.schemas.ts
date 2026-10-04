@@ -33,7 +33,6 @@ export const cartItemDtoSchema = z.object({
     available: z.number().int().nonnegative(),
   }),
   quantity: z.number().int().positive(),
-  /** Maior quantidade que o usuário pode ter nesta linha (disponibilidade e limite por pedido). */
   max_quantity: z.number().int().nonnegative(),
   unit_price_eth: ethAmountSchema,
   line_total_eth: ethAmountSchema,

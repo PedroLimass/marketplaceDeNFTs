@@ -9,7 +9,7 @@ export interface Wallet {
   network: NetworkId
   address: string
   nickname: string
-  /** Rótulo ENS sem o sufixo `.eth`. */
   ensName: string | null
   sameAsPrimary: boolean
+  connected: boolean
 }

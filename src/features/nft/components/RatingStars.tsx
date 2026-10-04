@@ -2,7 +2,6 @@ import { Star } from 'lucide-react'
 
 import { cn } from '@/shared/lib/utils'
 
-/** Cinco estrelas; as `round(média)` primeiras ficam preenchidas. O texto acessível é a nota. */
 export function RatingStars({ average, className }: { average: number; className?: string }) {
   const filled = Math.round(average)
 

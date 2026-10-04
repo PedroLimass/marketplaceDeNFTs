@@ -3,7 +3,6 @@ import { useState } from 'react'
 import { CatalogSearchField } from '@/features/catalog/components/CatalogSearchField'
 import searchIcon from '@/shared/assets/icons/search.svg'
 
-/** Ícone de busca que se expande em campo; só no desktop (no celular a busca fica na Home). */
 export function HeaderSearch() {
   const [open, setOpen] = useState(false)
 

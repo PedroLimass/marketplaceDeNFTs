@@ -16,7 +16,6 @@ function validate(file: File): string | null {
   return null
 }
 
-/** O avatar é salvo na hora, de forma independente do botão "Salvar" do formulário. */
 export function AvatarField({ avatarUrl }: { avatarUrl: string | null }) {
   const inputRef = useRef<HTMLInputElement>(null)
   const labelId = useId()

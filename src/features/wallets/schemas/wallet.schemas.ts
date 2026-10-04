@@ -22,7 +22,6 @@ export const walletNicknameSchema = z
   .min(1, 'Informe um apelido para a carteira.')
   .max(24, 'O apelido deve ter no máximo 24 caracteres.')
 
-/** Rótulo ENS sem o sufixo `.eth` (o sufixo é fixo na interface). Vazio vira `null`. */
 export const ensLabelSchema = z
   .string()
   .trim()
@@ -47,7 +46,6 @@ export const walletFieldsSchema = z.object({
   ens_name: ensLabelSchema.nullable().optional(),
 })
 
-/** `same_as_primary` só vale para a carteira secundária e dispensa os demais campos. */
 export const sameAsPrimaryRequestSchema = z.object({ same_as_primary: z.literal(true) })
 
 export const walletRequestSchema = z.union([sameAsPrimaryRequestSchema, walletFieldsSchema])
@@ -61,6 +59,7 @@ export const walletDtoSchema = z.object({
   nickname: z.string(),
   ens_name: z.string().nullable(),
   same_as_primary: z.boolean(),
+  connected: z.boolean(),
 })
 
 export const walletsResponseSchema = z.object({ items: z.array(walletDtoSchema) })

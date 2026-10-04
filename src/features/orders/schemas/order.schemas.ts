@@ -33,7 +33,6 @@ export const orderItemDtoSchema = z.object({
 export const orderDtoSchema = z.object({
   id: z.string(),
   status: orderStatusSchema,
-  /** Cresce a cada mudança de estado; o cliente ignora versões menores que a que já tem. */
   version: z.number().int().positive(),
   items: z.array(orderItemDtoSchema),
   subtotal_eth: ethAmountSchema,
