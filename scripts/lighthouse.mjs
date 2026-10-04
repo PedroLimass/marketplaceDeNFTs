@@ -56,24 +56,45 @@ const summary = []
 
 try {
   await waitForServer()
+  await mkdir('lighthouse-report', { recursive: true })
 
   for (const profile of PROFILES) {
     for (const page of PAGES) {
       const runs = []
+      let lastHtml = ''
+      let lastJson = ''
+
       for (let index = 0; index < RUNS; index += 1) {
         // Perfil novo a cada rodada: sem cache nem Service Worker de rodadas anteriores.
         browser = await chromium.launch({ args: [`--remote-debugging-port=${String(DEBUG_PORT)}`] })
         const result = await lighthouse(
           `${BASE_URL}${page.path}`,
-          { port: DEBUG_PORT, output: 'json', logLevel: 'error', onlyCategories: CATEGORIES },
+          {
+            port: DEBUG_PORT,
+            output: ['json', 'html'],
+            logLevel: 'error',
+            onlyCategories: CATEGORIES,
+          },
           profile.config,
         )
         await browser.close()
         browser = undefined
 
         const lhr = result?.lhr
-        if (!lhr) throw new Error('Lighthouse não devolveu relatório.')
+        if (!lhr || !result.report) throw new Error('Lighthouse não devolveu relatório.')
+
+        const [jsonReport, htmlReport] = Array.isArray(result.report)
+          ? result.report
+          : [result.report, '']
+        lastJson = typeof jsonReport === 'string' ? jsonReport : JSON.stringify(lhr)
+        lastHtml = typeof htmlReport === 'string' ? htmlReport : ''
+
         runs.push({
+          failing: CATEGORIES.filter((id) => id !== 'performance').flatMap((id) =>
+            (lhr.categories[id]?.auditRefs ?? [])
+              .filter((ref) => ref.weight > 0 && lhr.audits[ref.id]?.score === 0)
+              .map((ref) => `${id}: ${ref.id}`),
+          ),
           scores: Object.fromEntries(
             CATEGORIES.map((id) => [id, Math.round((lhr.categories[id]?.score ?? 0) * 100)]),
           ),
@@ -87,15 +108,23 @@ try {
         })
       }
 
+      const stem = `${profile.name}-${page.name}`
+      await writeFile(`lighthouse-report/${stem}.json`, lastJson)
+      if (lastHtml) await writeFile(`lighthouse-report/${stem}.html`, lastHtml)
+
+      const first = runs[0]
+      if (!first) throw new Error(`Nenhuma rodada concluída para ${stem}.`)
+
       const entry = {
         page: page.name,
         profile: profile.name,
         runs: runs.length,
+        failingAudits: [...new Set(runs.flatMap((run) => run.failing))],
         medianScores: Object.fromEntries(
           CATEGORIES.map((id) => [id, median(runs.map((run) => run.scores[id]))]),
         ),
         medianMetrics: Object.fromEntries(
-          Object.keys(runs[0].metrics).map((id) => [
+          Object.keys(first.metrics).map((id) => [
             id,
             Math.round(median(runs.map((run) => run.metrics[id] ?? 0)) * 1000) / 1000,
           ]),
@@ -106,11 +135,13 @@ try {
         `${profile.name.padEnd(7)} ${page.name.padEnd(8)}`,
         JSON.stringify(entry.medianScores),
         JSON.stringify(entry.medianMetrics),
+        entry.failingAudits.length > 0
+          ? `\n         reprovados: ${entry.failingAudits.join(', ')}`
+          : '',
       )
     }
   }
 
-  await mkdir('lighthouse-report', { recursive: true })
   await writeFile('lighthouse-report/summary.json', `${JSON.stringify(summary, null, 2)}\n`)
 } finally {
   await browser?.close()

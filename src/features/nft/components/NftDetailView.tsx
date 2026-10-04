@@ -158,11 +158,11 @@ function MobileDetail({ nft }: { nft: NftDetail }) {
       <div className="-mt-6 flex flex-col gap-5 rounded-t-[28px] bg-surface-card px-6 pt-8 pb-8">
         <div className="flex items-start justify-between gap-3">
           <h1 className="min-w-0 text-lg leading-6 font-bold text-text-primary">{nft.name}</h1>
-          <p
-            aria-label={`Nota ${nft.rating.average.toFixed(1)} de 5, com ${String(nft.rating.count)} avaliações`}
-            className="flex shrink-0 items-center gap-1.5 rounded-md border border-border-soft px-2 py-1 text-xs text-text-secondary"
-          >
+          <p className="flex shrink-0 items-center gap-1.5 rounded-md border border-border-soft px-2 py-1 text-xs text-text-secondary">
             <Star aria-hidden="true" className="size-3.5 fill-primary text-primary" />
+            <span className="sr-only">
+              Nota {nft.rating.average.toFixed(1)} de 5, com {nft.rating.count} avaliações
+            </span>
             <span aria-hidden="true">
               <strong className="font-bold text-text-primary">
                 {nft.rating.average.toFixed(1)}
